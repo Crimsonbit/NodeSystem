@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.reflections.Reflections;
 
@@ -91,6 +92,22 @@ public class NodeMaster {
 	
 	protected Field getField(Class<? extends AbstractNode> clazz, String key) {
 		return fieldKeyMap.get(clazz).get(key);
+	}
+	
+	public Set<String> getAllInputNames(Class<? extends AbstractNode> clazz){
+		return inputKeyMap.get(clazz).keySet();
+	}
+	
+	public Set<String> getAllInputNames(AbstractNode node){
+		return getAllInputNames(node.getClass());
+	}
+	
+	public Set<String> getAllOutputNames(Class<? extends AbstractNode> clazz){
+		return outputKeyMap.get(clazz).keySet();
+	}
+	
+	public Set<String> getAllOutputNames(AbstractNode node){
+		return getAllOutputNames(node.getClass());
 	}
 
 	public AbstractNode createNode(INodeType type) {
