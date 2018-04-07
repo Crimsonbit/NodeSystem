@@ -60,7 +60,11 @@ public abstract class AbstractNode {
 		Collection<Field> inputs = master.getAllInputs(this);
 		for (Field in : inputs) {
 			NodeConnection con = connections.get(in);
-			in.set(this, con.getNodeInstance().doGet(con.getField()));
+			if (con == null) {
+				in.set(this, null);
+			} else {
+				in.set(this, con.getNodeInstance().doGet(con.getField()));
+			}
 		}
 		NodeOutput outDefinition = f.getAnnotation(NodeOutput.class);
 		try {
