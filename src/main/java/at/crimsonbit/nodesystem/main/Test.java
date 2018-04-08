@@ -28,7 +28,7 @@ public class Test extends Application {
 
 		constNode1.getNode().set("constant", 10);
 		constNode2.getNode().set("constant", 2);
-		
+
 		graph.getGuiMaster().addNode(constNode1);
 		graph.getGuiMaster().addNode(constNode2);
 		graph.getGuiMaster().addNode(additionNode1);
@@ -44,9 +44,8 @@ public class Test extends Application {
 		graph.getGuiMaster().addConnection(multiplyNode1.getOutputPorts().get(0), additionNode2.getInputPortById(1));
 
 		graph.getGuiMaster().addConnection(additionNode2.getOutputPorts().get(0), outputNode.getInputPortById(0));
-
 		graph.update();
-
+		
 		Scene scene = new Scene(graph, 1024, 768);
 		scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		primaryStage.setScene(scene);
