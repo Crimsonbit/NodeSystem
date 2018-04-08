@@ -375,7 +375,7 @@ public class GNode extends Pane implements IGNode {
 			}
 			redraw();
 		} else if (id == 4) {
-			setName(getName() + this.calcNode.get("output"));
+			setName("Output - " + this.calcNode.get("output"));
 			redraw();
 
 		} else if (id == 5) {

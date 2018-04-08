@@ -1,7 +1,11 @@
 package at.crimsonbit.nodesystem.gui.dialog;
 
 import javafx.scene.control.SeparatorMenuItem;
-
+/**
+ * 
+ * @author NeonArtworks
+ *
+ */
 public class GSeparator extends SeparatorMenuItem {
 
 	private int id;

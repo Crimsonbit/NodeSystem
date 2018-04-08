@@ -5,7 +5,11 @@ import at.crimsonbit.nodesystem.gui.node.GNode;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
-
+/**
+ * 
+ * @author NeonArtworks
+ *
+ */
 public class GNodeMouseHandler {
 
 	private final DragContext dragContext = new DragContext();

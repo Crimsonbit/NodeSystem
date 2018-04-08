@@ -1,5 +1,9 @@
 package at.crimsonbit.nodesystem.util;
-
+/**
+ * 
+ * @author NeonArtworks
+ *
+ */
 public class RangeMapper {
 	public static double mapValue(double value, double min_input, double max_input, int min_output, int max_output) {
 		double inrange = max_input - min_input;

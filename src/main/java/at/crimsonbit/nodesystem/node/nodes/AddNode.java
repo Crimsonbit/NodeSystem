@@ -19,7 +19,7 @@ public class AddNode extends AbstractNode implements INodeType {
 
 	@NodeOutput("computAdd")
 	double output;
-
+	
 	public AddNode() {
 
 	}

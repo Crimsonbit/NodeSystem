@@ -12,7 +12,11 @@ import at.crimsonbit.nodesystem.node.types.BaseType;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeMaster;
 import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
-
+/**
+ * 
+ * @author NeonArtworks
+ *
+ */
 public class GNodeMaster {
 
 	private GNode graphParent;

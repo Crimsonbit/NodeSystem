@@ -9,7 +9,11 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Scale;
-
+/**
+ * 
+ * @author NeonArtworks
+ *
+ */
 public class GBackground extends Pane {
 
 	// This is to make the stroke be drawn 'on pixel'.

@@ -10,7 +10,11 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Line;
-
+/**
+ * 
+ * @author NeonArtworks
+ *
+ */
 public class GPort extends Group implements IGConsumable {
 
 	private double x;

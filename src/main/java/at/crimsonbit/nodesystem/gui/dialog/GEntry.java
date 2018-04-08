@@ -2,7 +2,11 @@ package at.crimsonbit.nodesystem.gui.dialog;
 
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCodeCombination;
-
+/**
+ * 
+ * @author NeonArtworks
+ *
+ */
 public class GEntry extends MenuItem {
 
 	private int id;

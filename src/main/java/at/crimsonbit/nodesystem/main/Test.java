@@ -18,21 +18,35 @@ public class Test extends Application {
 
 		GNodeSystem nodeSystem = new GNodeSystem();
 		// nodeSystem.getNodeGraph().getGuiMaster().getNodeMaster().registerNodes("at.crimsonbit.nodesystem.node.nodes");
-
 		GNodeGraph graph = nodeSystem.getNodeGraph();
-		GNode node1 = new GNode("Const", BaseType.CONSTANT, true, graph);
-		GNode node2 = new GNode("Add", MathType.ADD, true, graph);
-		GNode node3 = new GNode("Output", BaseType.OUTPUT, true, graph);
+		GNode constNode1 = new GNode("Constant Node", BaseType.CONSTANT, true, graph);
+		GNode constNode2 = new GNode("Constant Node 2", BaseType.CONSTANT, true, graph);
+		GNode additionNode1 = new GNode("Addition Node", MathType.ADD, true, graph);
+		GNode additionNode2 = new GNode("Addition Node", MathType.ADD, true, graph);
+		GNode multiplyNode1 = new GNode("Multiply Node 1", MathType.MULTIPLY, true, graph);
+		GNode outputNode = new GNode("Output", BaseType.OUTPUT, true, graph);
 
-		graph.getGuiMaster().addNode(node1);
-		graph.getGuiMaster().addNode(node2);
-		graph.getGuiMaster().addNode(node3);
+		constNode1.getNode().set("constant", 10);
+		constNode2.getNode().set("constant", 2);
 		
-		graph.getGuiMaster().addConnection(node1.getOutputPortById(0), node2.getInputPortById(0));
-		// System.out.println();
-		graph.getGuiMaster().addConnection(node2.getOutputPorts().get(0), node3.getInputPortById(0));
+		graph.getGuiMaster().addNode(constNode1);
+		graph.getGuiMaster().addNode(constNode2);
+		graph.getGuiMaster().addNode(additionNode1);
+		graph.getGuiMaster().addNode(additionNode2);
+		graph.getGuiMaster().addNode(multiplyNode1);
+		graph.getGuiMaster().addNode(outputNode);
+
+		graph.getGuiMaster().addConnection(constNode1.getOutputPortById(0), additionNode1.getInputPortById(0));
+		graph.getGuiMaster().addConnection(constNode2.getOutputPortById(0), additionNode1.getInputPortById(1));
+		graph.getGuiMaster().addConnection(constNode2.getOutputPortById(0), multiplyNode1.getInputPortById(0));
+		graph.getGuiMaster().addConnection(constNode1.getOutputPortById(0), multiplyNode1.getInputPortById(1));
+		graph.getGuiMaster().addConnection(additionNode1.getOutputPorts().get(0), additionNode2.getInputPortById(0));
+		graph.getGuiMaster().addConnection(multiplyNode1.getOutputPorts().get(0), additionNode2.getInputPortById(1));
+
+		graph.getGuiMaster().addConnection(additionNode2.getOutputPorts().get(0), outputNode.getInputPortById(0));
 
 		graph.update();
+
 		Scene scene = new Scene(graph, 1024, 768);
 		scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		primaryStage.setScene(scene);

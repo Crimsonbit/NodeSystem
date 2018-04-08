@@ -19,7 +19,11 @@ import javafx.scene.Node;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-
+/**
+ * 
+ * @author NeonArtworks
+ *
+ */
 public class GNodeGraph extends GBackground implements IGConsumable {
 
 	private GNodeMaster nodeMaster;
@@ -32,12 +36,6 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 	private int idCount = 100;
 	private GPopUp graphDialog;
 	private GSettingsPane settingsPane;
-
-	/**
-	 * the pane wrapper is necessary or else the grid would always align the
-	 * top-most and left-most child to the top and left eg when you drag the top
-	 * child down, the entire grid would move down
-	 */
 
 	private GNodeLayer nodeLayer;
 	private GLineLayer lineLayer;
@@ -192,10 +190,10 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 	public void update() {
 
 		// add components to graph pane
-		
+
 		getNodeLayer().getChildren().addAll(nodeMaster.getAddedEdges());
 		getNodeLayer().getChildren().addAll(nodeMaster.getAddedCells());
-		
+
 		// remove components from graph pane
 		getNodeLayer().getChildren().removeAll(nodeMaster.getRemovedCells());
 		getNodeLayer().getChildren().removeAll(nodeMaster.getRemovedEdges());

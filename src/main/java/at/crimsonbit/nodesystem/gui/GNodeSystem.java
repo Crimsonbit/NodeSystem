@@ -1,7 +1,11 @@
 package at.crimsonbit.nodesystem.gui;
 
 import javafx.scene.layout.Pane;
-
+/**
+ * 
+ * @author NeonArtworks
+ *
+ */
 public class GNodeSystem {
 
 	private GNodeGraph graph;

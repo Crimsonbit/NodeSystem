@@ -1,7 +1,11 @@
 package at.crimsonbit.nodesystem.gui.dialog;
 
 import javafx.scene.control.Menu;
-
+/**
+ * 
+ * @author NeonArtworks
+ *
+ */
 public class GSubMenu extends Menu {
 	private int id;
 	private String name;

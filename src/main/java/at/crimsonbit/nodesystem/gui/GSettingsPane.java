@@ -6,7 +6,11 @@ import javafx.scene.effect.BoxBlur;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-
+/**
+ * 
+ * @author NeonArtworks
+ *
+ */
 public class GSettingsPane extends Pane {
 
 	@Override

@@ -5,7 +5,11 @@ import javafx.scene.Group;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.StrokeLineCap;
-
+/**
+ * 
+ * @author NeonArtworks
+ *
+ */
 public class GNodeConnection extends Group {
 
 	protected GPort sourcePort;

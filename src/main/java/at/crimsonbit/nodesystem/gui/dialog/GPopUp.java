@@ -2,7 +2,11 @@ package at.crimsonbit.nodesystem.gui.dialog;
 
 import javafx.scene.control.ContextMenu;
 import javafx.scene.input.KeyCodeCombination;
-
+/**
+ * 
+ * @author NeonArtworks
+ *
+ */
 public class GPopUp extends ContextMenu {
 
 	public GPopUp() {
