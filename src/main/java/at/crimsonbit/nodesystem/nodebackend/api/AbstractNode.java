@@ -59,7 +59,7 @@ public abstract class AbstractNode {
 		for (Field in : inputs) {
 			NodeConnection con = connections.get(in);
 			if (con == null) {
-				in.set(this, null);
+				setFieldToDefault(f);
 			} else {
 				in.set(this, con.getNodeInstance().doGet(con.getField()));
 			}
@@ -77,6 +77,35 @@ public abstract class AbstractNode {
 			throw new RuntimeException(e);
 		}
 		return f.get(this);
+	}
+
+	private void setFieldToDefault(Field f) throws IllegalArgumentException, IllegalAccessException {
+		Class<?> type = f.getType();
+		if (type.isPrimitive()) {
+			if (type == int.class)
+				f.setInt(this, 0);
+			else if (type == float.class)
+				f.setFloat(this, 0.0f);
+			else if (type == double.class)
+				f.setDouble(this, 0.0);
+			else if (type == long.class)
+				f.setLong(this, 0l);
+			else if (type == short.class)
+				f.setShort(this, (short) 0);
+			else if (type == byte.class)
+				f.setByte(this, (byte) 0);
+			else if (type == boolean.class)
+				f.setBoolean(this, false);
+			else if (type == char.class)
+				f.setChar(this, '\0');
+			else {
+				throw new IllegalArgumentException(
+						"Type of field is primitive, but none of the known Types, don't know how to handle default value for this");
+			}
+
+		} else {
+			f.set(this, null);
+		}
 	}
 
 	public NodeMaster getNodeMaster() {
