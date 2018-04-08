@@ -7,6 +7,7 @@ import java.util.Optional;
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.dialog.GPopUp;
 import at.crimsonbit.nodesystem.gui.node.port.GPort;
+import at.crimsonbit.nodesystem.node.types.BaseType;
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.util.RangeMapper;
@@ -41,6 +42,7 @@ public class GNode extends Pane implements IGNode {
 	private boolean doDraw = false;
 	private boolean active = false;
 	private boolean portPressed = false;
+	private INodeType type;
 
 	private String name;
 	private int inPortCount = 0;
@@ -85,6 +87,7 @@ public class GNode extends Pane implements IGNode {
 		this.nodeGraph = graph;
 		this.doDraw = draw;
 		this.name = name;
+		this.type = type;
 		this.calcNode = this.nodeGraph.getGuiMaster().getNodeMaster().createNode(type);
 		defaultTopColor();
 		defaultBackColor();
@@ -100,6 +103,10 @@ public class GNode extends Pane implements IGNode {
 		}
 
 		draw();
+	}
+
+	public INodeType getNodeType() {
+		return this.type;
 	}
 
 	public AbstractNode getNode() {
@@ -123,6 +130,13 @@ public class GNode extends Pane implements IGNode {
 		pop.addItem(2, "remove Active");
 		pop.addItem(3, "Rename");
 		pop.addItem(0, "Remove");
+		if (this.type == BaseType.OUTPUT) {
+			pop.addItem(4, "Get Output");
+		}
+
+		if (this.type == BaseType.CONSTANT) {
+			pop.addItem(5, "Set Constant");
+		}
 		// pop.addItem(1, "set Active");
 
 		setPopUpDialog(pop);
@@ -360,7 +374,24 @@ public class GNode extends Pane implements IGNode {
 				removeBlur();
 			}
 			redraw();
+		} else if (id == 4) {
+			System.out.println(this.calcNode.get("output"));
+			
+		} else if (id == 5) {
+			doBlur();
+			TextInputDialog dialog = new TextInputDialog(getName());
+			dialog.setTitle("Constant");
+			dialog.setHeaderText("Set a new constant for the node.");
+			dialog.setContentText("Constant: ");
 
+			Optional<String> result = dialog.showAndWait();
+			if (result.isPresent()) {
+				int i = Integer.valueOf(result.get());
+				this.calcNode.set("constant", i);
+				removeBlur();
+			} else {
+				removeBlur();
+			}
 		}
 	}
 

@@ -28,6 +28,8 @@ public abstract class AbstractNode {
 		connections = new HashMap<>();
 	}
 
+
+
 	public final boolean set(String key, Object value) {
 		try {
 			Field f = master.getField(this.getClass(), key);

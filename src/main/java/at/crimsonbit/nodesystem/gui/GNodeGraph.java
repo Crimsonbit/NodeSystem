@@ -192,9 +192,10 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 	public void update() {
 
 		// add components to graph pane
-
-		getNodeLayer().getChildren().addAll(nodeMaster.getAddedCells());
+		
 		getNodeLayer().getChildren().addAll(nodeMaster.getAddedEdges());
+		getNodeLayer().getChildren().addAll(nodeMaster.getAddedCells());
+		
 		// remove components from graph pane
 		getNodeLayer().getChildren().removeAll(nodeMaster.getRemovedCells());
 		getNodeLayer().getChildren().removeAll(nodeMaster.getRemovedEdges());

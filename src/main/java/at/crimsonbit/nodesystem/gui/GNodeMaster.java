@@ -61,6 +61,12 @@ public class GNodeMaster {
 	public void removeConnection(GPort port) {
 		for (GNodeConnection con : getAllEdges()) {
 			if (con.getSourcePort() == port || con.getTargetPort() == port) {
+				try {
+					getNodeMaster().removeConnection(con.getTarget().getNode(), con.getTargetPort().getStringID());
+				} catch (NoSuchNodeException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				getRemovedEdges().add(con);
 			}
 		}
@@ -101,10 +107,16 @@ public class GNodeMaster {
 		addedCells.clear();
 		addedEdges.clear();
 	}
-
+	
 	public void removeNode(GNode node) {
 		for (GNodeConnection c : getAllEdges()) {
 			if (c.getSource() == node || c.getTarget() == node) {
+				try {
+					getNodeMaster().removeConnection(c.getTarget().getNode(), c.getTargetPort().getStringID());
+				} catch (NoSuchNodeException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				removedEdges.add(c);
 			}
 		}
@@ -163,7 +175,7 @@ public class GNodeMaster {
 	 */
 
 	public void addConnection(GPort node1, GPort node2) {
-		
+
 		if (node1.getNode() == node2.getNode())
 			return;
 
