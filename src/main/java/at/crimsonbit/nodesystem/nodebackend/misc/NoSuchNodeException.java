@@ -2,24 +2,25 @@ package at.crimsonbit.nodesystem.nodebackend.misc;
 
 public class NoSuchNodeException extends Exception {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6509586411824369320L;
+
 	public NoSuchNodeException() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public NoSuchNodeException(String message, Throwable cause) {
 		super(message, cause);
-		// TODO Auto-generated constructor stub
 	}
 
 	public NoSuchNodeException(String message) {
 		super(message);
-		// TODO Auto-generated constructor stub
 	}
 
 	public NoSuchNodeException(Throwable cause) {
 		super(cause);
-		// TODO Auto-generated constructor stub
 	}
 
 }

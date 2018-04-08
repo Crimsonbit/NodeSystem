@@ -28,8 +28,6 @@ public abstract class AbstractNode {
 		connections = new HashMap<>();
 	}
 
-
-
 	public final boolean set(String key, Object value) {
 		try {
 			Field f = master.getField(this.getClass(), key);
@@ -81,7 +79,7 @@ public abstract class AbstractNode {
 		return f.get(this);
 	}
 
-	private void setFieldToDefault(Field f) throws IllegalArgumentException, IllegalAccessException {
+	protected void setFieldToDefault(Field f) throws IllegalArgumentException, IllegalAccessException {
 		Class<?> type = f.getType();
 		if (type.isPrimitive()) {
 			if (type == int.class)

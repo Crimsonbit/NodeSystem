@@ -26,8 +26,8 @@ public class NodeMaster {
 	}
 
 	/**
-	 * Registers all Nodes in the package specified by path. A Node is any class,
-	 * that extends AbstractNode
+	 * Registers all Nodes in the package and all subpackages specified by path. A
+	 * Node is any class, that extends AbstractNode
 	 * 
 	 * @param path
 	 */
@@ -201,6 +201,13 @@ public class NodeMaster {
 		Field inField = regIns.get(input);
 		if (inField == null) {
 			throw new NoSuchNodeException("Node " + inNode.getClass().getName() + " has no input " + input);
+		}
+
+		try {
+			inNode.setFieldToDefault(inField);
+		} catch (IllegalAccessException e) {
+			throw new NoSuchNodeException("Could not set the disconnected Field " + input + " to default in " + inNode,
+					e);
 		}
 
 		return inNode.connections.remove(inField) != null;

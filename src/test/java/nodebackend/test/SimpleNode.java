@@ -23,6 +23,9 @@ public class SimpleNode extends AbstractNode {
 	}
 
 	public void computeConcat() {
-		concat = s1 + val1;
+		if (s1 == null) {
+			concat = "null";
+		} else
+			concat = s1 + val1;
 	}
 }
