@@ -156,6 +156,12 @@ public class GNodeMaster {
 		addNode(new GNode(id, type, draw, graph));
 
 	}
+	public void addNode(String id, INodeType type, boolean draw, GNodeGraph graph, double x, double y) {
+		GNode n = new GNode(id, type, draw, graph);
+		n.relocate(x, y);
+		addNode(n);
+
+	}
 
 	public void addNode(String id, BaseType type, boolean draw, GNodeGraph graph) {
 		addNode(new GNode(id, type, draw, graph));

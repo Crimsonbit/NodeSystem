@@ -1,5 +1,6 @@
 package at.crimsonbit.nodesystem.node.nodes;
 
+import at.crimsonbit.nodesystem.node.types.CalculateType;
 import at.crimsonbit.nodesystem.node.types.MathType;
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
@@ -7,25 +8,25 @@ import at.crimsonbit.nodesystem.nodebackend.api.NodeInput;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeOutput;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeType;
 
-public class SubtractNode extends AbstractNode implements INodeType {
+public class EqualNode extends AbstractNode implements INodeType {
 	@NodeType
-	private static final MathType type = MathType.SUBTRACT;
+	private static final CalculateType type = CalculateType.EQUAL;
 
 	@NodeInput
-	double in_1;
+	Object in_1;
 
 	@NodeInput
-	double in_2;
+	Object in_2;
 
-	@NodeOutput("computeSubtract")
-	double output;
+	@NodeOutput("computeEqual")
+	boolean output;
 
-	public SubtractNode() {
+	public EqualNode() {
 
 	}
 
-	public void computeSubtract() {
-		output = in_1 - in_2;
+	public void computeEqual() {
+		output = (in_1 == in_2);
 	}
 
 }

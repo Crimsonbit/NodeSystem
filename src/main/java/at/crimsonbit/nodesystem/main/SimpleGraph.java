@@ -16,10 +16,7 @@ public class SimpleGraph extends Application {
 		primaryStage.setTitle("Node Editor");
 
 		GNodeSystem nodeSystem = new GNodeSystem();
-		// nodeSystem.getNodeGraph().getGuiMaster().getNodeMaster().registerNodes("at.crimsonbit.nodesystem.node.nodes");
 		GNodeGraph graph = nodeSystem.getNodeGraph();
-
-		// graph.addColorLookup(BaseType.CONSTANT, Color.GREEN);
 
 		Scene scene = new Scene(graph, 1024, 768);
 		scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());

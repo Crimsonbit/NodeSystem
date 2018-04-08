@@ -9,6 +9,6 @@ import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
  */
 public enum CalculateType implements INodeType {
 
-	ABSOLUTE, CLAMP, NEGATE, RANGEMAP
+	ABSOLUTE, CLAMP, NEGATE, RANGEMAP, BOOL, EQUAL
 
 }

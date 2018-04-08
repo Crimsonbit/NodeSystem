@@ -17,14 +17,14 @@ public class AddNode extends AbstractNode implements INodeType {
 	@NodeInput
 	double in_2;
 
-	@NodeOutput("computAdd")
+	@NodeOutput("computeAdd")
 	double output;
 	
 	public AddNode() {
 
 	}
 
-	public void computAdd() {
+	public void computeAdd() {
 		output = in_1 + in_2;
 	}
 

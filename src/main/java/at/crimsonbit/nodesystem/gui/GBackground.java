@@ -28,10 +28,12 @@ public class GBackground extends Pane {
 	private double scaleValue = 1.0;
 	private double strokeValue = 1.0;
 	private double delta = 0.1;
+
 	private double lineSpacing = 25;
 	private double r = RangeMapper.mapValue(27, 0, 255, 0, 1);
 	private double gr = RangeMapper.mapValue(28, 0, 255, 0, 1);
 	private double b = RangeMapper.mapValue(29, 0, 255, 0, 1);
+
 	private double localMouseX = getWidth() / 2;
 	private double localMouseY = getHeight() / 2;
 
