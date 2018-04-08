@@ -38,7 +38,7 @@ public class NodeMaster {
 			inputKeyMap.put(clazz, new HashMap<>());
 			outputKeyMap.put(clazz, new HashMap<>());
 			fieldKeyMap.put(clazz, new HashMap<>());
-			
+
 			try {
 
 				Field[] decF = clazz.getDeclaredFields();
@@ -82,6 +82,10 @@ public class NodeMaster {
 			populateKeys(superclass.asSubclass(AbstractNode.class), map, annotation);
 		}
 
+	}
+
+	public Set<INodeType> getAllNodeClasses() {
+		return registeredNodes.keySet();
 	}
 
 	protected Collection<Field> getAllInputs(Class<? extends AbstractNode> clazz) {

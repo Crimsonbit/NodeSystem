@@ -78,4 +78,8 @@ public abstract class AbstractNode {
 		}
 		return f.get(this);
 	}
+
+	public NodeMaster getNodeMaster() {
+		return master;
+	}
 }

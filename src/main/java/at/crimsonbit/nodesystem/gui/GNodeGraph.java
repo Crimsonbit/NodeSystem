@@ -3,6 +3,7 @@ package at.crimsonbit.nodesystem.gui;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import at.crimsonbit.nodesystem.gui.dialog.GEntry;
 import at.crimsonbit.nodesystem.gui.dialog.GPopUp;
@@ -71,7 +72,7 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 	}
 
 	private void addNodeMenus(GSubMenu nodeMenu) {
-		HashSet<INodeType> map = getGuiMaster().getNodeMaster().getAllNodeClasses();
+		Set<INodeType> map = getGuiMaster().getNodeMaster().getAllNodeClasses();
 
 		Map<String, GSubMenu> cache = new HashMap<>();
 		for (INodeType type : map) {
@@ -149,7 +150,7 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 	public void consumeMessage(int id, GEntry source) {
 		// for(int i = 0; i<idCount;i++) {
 		// if(i == id) {
-		HashSet<INodeType> map = getGuiMaster().getNodeMaster().getAllNodeClasses();
+		Set<INodeType> map = getGuiMaster().getNodeMaster().getAllNodeClasses();
 		for (INodeType type : map) {
 			if (source.getName().toUpperCase() == type.toString())
 				getGuiMaster().addNode(source.getName(), type, true, this);
