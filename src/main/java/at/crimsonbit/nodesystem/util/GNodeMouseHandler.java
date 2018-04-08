@@ -4,7 +4,10 @@ import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+
 /**
  * 
  * @author NeonArtworks
@@ -14,18 +17,19 @@ public class GNodeMouseHandler {
 
 	private final DragContext dragContext = new DragContext();
 	private GNodeGraph graph;
+	private GNode node;
 
 	public GNodeMouseHandler(GNodeGraph g) {
 		this.graph = g;
 	}
 
 	public void addMouseHandler(final Node node) {
+		this.node = (GNode) node;
 
 		node.setOnMousePressed(onMousePressedEventHandler);
 		node.setOnMouseDragged(onMouseDraggedEventHandler);
 		node.setOnMouseReleased(onMouseReleasedEventHandler);
 	}
-
 	EventHandler<MouseEvent> onMousePressedEventHandler = new EventHandler<MouseEvent>() {
 
 		public void handle(MouseEvent event) {

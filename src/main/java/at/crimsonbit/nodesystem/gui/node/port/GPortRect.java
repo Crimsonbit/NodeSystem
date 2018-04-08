@@ -6,6 +6,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+
 /**
  * 
  * @author NeonArtworks
@@ -13,25 +14,25 @@ import javafx.scene.shape.Rectangle;
  */
 @SuppressWarnings({ "restriction", "unused" })
 public class GPortRect extends Rectangle {
-	
-	
+
 	private GNode node;
+
 	public GPortRect(double x, double y, boolean input, GNode node) {
 		this.node = node;
+
 		setX(x);
 		setY(y);
 		setWidth(6);
 		setHeight(6);
 		if (input)
-			setFill(Color.BLUE);
+			setFill(node.getNodeGraph().getNodeColorLookup().get("input"));
 		else
-			setFill(Color.RED);
-		setStroke(Color.LIGHTSKYBLUE);
+			setFill(node.getNodeGraph().getNodeColorLookup().get("output"));
+
+		//setStroke(Color.LIGHTSKYBLUE);
 		setArcWidth(20.0);
 		setArcHeight(20.0);
 		setStrokeWidth(1);
-
-		
 
 	}
 }

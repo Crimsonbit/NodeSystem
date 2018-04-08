@@ -7,6 +7,8 @@ import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
  * @author NeonArtworks
  *
  */
-public enum BaseType implements INodeType {
-	CONSTANT, OUTPUT
+public enum CalculateType implements INodeType {
+
+	ABSOLUTE, CLAMP, NEGATE, RANGEMAP
+
 }

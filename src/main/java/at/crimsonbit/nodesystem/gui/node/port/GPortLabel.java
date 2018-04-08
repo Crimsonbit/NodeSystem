@@ -2,6 +2,7 @@ package at.crimsonbit.nodesystem.gui.node.port;
 
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+
 /**
  * 
  * @author NeonArtworks
@@ -16,7 +17,7 @@ public class GPortLabel extends Text {
 		int off = getText().length();
 
 		if (!input)
-			setX(x - (off * 6));
+			setX(x - (off * 7));
 		else
 			setX(x + (off + 6));
 		setY(y + 6);

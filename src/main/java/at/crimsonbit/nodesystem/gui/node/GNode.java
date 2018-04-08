@@ -1,7 +1,6 @@
 package at.crimsonbit.nodesystem.gui.node;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,10 +8,10 @@ import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.dialog.GPopUp;
 import at.crimsonbit.nodesystem.gui.node.port.GPort;
 import at.crimsonbit.nodesystem.node.types.BaseType;
-import at.crimsonbit.nodesystem.node.types.MathType;
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.util.RangeMapper;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextInputDialog;
@@ -20,6 +19,8 @@ import javafx.scene.effect.BlurType;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -50,7 +51,6 @@ public class GNode extends Pane implements IGNode {
 	private String name;
 	private int inPortCount = 0;
 	private int outPortcount = 0;
-
 	private final int PORT_INPUT_START_X = 5;
 	private final int PORT_INPUT_START_Y = 35;
 	private final int PORT_OUTPUT_START_X = 140;
@@ -71,19 +71,9 @@ public class GNode extends Pane implements IGNode {
 		this.name = name;
 		defaultTopColor();
 		defaultBackColor();
+		defaultPopUpDialog();
+		// addKeyHandler();
 		draw();
-	}
-
-	public void setGNodeGraph(GNodeGraph graph) {
-		this.nodeGraph = graph;
-	}
-
-	public Rectangle getTop() {
-		return top;
-	}
-
-	public GNodeGraph getNodeGraph() {
-		return this.nodeGraph;
 	}
 
 	public GNode(String name, INodeType type, boolean draw, GNodeGraph graph) {
@@ -104,8 +94,46 @@ public class GNode extends Pane implements IGNode {
 			addOutputPort(inPortCount, n, PORT_OUTPUT_START_X, PORT_OUTPUT_START_Y + (outPortcount * PORT_OFFSET));
 			outPortcount++;
 		}
-	
+		// addKeyHandler();
 		draw();
+	}
+
+	public GNode(GNode gNode) {
+		this.nodeGraph = gNode.getNodeGraph();
+		this.doDraw = gNode.doDraw();
+		this.name = gNode.getName();
+		this.type = gNode.getNodeType();
+		this.calcNode = this.nodeGraph.getGuiMaster().getNodeMaster().createNode(type);
+		defaultTopColor();
+		defaultBackColor();
+		defaultPopUpDialog();
+
+		for (String n : calcNode.getNodeMaster().getAllInputNames(calcNode)) {
+			addInputPort(inPortCount, n, PORT_INPUT_START_X, PORT_INPUT_START_Y + (inPortCount * PORT_OFFSET));
+			inPortCount++;
+		}
+		for (String n : calcNode.getNodeMaster().getAllOutputNames(calcNode)) {
+			addOutputPort(inPortCount, n, PORT_OUTPUT_START_X, PORT_OUTPUT_START_Y + (outPortcount * PORT_OFFSET));
+			outPortcount++;
+		}
+		// addKeyHandler();
+		draw();
+	}
+
+	public boolean doDraw() {
+		return doDraw;
+	}
+
+	public void setGNodeGraph(GNodeGraph graph) {
+		this.nodeGraph = graph;
+	}
+
+	public Rectangle getTop() {
+		return top;
+	}
+
+	public GNodeGraph getNodeGraph() {
+		return this.nodeGraph;
 	}
 
 	public INodeType getNodeType() {
@@ -130,6 +158,7 @@ public class GNode extends Pane implements IGNode {
 		GPopUp pop = new GPopUp();
 		pop.addItem(-2, getName(), true);
 		pop.addSeparator(-1);
+		pop.addItem(6, "Copy Node");
 		pop.addItem(2, "remove Active");
 		pop.addItem(3, "Rename");
 		pop.addItem(0, "Remove");
@@ -409,6 +438,10 @@ public class GNode extends Pane implements IGNode {
 			} else {
 				removeBlur();
 			}
+		} else if (id == 6) {
+			GNode node = new GNode(this);
+			nodeGraph.getGuiMaster().addNode(node);
+			nodeGraph.update();
 		}
 	}
 

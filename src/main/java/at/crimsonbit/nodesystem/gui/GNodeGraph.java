@@ -12,12 +12,15 @@ import at.crimsonbit.nodesystem.gui.layer.GNodeLayer;
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.gui.node.IGConsumable;
 import at.crimsonbit.nodesystem.node.types.BaseType;
+import at.crimsonbit.nodesystem.node.types.CalculateType;
 import at.crimsonbit.nodesystem.node.types.MathType;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.util.GNodeMouseHandler;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -45,6 +48,7 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 	private GLineLayer lineLayer;
 
 	private HashMap<INodeType, Color> colorLookup = new HashMap<INodeType, Color>();
+	private HashMap<String, Color> nodeLookup = new HashMap<String, Color>();
 
 	public GNodeGraph() {
 		this.settingsPane = new GSettingsPane();
@@ -57,9 +61,9 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 		this.getChildren().add(canvas);
 		this.handler = new GNodeMouseHandler(this);
 		// this.getChildren().add(this.settingsPane);
-		
+
 		setDefualtColorLookup();
-		
+
 		graphDialog = new GPopUp();
 		graphDialog.addItem(-1, "Node Editor", true);
 		graphDialog.addSeparator(-2);
@@ -68,8 +72,9 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 		addNodeMenus(nodeMenu);
 
 		graphDialog.addItem(nodeMenu);
-		
+
 		this.setPopUpDialog(graphDialog);
+
 	}
 
 	public void setPopUpDialog(GPopUp dialog) {
@@ -232,6 +237,21 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 		getColorLookup().put(BaseType.CONSTANT, Color.RED);
 		for (INodeType t : MathType.values())
 			getColorLookup().put(t, Color.ORANGE);
+		for (INodeType t : CalculateType.values()) {
+			getColorLookup().put(t, Color.DARKORANGE);
+		}
+
+		getNodeColorLookup().put("input", Color.LIGHTBLUE);
+		getNodeColorLookup().put("output", Color.LIGHTGREEN);
+
+	}
+
+	public void addNodeColorLookup(String string, Color c) {
+		this.nodeLookup.put(string, c);
+	}
+
+	public HashMap<String, Color> getNodeColorLookup() {
+		return this.nodeLookup;
 	}
 
 	public void addColorLookup(INodeType type, Color c) {

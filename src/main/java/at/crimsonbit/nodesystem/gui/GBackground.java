@@ -4,11 +4,13 @@ import at.crimsonbit.nodesystem.util.RangeMapper;
 import javafx.event.EventHandler;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Scale;
+
 /**
  * 
  * @author NeonArtworks
@@ -32,10 +34,8 @@ public class GBackground extends Pane {
 	private double b = RangeMapper.mapValue(29, 0, 255, 0, 1);
 	private double localMouseX = getWidth() / 2;
 	private double localMouseY = getHeight() / 2;
-	
 
 	public GBackground() {
-		
 
 		scaleTransform = new Scale(scaleValue, scaleValue, 0, 0);
 		getTransforms().add(scaleTransform);
@@ -50,7 +50,6 @@ public class GBackground extends Pane {
 				localMouseY = event.getSceneY();
 			}
 		});
-
 	}
 
 	public Canvas getCanvas() {
