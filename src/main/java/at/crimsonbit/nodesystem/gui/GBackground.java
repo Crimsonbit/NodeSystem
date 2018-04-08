@@ -14,6 +14,7 @@ import javafx.scene.transform.Scale;
  * @author NeonArtworks
  *
  */
+@SuppressWarnings({ "restriction", "unused" })
 public class GBackground extends Pane {
 
 	// This is to make the stroke be drawn 'on pixel'.

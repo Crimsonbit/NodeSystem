@@ -15,6 +15,7 @@ import javafx.scene.shape.Line;
  * @author NeonArtworks
  *
  */
+@SuppressWarnings({ "restriction", "unused" })
 public class GPort extends Group implements IGConsumable {
 
 	private double x;

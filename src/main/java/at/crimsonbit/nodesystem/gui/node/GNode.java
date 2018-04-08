@@ -1,6 +1,7 @@
 package at.crimsonbit.nodesystem.gui.node;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,6 +9,7 @@ import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.dialog.GPopUp;
 import at.crimsonbit.nodesystem.gui.node.port.GPort;
 import at.crimsonbit.nodesystem.node.types.BaseType;
+import at.crimsonbit.nodesystem.node.types.MathType;
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.util.RangeMapper;
@@ -25,6 +27,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 
+@SuppressWarnings({ "restriction", "unused" })
 public class GNode extends Pane implements IGNode {
 
 	private GNodeGraph nodeGraph;
@@ -101,7 +104,7 @@ public class GNode extends Pane implements IGNode {
 			addOutputPort(inPortCount, n, PORT_OUTPUT_START_X, PORT_OUTPUT_START_Y + (outPortcount * PORT_OFFSET));
 			outPortcount++;
 		}
-
+	
 		draw();
 	}
 
@@ -233,6 +236,7 @@ public class GNode extends Pane implements IGNode {
 			if (inPortCount < outPortcount) {
 				h = height * outPortcount;
 			}
+
 			outline = new Rectangle(150, h - 5);
 			outline.setTranslateY(5);
 			outline.setFill(Color.TRANSPARENT);
@@ -249,10 +253,14 @@ public class GNode extends Pane implements IGNode {
 			base.setArcHeight(20.0);
 
 			top = new Rectangle(150, 50 / 3);
+
 			top.setStroke(topColor);
 			top.setFill(topColor);
 			top.setAccessibleText("node_top"); // top.setArcWidth(20.0); //
 			top.setArcHeight(20.0);
+
+			top.setStroke(nodeGraph.getColorLookup().get(type));
+			top.setFill(nodeGraph.getColorLookup().get(type));
 
 			text = new Text(name);
 			text.setFill(Color.WHITE);

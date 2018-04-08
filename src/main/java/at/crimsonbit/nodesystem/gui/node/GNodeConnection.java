@@ -10,6 +10,7 @@ import javafx.scene.shape.StrokeLineCap;
  * @author NeonArtworks
  *
  */
+@SuppressWarnings({ "restriction", "unused" })
 public class GNodeConnection extends Group {
 
 	protected GPort sourcePort;

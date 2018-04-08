@@ -11,6 +11,7 @@ import javafx.scene.shape.Rectangle;
  * @author NeonArtworks
  *
  */
+@SuppressWarnings({ "restriction", "unused" })
 public class GSettingsPane extends Pane {
 
 	@Override

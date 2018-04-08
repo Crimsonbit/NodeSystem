@@ -1,7 +1,6 @@
 package at.crimsonbit.nodesystem.gui;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,6 +11,8 @@ import at.crimsonbit.nodesystem.gui.layer.GLineLayer;
 import at.crimsonbit.nodesystem.gui.layer.GNodeLayer;
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.gui.node.IGConsumable;
+import at.crimsonbit.nodesystem.node.types.BaseType;
+import at.crimsonbit.nodesystem.node.types.MathType;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.util.GNodeMouseHandler;
 import javafx.scene.Group;
@@ -19,11 +20,14 @@ import javafx.scene.Node;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+
 /**
  * 
  * @author NeonArtworks
  *
  */
+@SuppressWarnings({ "restriction", "unused" })
 public class GNodeGraph extends GBackground implements IGConsumable {
 
 	private GNodeMaster nodeMaster;
@@ -40,6 +44,8 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 	private GNodeLayer nodeLayer;
 	private GLineLayer lineLayer;
 
+	private HashMap<INodeType, Color> colorLookup = new HashMap<INodeType, Color>();
+
 	public GNodeGraph() {
 		this.settingsPane = new GSettingsPane();
 		this.nodeMaster = new GNodeMaster();
@@ -51,7 +57,9 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 		this.getChildren().add(canvas);
 		this.handler = new GNodeMouseHandler(this);
 		// this.getChildren().add(this.settingsPane);
-
+		
+		setDefualtColorLookup();
+		
 		graphDialog = new GPopUp();
 		graphDialog.addItem(-1, "Node Editor", true);
 		graphDialog.addSeparator(-2);
@@ -60,7 +68,7 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 		addNodeMenus(nodeMenu);
 
 		graphDialog.addItem(nodeMenu);
-
+		
 		this.setPopUpDialog(graphDialog);
 	}
 
@@ -217,5 +225,20 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 
 	public double getScale() {
 		return this.getScaleValue();
+	}
+
+	private void setDefualtColorLookup() {
+		getColorLookup().put(BaseType.OUTPUT, Color.LIGHTBLUE);
+		getColorLookup().put(BaseType.CONSTANT, Color.RED);
+		for (INodeType t : MathType.values())
+			getColorLookup().put(t, Color.ORANGE);
+	}
+
+	public void addColorLookup(INodeType type, Color c) {
+		this.colorLookup.put(type, c);
+	}
+
+	public HashMap<INodeType, Color> getColorLookup() {
+		return colorLookup;
 	}
 }

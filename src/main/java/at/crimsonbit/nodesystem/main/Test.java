@@ -10,6 +10,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+@SuppressWarnings({ "restriction", "unused" })
 public class Test extends Application {
 
 	@Override

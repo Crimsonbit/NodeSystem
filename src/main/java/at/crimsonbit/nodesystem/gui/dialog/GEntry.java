@@ -7,6 +7,7 @@ import javafx.scene.input.KeyCodeCombination;
  * @author NeonArtworks
  *
  */
+@SuppressWarnings({ "restriction", "unused" })
 public class GEntry extends MenuItem {
 
 	private int id;
