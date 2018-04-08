@@ -23,11 +23,11 @@ public class Test extends Application {
 		GNode node1 = new GNode("Const", BaseType.CONSTANT, true, graph);
 		GNode node2 = new GNode("Add", MathType.ADD, true, graph);
 		GNode node3 = new GNode("Output", BaseType.OUTPUT, true, graph);
-		
+
 		graph.getGuiMaster().addNode(node1);
 		graph.getGuiMaster().addNode(node2);
 		graph.getGuiMaster().addNode(node3);
-
+		
 		graph.getGuiMaster().addConnection(node1.getOutputPortById(0), node2.getInputPortById(0));
 		// System.out.println();
 		graph.getGuiMaster().addConnection(node2.getOutputPorts().get(0), node3.getInputPortById(0));
