@@ -1,4 +1,4 @@
-package at.crimsonbit.nodebackend.api;
+package at.crimsonbit.nodesystem.nodebackend.api;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import at.crimsonbit.nodebackend.util.NodeConnection;
+import at.crimsonbit.nodesystem.nodebackend.util.NodeConnection;
 
 /**
  * 

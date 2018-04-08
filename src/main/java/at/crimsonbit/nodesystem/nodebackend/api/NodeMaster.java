@@ -1,4 +1,4 @@
-package at.crimsonbit.nodebackend.api;
+package at.crimsonbit.nodesystem.nodebackend.api;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -9,8 +9,8 @@ import java.util.Set;
 
 import org.reflections.Reflections;
 
-import at.crimsonbit.nodebackend.misc.NoSuchNodeException;
-import at.crimsonbit.nodebackend.util.NodeConnection;
+import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
+import at.crimsonbit.nodesystem.nodebackend.util.NodeConnection;
 
 public class NodeMaster {
 	private final Map<INodeType, Class<? extends AbstractNode>> registeredNodes;

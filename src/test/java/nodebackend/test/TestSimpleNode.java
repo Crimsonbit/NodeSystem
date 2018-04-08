@@ -5,9 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import at.crimsonbit.nodebackend.api.AbstractNode;
-import at.crimsonbit.nodebackend.api.NodeMaster;
-import at.crimsonbit.nodebackend.misc.NoSuchNodeException;
+import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
+import at.crimsonbit.nodesystem.nodebackend.api.NodeMaster;
+import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
 
 class TestSimpleNode {
 

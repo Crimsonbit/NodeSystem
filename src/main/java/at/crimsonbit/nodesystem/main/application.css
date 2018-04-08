@@ -1,0 +1,19 @@
+.context-menu {
+	-fx-background-color: #191919;
+	-fx-border-color: white;
+	-fx-border-radius: 10 10 10 10;
+	-fx-background-radius: 10 10 10 10;
+}
+
+.menu-item .label {
+	-fx-text-fill: white;
+}
+
+.menu-item:focused {
+	-fx-text-fill: orange;
+	-fx-background-color: #363b3f;
+}
+
+.menu-item:focused .label {
+	-fx-text-fill: orange;
+}

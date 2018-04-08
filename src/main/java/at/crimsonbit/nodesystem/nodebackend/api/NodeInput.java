@@ -1,4 +1,4 @@
-package at.crimsonbit.nodebackend.api;
+package at.crimsonbit.nodesystem.nodebackend.api;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

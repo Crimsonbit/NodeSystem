@@ -1,8 +1,8 @@
-package at.crimsonbit.nodebackend.util;
+package at.crimsonbit.nodesystem.nodebackend.util;
 
 import java.lang.reflect.Field;
 
-import at.crimsonbit.nodebackend.api.AbstractNode;
+import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
 
 public class NodeConnection {
 	private final Field field;

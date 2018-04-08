@@ -1,4 +1,4 @@
-package at.crimsonbit.nodebackend.api;
+package at.crimsonbit.nodesystem.nodebackend.api;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;

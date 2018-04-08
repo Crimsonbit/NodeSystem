@@ -1,9 +1,9 @@
 package nodebackend.test;
 
-import at.crimsonbit.nodebackend.api.AbstractNode;
-import at.crimsonbit.nodebackend.api.NodeInput;
-import at.crimsonbit.nodebackend.api.NodeOutput;
-import at.crimsonbit.nodebackend.api.NodeType;
+import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
+import at.crimsonbit.nodesystem.nodebackend.api.NodeInput;
+import at.crimsonbit.nodesystem.nodebackend.api.NodeOutput;
+import at.crimsonbit.nodesystem.nodebackend.api.NodeType;
 
 public class SimpleNode extends AbstractNode {
 	@NodeType

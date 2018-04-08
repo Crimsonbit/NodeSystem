@@ -1,4 +1,4 @@
-package at.crimsonbit.nodebackend.misc;
+package at.crimsonbit.nodesystem.nodebackend.misc;
 
 public class NoSuchNodeException extends Exception {
 
