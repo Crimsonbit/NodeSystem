@@ -13,10 +13,10 @@ import at.crimsonbit.nodebackend.misc.NoSuchNodeException;
 import at.crimsonbit.nodebackend.util.NodeConnection;
 
 public class NodeMaster {
-	private Map<INodeType, Class<? extends AbstractNode>> registeredNodes;
-	private Map<Class<? extends AbstractNode>, Map<String, Field>> inputKeyMap;
-	private Map<Class<? extends AbstractNode>, Map<String, Field>> outputKeyMap;
-	private Map<Class<? extends AbstractNode>, Map<String, Field>> fieldKeyMap;
+	private final Map<INodeType, Class<? extends AbstractNode>> registeredNodes;
+	private final Map<Class<? extends AbstractNode>, Map<String, Field>> inputKeyMap;
+	private final Map<Class<? extends AbstractNode>, Map<String, Field>> outputKeyMap;
+	private final Map<Class<? extends AbstractNode>, Map<String, Field>> fieldKeyMap;
 
 	public NodeMaster() {
 		inputKeyMap = new HashMap<>();
@@ -25,13 +25,21 @@ public class NodeMaster {
 		fieldKeyMap = new HashMap<>();
 	}
 
+	/**
+	 * Registers all Nodes in the package specified by path. A Node is any class,
+	 * that extends AbstractNode
+	 * 
+	 * @param path
+	 */
 	public void registerNodes(String path) {
 		Reflections ref = new Reflections(path);
 		for (Class<? extends AbstractNode> clazz : ref.getSubTypesOf(AbstractNode.class)) {
+
+			inputKeyMap.put(clazz, new HashMap<>());
+			outputKeyMap.put(clazz, new HashMap<>());
+			fieldKeyMap.put(clazz, new HashMap<>());
+			
 			try {
-				inputKeyMap.put(clazz, new HashMap<>());
-				outputKeyMap.put(clazz, new HashMap<>());
-				fieldKeyMap.put(clazz, new HashMap<>());
 
 				Field[] decF = clazz.getDeclaredFields();
 				for (Field f : decF) {
@@ -64,9 +72,7 @@ public class NodeMaster {
 		Field[] decF = clazz.getDeclaredFields();
 		for (Field f : decF) {
 			if (f.isAnnotationPresent(annotation)) {
-				if (!f.isAccessible()) {
-					f.setAccessible(true);
-				}
+				f.setAccessible(true);
 				map.put(f.getName(), f);
 			}
 		}
@@ -89,25 +95,33 @@ public class NodeMaster {
 	protected Field getOutput(Class<? extends AbstractNode> clazz, String key) {
 		return outputKeyMap.get(clazz).get(key);
 	}
-	
+
 	protected Field getField(Class<? extends AbstractNode> clazz, String key) {
 		return fieldKeyMap.get(clazz).get(key);
 	}
-	
-	public Set<String> getAllInputNames(Class<? extends AbstractNode> clazz){
+
+	public Set<String> getAllInputNames(Class<? extends AbstractNode> clazz) {
 		return inputKeyMap.get(clazz).keySet();
 	}
-	
-	public Set<String> getAllInputNames(AbstractNode node){
+
+	public Set<String> getAllInputNames(AbstractNode node) {
 		return getAllInputNames(node.getClass());
 	}
-	
-	public Set<String> getAllOutputNames(Class<? extends AbstractNode> clazz){
+
+	public Set<String> getAllOutputNames(Class<? extends AbstractNode> clazz) {
 		return outputKeyMap.get(clazz).keySet();
 	}
-	
-	public Set<String> getAllOutputNames(AbstractNode node){
+
+	public Set<String> getAllOutputNames(AbstractNode node) {
 		return getAllOutputNames(node.getClass());
+	}
+
+	public Set<String> getAllFieldNames(Class<? extends AbstractNode> clazz) {
+		return fieldKeyMap.get(clazz).keySet();
+	}
+
+	public Set<String> getAllFieldNames(AbstractNode node) {
+		return getAllFieldNames(node.getClass());
 	}
 
 	public AbstractNode createNode(INodeType type) {
@@ -160,6 +174,33 @@ public class NodeMaster {
 		inNode.connections.put(inField, new NodeConnection(outField, outNode));
 
 		return true;
+	}
+
+	/**
+	 * Remove a Connection to the input of this node
+	 * 
+	 * @param inNode
+	 *            The Node
+	 * @param input
+	 *            The name of the input
+	 * @return If there was a Connection on this input
+	 * @throws NoSuchNodeException
+	 *             If the Node is not registered or the registered Node has no input
+	 *             Field named input
+	 */
+	public boolean removeConnection(AbstractNode inNode, String input) throws NoSuchNodeException {
+		Map<String, Field> regIns = inputKeyMap.get(inNode.getClass());
+		if (regIns == null) {
+			throw new NoSuchNodeException(
+					"No Node with class " + inNode.getClass().getCanonicalName() + " is registered");
+		}
+		Field inField = regIns.get(input);
+		if (inField == null) {
+			throw new NoSuchNodeException("Node " + inNode.getClass().getName() + " has no input " + input);
+		}
+
+		return inNode.connections.remove(inField) != null;
+
 	}
 
 }

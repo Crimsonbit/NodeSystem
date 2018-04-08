@@ -14,7 +14,6 @@ public class ConstantNode extends AbstractNode {
 	@NodeOutput("compute")
 	Object constant;
 
-
 	public void compute() {
 
 	}
