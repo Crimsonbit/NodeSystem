@@ -43,7 +43,7 @@ public class GNode extends Pane implements IGNode {
 	private boolean active = false;
 	private boolean portPressed = false;
 	private INodeType type;
-
+	private String nameAddition;
 	private String name;
 	private int inPortCount = 0;
 	private int outPortcount = 0;
@@ -368,15 +368,16 @@ public class GNode extends Pane implements IGNode {
 
 			Optional<String> result = dialog.showAndWait();
 			if (result.isPresent()) {
-				setName(result.get());
+				setName(result.get() + nameAddition);
 				removeBlur();
 			} else {
 				removeBlur();
 			}
 			redraw();
 		} else if (id == 4) {
-			System.out.println(this.calcNode.get("output"));
-			
+			setName(getName() + this.calcNode.get("output"));
+			redraw();
+
 		} else if (id == 5) {
 			doBlur();
 			TextInputDialog dialog = new TextInputDialog(getName());
@@ -386,8 +387,11 @@ public class GNode extends Pane implements IGNode {
 
 			Optional<String> result = dialog.showAndWait();
 			if (result.isPresent()) {
+				this.nameAddition = " - " + result.get();
 				int i = Integer.valueOf(result.get());
+				setName(getName() + this.nameAddition);
 				this.calcNode.set("constant", i);
+				redraw();
 				removeBlur();
 			} else {
 				removeBlur();

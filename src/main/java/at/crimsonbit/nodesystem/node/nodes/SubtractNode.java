@@ -24,7 +24,7 @@ public class SubtractNode extends AbstractNode implements INodeType {
 
 	}
 
-	public void computAdd() {
+	public void computSubtract() {
 		output = in_1 - in_2;
 	}
 
