@@ -57,29 +57,23 @@ public class GBackground extends Pane {
 			}
 		});
 		/*
-		setOnMouseDragged(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				if (event.isMiddleButtonDown()) {
-					lX = event.getSceneX();
-					lY = event.getSceneY();
-
-					double scale = getScaleValue();
-					dragContext.x = getBoundsInParent().getMinX() * scale - event.getScreenX();
-					dragContext.y = getBoundsInParent().getMinY() * scale - event.getScreenY();
-					double offsetX = event.getScreenX() + dragContext.x;
-					double offsetY = event.getScreenY() + dragContext.y;
-
-					// adjust the offset in case we are zoomed
-
-					offsetX /= scale;
-					offsetY /= scale;
-					relocate(offsetX, offsetY);
-
-				}
-			}
-		});
-	*/
+		 * setOnMouseDragged(new EventHandler<MouseEvent>() {
+		 * 
+		 * @Override public void handle(MouseEvent event) { if
+		 * (event.isMiddleButtonDown()) { lX = event.getSceneX(); lY =
+		 * event.getSceneY();
+		 * 
+		 * double scale = getScaleValue(); dragContext.x = getBoundsInParent().getMinX()
+		 * * scale - event.getScreenX(); dragContext.y = getBoundsInParent().getMinY() *
+		 * scale - event.getScreenY(); double offsetX = event.getScreenX() +
+		 * dragContext.x; double offsetY = event.getScreenY() + dragContext.y;
+		 * 
+		 * // adjust the offset in case we are zoomed
+		 * 
+		 * offsetX /= scale; offsetY /= scale; relocate(offsetX, offsetY);
+		 * 
+		 * } } });
+		 */
 	}
 
 	public Canvas getCanvas() {

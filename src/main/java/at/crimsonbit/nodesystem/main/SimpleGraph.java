@@ -22,7 +22,7 @@ public class SimpleGraph extends Application {
 		// graph.addNodeColorLookup("curve", Color.BLUE);
 
 		Scene scene = new Scene(graph, 1024, 768);
-		
+
 		graph.addKeySupport();
 		scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		primaryStage.setScene(scene);

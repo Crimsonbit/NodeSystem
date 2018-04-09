@@ -13,7 +13,6 @@ import javafx.scene.shape.StrokeLineCap;
  * @author NeonArtworks
  *
  */
-@SuppressWarnings({ "restriction", "unused" })
 public class GNodeConnection extends Group {
 
 	protected GPort sourcePort;
@@ -21,6 +20,8 @@ public class GNodeConnection extends Group {
 	protected GNode source;
 	protected GNode target;
 	private CubicCurve line;
+
+	private double width;
 
 	public GNodeConnection(GPort sourcePort, GPort targetPort) {
 
@@ -48,16 +49,16 @@ public class GNodeConnection extends Group {
 		line.endXProperty().bind(target.layoutXProperty().add(targetPort.getX()));
 		line.endYProperty().bind(target.layoutYProperty().add(targetPort.getY()));
 		line.setStroke(source.getNodeGraph().getColorLookup().get(source.getNodeType()));
-		line.setStrokeWidth(4);
+		line.setStrokeWidth((double) source.getNodeGraph().getSettings().get("curve_width"));
 		line.setStrokeLineCap(StrokeLineCap.ROUND);
 		line.setFill(Color.TRANSPARENT);
-		line.setStrokeWidth(2);
+		// line.setStrokeWidth(2);
 
 		DropShadow e = new DropShadow();
 		e.setBlurType(BlurType.GAUSSIAN);
 		e.setColor(new Color(0.1, 0.1, 0.1, 1));
-		e.setWidth(5);
-		e.setHeight(5);
+		e.setWidth((double) source.getNodeGraph().getSettings().get("curve_width") + 4);
+		e.setHeight((double) source.getNodeGraph().getSettings().get("curve_width") + 4);
 		e.setOffsetX(5);
 		e.setOffsetY(5);
 		e.setRadius(10);
@@ -65,6 +66,14 @@ public class GNodeConnection extends Group {
 
 		getChildren().add(line);
 
+	}
+
+	public double getWidth() {
+		return width;
+	}
+
+	public void setWidth(double width) {
+		this.width = width;
 	}
 
 	public GNode getSource() {

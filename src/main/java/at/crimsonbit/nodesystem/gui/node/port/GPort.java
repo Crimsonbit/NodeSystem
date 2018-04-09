@@ -5,6 +5,7 @@ import at.crimsonbit.nodesystem.gui.dialog.GEntry;
 import at.crimsonbit.nodesystem.gui.dialog.GPopUp;
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.gui.node.IGConsumable;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.ContextMenuEvent;
@@ -27,9 +28,11 @@ public class GPort extends Group implements IGConsumable {
 	private CubicCurve line = new CubicCurve();
 	private GPopUp dialog;
 	private String stringID;
-
+	private GPort thisPort;
 	private GPortLabel label;
 	private GPortRect rect;
+	private long currentTime;
+	private long lastTime;
 
 	private void addPopUpHandler(GPopUp dialog) {
 		this.addEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, event -> {
@@ -48,6 +51,37 @@ public class GPort extends Group implements IGConsumable {
 				event.consume();
 			});
 		}
+
+		setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				long diff = 0;
+
+				currentTime = System.currentTimeMillis();
+
+				if (lastTime != 0 && currentTime != 0) {
+					diff = currentTime - lastTime;
+
+					if (diff <= 215) {
+						System.out.println("double");
+						GNodeGraph graph = node.getNodeGraph();
+						// graph.getGuiMaster().addConnection(node1, node2);
+						if (isInput())
+							graph.getGuiMaster().setSecondPort(thisPort);
+						else
+							graph.getGuiMaster().setFirstPort(thisPort);
+						graph.getGuiMaster().connectPorts();
+						graph.update();
+					}
+
+				}
+
+				lastTime = currentTime;
+			}
+
+		});
 
 		// addSubeMenuHandlers();
 
@@ -77,6 +111,7 @@ public class GPort extends Group implements IGConsumable {
 
 	public GPort(int id, boolean input, String labels, double x, double y, GNode node) {
 		this.node = node;
+
 		this.id = id;
 		this.stringID = labels;
 		this.input = input;
@@ -93,6 +128,7 @@ public class GPort extends Group implements IGConsumable {
 
 		addPopUpHandler(pop);
 		draw();
+		this.thisPort = this;
 		// getChildren().add(line);
 		/*
 		 * setOnMouseEntered(new EventHandler<MouseEvent>() {

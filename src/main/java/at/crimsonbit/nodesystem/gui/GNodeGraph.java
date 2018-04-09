@@ -16,8 +16,10 @@ import at.crimsonbit.nodesystem.node.types.CalculateType;
 import at.crimsonbit.nodesystem.node.types.ImageType;
 import at.crimsonbit.nodesystem.node.types.MathType;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
+import at.crimsonbit.nodesystem.util.DragContext;
 import at.crimsonbit.nodesystem.util.GNodeMouseHandler;
 import javafx.event.EventHandler;
+import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.input.ContextMenuEvent;
@@ -26,6 +28,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 /**
  * 
@@ -57,8 +60,20 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 
 	private HashMap<INodeType, Color> colorLookup = new HashMap<INodeType, Color>();
 	private HashMap<String, Color> nodeLookup = new HashMap<String, Color>();
+	private HashMap<String, Object> settings = new HashMap<String, Object>();
+
+	private final DragContext dragContext = new DragContext();
+
+	private Rectangle selection;
 
 	public GNodeGraph() {
+		this.selection = new Rectangle();
+		// this.selection.setFill(Color.TRANSPARENT);
+		this.selection.setStroke(Color.LIGHTSKYBLUE);
+		this.selection.setArcWidth(21.0);
+		this.selection.setArcHeight(21.0);
+		this.selection.setStrokeWidth(1);
+
 		this.settingsPane = new GSettingsPane();
 		this.nodeMaster = new GNodeMaster(this);
 		this.canvas = new Group();
@@ -66,6 +81,7 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 		this.lineLayer = new GLineLayer();
 		this.canvas.getChildren().add(nodeLayer);
 		this.canvas.getChildren().add(lineLayer);
+		this.canvas.getChildren().add(this.selection);
 		this.getChildren().add(canvas);
 		this.handler = new GNodeMouseHandler(this);
 		// this.getChildren().add(this.settingsPane);
@@ -82,16 +98,71 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 		graphDialog.addItem(nodeMenu);
 
 		this.setPopUpDialog(graphDialog);
-
+		addSelectGroupSupport();
 		setOnMouseMoved(new EventHandler<MouseEvent>() {
 
 			@Override
 			public void handle(MouseEvent event) {
 				pX = event.getScreenX();
 				pY = event.getScreenY();
+				curX = event.getSceneX();
+				curY = event.getSceneY();
 			}
 		});
+		
+		addSetting("curve_width", 4d);
 
+	}
+
+	public void addSetting(String s, Object r) {
+		this.settings.put(s, r);
+	}
+
+	public HashMap<String, Object> getSettings() {
+		return this.settings;
+	}
+
+	/**
+	 * Adds support to select multiple nodes at once.
+	 */
+	public void addSelectGroupSupport() {
+		setOnMousePressed(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+				if (getActive() == null) {
+					double scale = getScaleValue();
+					dragContext.x = getBoundsInParent().getMinX() * scale - event.getScreenX();
+					dragContext.y = getBoundsInParent().getMinY() * scale - event.getScreenY();
+					setCursor(Cursor.MOVE);
+
+					selection.setX(event.getSceneX());
+					selection.setY(event.getSceneY());
+				}
+			}
+
+		});
+
+		setOnMouseDragged(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+				// TODO Auto-generated method stub
+				if (getActive() == null) {
+					double offsetX = event.getScreenX() + dragContext.x;
+					double offsetY = event.getScreenY() + dragContext.y;
+
+					// adjust the offset in case we are zoomed
+					double scale = getScaleValue();
+
+					offsetX /= scale;
+					offsetY /= scale;
+					selection.setWidth(offsetX);
+					selection.setHeight(offsetY);
+				}
+			}
+
+		});
 	}
 
 	public void addKeySupport() {
