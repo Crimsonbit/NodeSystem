@@ -28,6 +28,9 @@ public class GPort extends Group implements IGConsumable {
 	private GPopUp dialog;
 	private String stringID;
 
+	private GPortLabel label;
+	private GPortRect rect;
+
 	private void addPopUpHandler(GPopUp dialog) {
 		this.addEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, event -> {
 			dialog.show(this, event.getScreenX(), event.getScreenY());
@@ -57,6 +60,21 @@ public class GPort extends Group implements IGConsumable {
 		 */
 	}
 
+	public void draw() {
+		getChildren().add(label);
+		getChildren().add(rect);
+	}
+
+	public void redraw() {
+		getChildren().clear();
+		getChildren().add(label);
+		getChildren().add(rect);
+	}
+
+	public GPortRect getPortRectangle() {
+		return this.rect;
+	}
+
 	public GPort(int id, boolean input, String labels, double x, double y, GNode node) {
 		this.node = node;
 		this.id = id;
@@ -64,18 +82,17 @@ public class GPort extends Group implements IGConsumable {
 		this.input = input;
 		this.x = x;
 		this.y = y;
-		GPortLabel label = new GPortLabel(x, y, labels, input);
-		GPortRect rect = new GPortRect(x, y, input, node);
+		label = new GPortLabel(x, y, labels, input);
+		rect = new GPortRect(x, y, input, node);
 
-		getChildren().add(label);
-		getChildren().add(rect);
 		GPopUp pop = new GPopUp();
 		pop.addItem(-1, labels, true);
 		pop.addItem(0, "Connect");
 		pop.addItem(1, "Disconnect");
 		this.dialog = pop;
-		addPopUpHandler(pop);
 
+		addPopUpHandler(pop);
+		draw();
 		// getChildren().add(line);
 		/*
 		 * setOnMouseEntered(new EventHandler<MouseEvent>() {

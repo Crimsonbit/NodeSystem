@@ -47,7 +47,7 @@ public class GNodeConnection extends Group {
 
 		line.endXProperty().bind(target.layoutXProperty().add(targetPort.getX()));
 		line.endYProperty().bind(target.layoutYProperty().add(targetPort.getY()));
-		line.setStroke(source.getNodeGraph().getNodeColorLookup().get("curve"));
+		line.setStroke(source.getNodeGraph().getColorLookup().get(source.getNodeType()));
 		line.setStrokeWidth(4);
 		line.setStrokeLineCap(StrokeLineCap.ROUND);
 		line.setFill(Color.TRANSPARENT);

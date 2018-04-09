@@ -17,9 +17,12 @@ import at.crimsonbit.nodesystem.node.types.ImageType;
 import at.crimsonbit.nodesystem.node.types.MathType;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.util.GNodeMouseHandler;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -42,6 +45,7 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 	private int idCount = 100;
 	private GPopUp graphDialog;
 	private GSettingsPane settingsPane;
+	private GNode toCopy;
 
 	private GNodeLayer nodeLayer;
 	private GLineLayer lineLayer;
@@ -54,12 +58,12 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 
 	public GNodeGraph() {
 		this.settingsPane = new GSettingsPane();
-		this.nodeMaster = new GNodeMaster();
+		this.nodeMaster = new GNodeMaster(this);
 		this.canvas = new Group();
 		this.nodeLayer = new GNodeLayer();
 		this.lineLayer = new GLineLayer();
 		this.canvas.getChildren().add(nodeLayer);
-
+		this.canvas.getChildren().add(lineLayer);
 		this.getChildren().add(canvas);
 		this.handler = new GNodeMouseHandler(this);
 		// this.getChildren().add(this.settingsPane);
@@ -78,6 +82,49 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 		this.setPopUpDialog(graphDialog);
 
 	}
+
+	public void addKeySupport() {
+		if (getScene() != null)
+			getScene().setOnKeyPressed(onKeyPressedEventHandler);
+	}
+
+	private EventHandler<KeyEvent> onKeyPressedEventHandler = new EventHandler<KeyEvent>() {
+		@Override
+		public void handle(KeyEvent event) {
+			if (getActive() != null) {
+
+				if (event.isControlDown() && event.getCode().equals(KeyCode.C)) {
+					toCopy = new GNode(getActive());
+				}
+				if (event.isControlDown() && event.getCode().equals(KeyCode.V) && toCopy != null) {
+					getGuiMaster().addNode(toCopy);
+					toCopy.relocate(getActive().getBoundsInParent().getMinX(),
+							getActive().getBoundsInParent().getMinY());
+					update();
+				}
+				if (event.getCode().equals(KeyCode.DELETE)) {
+					getGuiMaster().removeNode(getActive());
+					update();
+				}
+				if (event.isShiftDown() && event.getCode().equals(KeyCode.C)) {
+					if (getActive().getNodeType().equals(BaseType.CONSTANT)) {
+						getActive().setConstant();
+						// update();
+					}
+				}
+				if (event.isShiftDown() && event.getCode().equals(KeyCode.O)) {
+					if (getActive().getNodeType().equals(BaseType.OUTPUT)) {
+						getActive().setOutput();
+						// update();
+					}
+				}
+
+			}
+			if (event.isControlDown() && event.getCode().equals(KeyCode.N)) {
+				popUpDialog.show(nodeMaster.getNodeGraph(), curX, curY);
+			}
+		}
+	};
 
 	public void setPopUpDialog(GPopUp dialog) {
 		this.popUpDialog = dialog;
@@ -208,13 +255,12 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 
 		// add components to graph pane
 
-		getNodeLayer().getChildren().addAll(nodeMaster.getAddedEdges());
 		getNodeLayer().getChildren().addAll(nodeMaster.getAddedCells());
-
+		getLineLayer().getChildren().addAll(nodeMaster.getAddedEdges());
 		// remove components from graph pane
 		getNodeLayer().getChildren().removeAll(nodeMaster.getRemovedCells());
-		getNodeLayer().getChildren().removeAll(nodeMaster.getRemovedEdges());
-
+		getLineLayer().getChildren().removeAll(nodeMaster.getRemovedEdges());
+		getNodeLayer().toFront();
 		// enable dragging of cells
 		for (GNode cell : nodeMaster.getAddedCells()) {
 			handler.addMouseHandler(cell);

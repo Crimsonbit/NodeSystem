@@ -12,6 +12,7 @@ import at.crimsonbit.nodesystem.node.types.BaseType;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeMaster;
 import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
+
 /**
  * 
  * @author NeonArtworks
@@ -30,7 +31,7 @@ public class GNodeMaster {
 	private List<GNodeConnection> removedEdges;
 
 	private Map<String, GNode> cellMap; // <id,cell>
-
+	private GNodeGraph graph;
 	private GPort outPort;
 	private GPort inPort;
 
@@ -40,6 +41,10 @@ public class GNodeMaster {
 
 	public void setSecondPort(GPort port) {
 		this.inPort = port;
+	}
+
+	public GNodeGraph getNodeGraph() {
+		return this.graph;
 	}
 
 	public void connectPorts() {
@@ -56,6 +61,10 @@ public class GNodeMaster {
 			}
 			if (this.outPort != null && this.inPort != null) {
 				addConnection(this.outPort, this.inPort);
+				this.inPort.getPortRectangle()
+						.setInputColor(graph.getColorLookup().get(this.outPort.getNode().getNodeType()));
+				this.inPort.getPortRectangle().redraw();
+				this.inPort.redraw();
 				this.outPort = null;
 				this.inPort = null;
 			}
@@ -66,6 +75,10 @@ public class GNodeMaster {
 		for (GNodeConnection con : getAllEdges()) {
 			if (con.getSourcePort() == port || con.getTargetPort() == port) {
 				try {
+					con.getTargetPort().getPortRectangle()
+							.setInputColor(graph.getColorLookup().get(con.getTarget().getNodeType()));
+					con.getTargetPort().getPortRectangle().redraw();
+					con.getTargetPort().redraw();
 					getNodeMaster().removeConnection(con.getTarget().getNode(), con.getTargetPort().getStringID());
 				} catch (NoSuchNodeException e) {
 					// TODO Auto-generated catch block
@@ -76,7 +89,8 @@ public class GNodeMaster {
 		}
 	}
 
-	public GNodeMaster() {
+	public GNodeMaster(GNodeGraph graph) {
+		this.graph = graph;
 		this.nodeMaster = new NodeMaster();
 		this.nodeMaster.registerNodes("at.crimsonbit.nodesystem.node.nodes");
 		this.graphParent = new GNode("_ROOT_", false);
@@ -111,7 +125,7 @@ public class GNodeMaster {
 		addedCells.clear();
 		addedEdges.clear();
 	}
-	
+
 	public void removeNode(GNode node) {
 		for (GNodeConnection c : getAllEdges()) {
 			if (c.getSource() == node || c.getTarget() == node) {
@@ -156,6 +170,7 @@ public class GNodeMaster {
 		addNode(new GNode(id, type, draw, graph));
 
 	}
+
 	public void addNode(String id, INodeType type, boolean draw, GNodeGraph graph, double x, double y) {
 		GNode n = new GNode(id, type, draw, graph);
 		n.relocate(x, y);

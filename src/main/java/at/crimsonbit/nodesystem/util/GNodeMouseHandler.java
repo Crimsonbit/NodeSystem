@@ -3,7 +3,10 @@ package at.crimsonbit.nodesystem.util;
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import javafx.event.EventHandler;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
 /**
@@ -23,11 +26,13 @@ public class GNodeMouseHandler {
 
 	public void addMouseHandler(final Node node) {
 		this.node = (GNode) node;
-
 		node.setOnMousePressed(onMousePressedEventHandler);
 		node.setOnMouseDragged(onMouseDraggedEventHandler);
 		node.setOnMouseReleased(onMouseReleasedEventHandler);
+
 	}
+
+	
 
 	EventHandler<MouseEvent> onMousePressedEventHandler = new EventHandler<MouseEvent>() {
 
@@ -43,6 +48,7 @@ public class GNodeMouseHandler {
 					double scale = graph.getScaleValue();
 					dragContext.x = node.getBoundsInParent().getMinX() * scale - event.getScreenX();
 					dragContext.y = node.getBoundsInParent().getMinY() * scale - event.getScreenY();
+					node.setCursor(Cursor.HAND);
 				}
 			}
 		}
@@ -66,6 +72,7 @@ public class GNodeMouseHandler {
 					offsetY /= scale;
 
 					node.relocate(offsetX, offsetY);
+					node.setCursor(Cursor.MOVE);
 				}
 			}
 		}
@@ -87,6 +94,7 @@ public class GNodeMouseHandler {
 				node.setActive(true);
 				node.redraw();
 				graph.setActive(node);
+				node.setCursor(Cursor.DEFAULT);
 			}
 		}
 	};

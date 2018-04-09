@@ -11,7 +11,6 @@ import at.crimsonbit.nodesystem.node.types.BaseType;
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.util.RangeMapper;
-import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextInputDialog;
@@ -19,8 +18,6 @@ import javafx.scene.effect.BlurType;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -260,6 +257,7 @@ public class GNode extends Pane implements IGNode {
 
 	@Override
 	public void draw() {
+
 		if (this.doDraw) {
 			double h = height * inPortCount;
 			if (inPortCount < outPortcount) {
@@ -346,6 +344,10 @@ public class GNode extends Pane implements IGNode {
 		addPopUpHandler(this.popUpDialog);
 	}
 
+	public GPopUp getPopUpDialog() {
+		return this.popUpDialog;
+	}
+
 	private void addPopUpHandler(GPopUp dialog) {
 		this.addEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, event -> {
 			dialog.show(this, event.getScreenX(), event.getScreenY());
@@ -412,10 +414,26 @@ public class GNode extends Pane implements IGNode {
 			}
 			redraw();
 		} else if (id == 4) {
+			setOutput();
+		} else if (id == 5) {
+			setConstant();
+		} else if (id == 6) {
+			GNode node = new GNode(this);
+			node.relocate(getBoundsInParent().getMinX(), getBoundsInParent().getMinY());
+			nodeGraph.getGuiMaster().addNode(node);
+			nodeGraph.update();
+		}
+	}
+
+	public void setOutput() {
+		if (getNodeType().equals(BaseType.OUTPUT)) {
 			setName("Output - " + this.calcNode.get("output"));
 			redraw();
+		}
+	}
 
-		} else if (id == 5) {
+	public void setConstant() {
+		if (getNodeType().equals(BaseType.CONSTANT)) {
 			doBlur();
 			TextInputDialog dialog = new TextInputDialog(getName());
 			dialog.setTitle("Constant");
@@ -438,10 +456,6 @@ public class GNode extends Pane implements IGNode {
 			} else {
 				removeBlur();
 			}
-		} else if (id == 6) {
-			GNode node = new GNode(this);
-			nodeGraph.getGuiMaster().addNode(node);
-			nodeGraph.update();
 		}
 	}
 
