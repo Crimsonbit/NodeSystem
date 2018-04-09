@@ -1,5 +1,12 @@
 # NodeSystem
-NodeSystem (the name is not final) is a JavaFX based NodeSystem (Node-Graph).
+<h1 align="center">
+    <img src="http://www.neonartworks.at/images/github/nodesystem1.png">
+</h1>
+<p align="center">
+<sup>
+<b>NodeSystem (the name is not final) is a JavaFX based NodeSystem (Node-Graph).</b>
+</sup>
+</p>
 
 # How to use
 Creating a new Node-Graph is really easy!
