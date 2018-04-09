@@ -52,6 +52,8 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 
 	private double curX;
 	private double curY;
+	private double pX;
+	private double pY;
 
 	private HashMap<INodeType, Color> colorLookup = new HashMap<INodeType, Color>();
 	private HashMap<String, Color> nodeLookup = new HashMap<String, Color>();
@@ -80,6 +82,15 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 		graphDialog.addItem(nodeMenu);
 
 		this.setPopUpDialog(graphDialog);
+
+		setOnMouseMoved(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+				pX = event.getScreenX();
+				pY = event.getScreenY();
+			}
+		});
 
 	}
 
@@ -118,10 +129,9 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 						// update();
 					}
 				}
-
 			}
 			if (event.isControlDown() && event.getCode().equals(KeyCode.N)) {
-				popUpDialog.show(nodeMaster.getNodeGraph(), curX, curY);
+				popUpDialog.show(nodeMaster.getNodeGraph(), pX, pY);
 			}
 		}
 	};
