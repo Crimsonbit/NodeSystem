@@ -8,6 +8,7 @@ import at.crimsonbit.nodesystem.nodebackend.api.NodeOutput;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeType;
 
 public class AddNode extends AbstractNode implements INodeType {
+
 	@NodeType
 	private static final MathType type = MathType.ADD;
 
@@ -19,7 +20,7 @@ public class AddNode extends AbstractNode implements INodeType {
 
 	@NodeOutput("computeAdd")
 	double output;
-	
+
 	public AddNode() {
 
 	}

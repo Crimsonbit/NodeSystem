@@ -18,8 +18,7 @@ public class ClampNode extends AbstractNode implements INodeType {
 	double minVal;
 
 	@NodeInput
-	double maxVal;
-	
+	double maxVal;	
 	
 	
 	@NodeOutput("clamp")

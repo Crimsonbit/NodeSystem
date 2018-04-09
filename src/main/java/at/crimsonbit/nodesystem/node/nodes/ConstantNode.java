@@ -11,7 +11,7 @@ public class ConstantNode extends AbstractNode implements INodeType {
 
 	@NodeType
 	private static final BaseType type = BaseType.CONSTANT;
-
+	
 	@NodeField
 	@NodeOutput("compute")
 	Object constant;

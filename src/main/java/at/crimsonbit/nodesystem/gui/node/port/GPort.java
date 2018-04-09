@@ -9,7 +9,8 @@ import javafx.scene.Group;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.shape.Line;
+import javafx.scene.shape.CubicCurve;
+
 /**
  * 
  * @author NeonArtworks
@@ -23,7 +24,7 @@ public class GPort extends Group implements IGConsumable {
 	private int id;
 	private boolean input;
 	private GNode node;
-	private Line line = new Line();
+	private CubicCurve line = new CubicCurve();
 	private GPopUp dialog;
 	private String stringID;
 

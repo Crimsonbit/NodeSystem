@@ -67,6 +67,7 @@ public abstract class AbstractNode {
 		NodeOutput outDefinition = f.getAnnotation(NodeOutput.class);
 		try {
 			Method m = this.getClass().getDeclaredMethod(outDefinition.value());
+			m.setAccessible(true);
 			m.invoke(this);
 		} catch (NoSuchMethodException e) {
 			throw new IllegalArgumentException("Compute method " + outDefinition.value() + " not defined in class "

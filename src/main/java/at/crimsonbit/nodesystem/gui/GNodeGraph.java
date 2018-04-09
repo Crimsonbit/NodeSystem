@@ -13,14 +13,13 @@ import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.gui.node.IGConsumable;
 import at.crimsonbit.nodesystem.node.types.BaseType;
 import at.crimsonbit.nodesystem.node.types.CalculateType;
+import at.crimsonbit.nodesystem.node.types.ImageType;
 import at.crimsonbit.nodesystem.node.types.MathType;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.util.GNodeMouseHandler;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -245,10 +244,13 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 		for (INodeType t : CalculateType.values()) {
 			getColorLookup().put(t, Color.DARKORANGE);
 		}
+		for (INodeType t : ImageType.values())
+			getColorLookup().put(t, Color.BROWN);
 
 		getNodeColorLookup().put("input", Color.LIGHTBLUE);
 		getNodeColorLookup().put("output", Color.LIGHTGREEN);
-
+		getNodeColorLookup().put("curve", Color.CRIMSON);
+		getNodeColorLookup().put("text", Color.WHITE);
 	}
 
 	public void addNodeColorLookup(String string, Color c) {

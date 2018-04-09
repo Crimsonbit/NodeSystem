@@ -1,10 +1,10 @@
 package at.crimsonbit.nodesystem.gui;
 
+import at.crimsonbit.nodesystem.util.DragContext;
 import at.crimsonbit.nodesystem.util.RangeMapper;
 import javafx.event.EventHandler;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
@@ -36,6 +36,9 @@ public class GBackground extends Pane {
 
 	private double localMouseX = getWidth() / 2;
 	private double localMouseY = getHeight() / 2;
+	private double lX;
+	private double lY;
+	private final DragContext dragContext = new DragContext();
 
 	public GBackground() {
 
@@ -48,10 +51,35 @@ public class GBackground extends Pane {
 		setOnMouseMoved(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
+
 				localMouseX = event.getSceneX();
 				localMouseY = event.getSceneY();
 			}
 		});
+		/*
+		setOnMouseDragged(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				if (event.isMiddleButtonDown()) {
+					lX = event.getSceneX();
+					lY = event.getSceneY();
+
+					double scale = getScaleValue();
+					dragContext.x = getBoundsInParent().getMinX() * scale - event.getScreenX();
+					dragContext.y = getBoundsInParent().getMinY() * scale - event.getScreenY();
+					double offsetX = event.getScreenX() + dragContext.x;
+					double offsetY = event.getScreenY() + dragContext.y;
+
+					// adjust the offset in case we are zoomed
+
+					offsetX /= scale;
+					offsetY /= scale;
+					relocate(offsetX, offsetY);
+
+				}
+			}
+		});
+	*/
 	}
 
 	public Canvas getCanvas() {
@@ -65,8 +93,8 @@ public class GBackground extends Pane {
 		final int right = (int) snappedRightInset();
 		final int bottom = (int) snappedBottomInset();
 		final int left = (int) snappedLeftInset();
-		final int width = (int) getWidth() - left - right;
-		final int height = (int) getHeight() - top - bottom;
+		final int width = (int) getWidth() + left + right;
+		final int height = (int) getHeight() + top + bottom;
 		final double spacing = lineSpacing;
 
 		canvas.setLayoutX(left);
