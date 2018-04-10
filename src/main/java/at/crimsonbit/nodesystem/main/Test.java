@@ -19,7 +19,7 @@ public class Test extends Application {
 
 		GNodeSystem nodeSystem = new GNodeSystem();
 		// nodeSystem.getNodeGraph().getGuiMaster().getNodeMaster().registerNodes("at.crimsonbit.nodesystem.node.nodes");
-		GNodeGraph graph = nodeSystem.getNodeGraph();
+		GNodeGraph graph = nodeSystem.getGUI();
 		GNode constNode1 = new GNode("Constant Node", BaseType.CONSTANT, true, graph);
 		GNode constNode2 = new GNode("Constant Node 2", BaseType.CONSTANT, true, graph);
 		GNode additionNode1 = new GNode("Addition Node", MathType.ADD, true, graph);

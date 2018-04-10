@@ -6,6 +6,7 @@ import at.crimsonbit.nodesystem.gui.dialog.GPopUp;
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.gui.node.IGConsumable;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.scene.Group;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.ContextMenuEvent;
@@ -34,38 +35,24 @@ public class GPort extends Group implements IGConsumable {
 	private long currentTime;
 	private long lastTime;
 
+	private long currentRemoveTime;
+	private long lastRemoveTime;
+
 	private void addPopUpHandler(GPopUp dialog) {
-		this.addEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, event -> {
-			dialog.show(this, event.getScreenX(), event.getScreenY());
-			event.consume();
-		});
-
-		this.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
-			dialog.hide();
-		});
-
-		for (MenuItem item : this.dialog.getItems()) {
-			int id = Integer.valueOf(item.getId());
-			item.setOnAction(event -> {
-				consumeMessage(id, (GEntry) item);
-				event.consume();
-			});
-		}
-
-		setOnMouseClicked(new EventHandler<MouseEvent>() {
+		addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
 
 			@Override
-			public void handle(MouseEvent arg0) {
+			public void handle(MouseEvent event) {
 				// TODO Auto-generated method stub
 				long diff = 0;
-
 				currentTime = System.currentTimeMillis();
-
+				dialog.hide();
 				if (lastTime != 0 && currentTime != 0) {
 					diff = currentTime - lastTime;
 
 					if (diff <= 215) {
-						System.out.println("double");
+
+						// System.out.println("double");
 						GNodeGraph graph = node.getNodeGraph();
 						// graph.getGuiMaster().addConnection(node1, node2);
 						if (isInput())
@@ -83,6 +70,34 @@ public class GPort extends Group implements IGConsumable {
 
 		});
 
+		this.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
+
+			node.setPortPressed(false);
+		});
+		this.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
+			if (event.isSecondaryButtonDown()) {
+				long diff = 0;
+				currentRemoveTime = System.currentTimeMillis();
+				dialog.hide();
+				if (lastRemoveTime != 0 && currentRemoveTime != 0) {
+					diff = currentRemoveTime - lastRemoveTime;
+
+					if (diff <= 700) {
+						GNodeGraph graph = node.getNodeGraph();
+						graph.getGuiMaster().removeConnection(this);
+						graph.update();
+					}
+				}
+				lastRemoveTime = currentRemoveTime;
+			}
+		});
+
+		/*
+		 * for (MenuItem item : this.dialog.getItems()) { int id =
+		 * Integer.valueOf(item.getId()); item.setOnAction(event -> { consumeMessage(id,
+		 * (GEntry) item); event.consume(); }); }
+		 * 
+		 */
 		// addSubeMenuHandlers();
 
 		/*

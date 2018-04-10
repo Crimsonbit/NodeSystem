@@ -18,6 +18,7 @@ import at.crimsonbit.nodesystem.node.types.MathType;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.util.DragContext;
 import at.crimsonbit.nodesystem.util.GNodeMouseHandler;
+import at.crimsonbit.nodesystem.util.SystemUsage;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
@@ -29,6 +30,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 
 /**
  * 
@@ -52,7 +54,7 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 
 	private GNodeLayer nodeLayer;
 	private GLineLayer lineLayer;
-
+	private Pane infoLayer = new Pane();
 	private HashMap<INodeType, Color> colorLookup = new HashMap<INodeType, Color>();
 	private HashMap<String, Color> nodeLookup = new HashMap<String, Color>();
 	private HashMap<String, Object> settings = new HashMap<String, Object>();
@@ -60,6 +62,9 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 	private final DragContext dragContext = new DragContext();
 
 	private Rectangle selection;
+	private Text nodeInfo = new Text();
+
+	private final boolean DEBUG = true;
 
 	public GNodeGraph() {
 		this.selection = new Rectangle();
@@ -77,6 +82,7 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 		this.canvas.getChildren().add(nodeLayer);
 		this.canvas.getChildren().add(lineLayer);
 		this.canvas.getChildren().add(this.selection);
+		this.canvas.getChildren().add(infoLayer);
 		this.getChildren().add(canvas);
 		this.handler = new GNodeMouseHandler(this);
 		// this.getChildren().add(this.settingsPane);
@@ -93,10 +99,22 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 		graphDialog.addItem(nodeMenu);
 
 		this.setPopUpDialog(graphDialog);
-		addSelectGroupSupport();
+		// addSelectGroupSupport();
 
 		addSetting("curve_width", 4d);
+		addInfo();
 
+	}
+
+	public Text getNodeInfo() {
+		return this.nodeInfo;
+	}
+
+	public void addInfo() {
+		nodeInfo.setFill(Color.WHITE);
+		nodeInfo.relocate(getWidth() / 2, getHeight() / 2);
+		infoLayer.getChildren().add(nodeInfo);
+		update();
 	}
 
 	public void addSetting(String s, Object r) {
@@ -346,6 +364,12 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 
 		// merge added & removed cells with all cells
 		getGuiMaster().merge();
+		if (getActive() != null) {
+			if (getActive().getNodeType().equals(BaseType.OUTPUT) && getActive().getOutput() != null) {
+				nodeInfo.setText(SystemUsage.getRamInfo() + ", Current Output Value: " + getActive().getOutput());
+			}
+		} else
+			nodeInfo.setText(SystemUsage.getRamInfo());
 
 	}
 

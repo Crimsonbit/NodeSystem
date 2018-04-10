@@ -1,6 +1,7 @@
 package at.crimsonbit.nodesystem.gui;
 
 import javafx.scene.layout.Pane;
+
 /**
  * 
  * @author NeonArtworks
@@ -9,14 +10,14 @@ import javafx.scene.layout.Pane;
 @SuppressWarnings({ "restriction", "unused" })
 public class GNodeSystem {
 
-	private GNodeGraph graph;
+	private GNodeGraph nodeView;
 
 	public GNodeSystem() {
-		this.graph = new GNodeGraph();
+		this.nodeView = new GNodeGraph();
 	}
 
-	public GNodeGraph getNodeGraph() {
-		return this.graph;
+	public GNodeGraph getGUI() {
+		return this.nodeView;
 	}
 
 }

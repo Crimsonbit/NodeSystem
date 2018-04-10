@@ -425,6 +425,13 @@ public class GNode extends Pane implements IGNode {
 		}
 	}
 
+	public Object getOutput() {
+		if (getNodeType().equals(BaseType.OUTPUT)) {
+			return this.calcNode.get("output");
+		}
+		return null;
+	}
+
 	public void setOutput() {
 		if (getNodeType().equals(BaseType.OUTPUT)) {
 			setName("Output - " + this.calcNode.get("output"));
