@@ -39,6 +39,12 @@ public class GBackground extends Pane {
 	private double lX;
 	private double lY;
 	private final DragContext dragContext = new DragContext();
+	private double curX;
+	private double curY;
+	private double pX;
+	private double pY;
+	double width;
+	double height;
 
 	public GBackground() {
 
@@ -54,6 +60,10 @@ public class GBackground extends Pane {
 
 				localMouseX = event.getSceneX();
 				localMouseY = event.getSceneY();
+				pX = event.getScreenX();
+				pY = event.getScreenY();
+				curX = event.getSceneX();
+				curY = event.getSceneY();
 			}
 		});
 		/*
@@ -76,6 +86,54 @@ public class GBackground extends Pane {
 		 */
 	}
 
+	public double getLocalMouseX() {
+		return localMouseX;
+	}
+
+	public void setLocalMouseX(double localMouseX) {
+		this.localMouseX = localMouseX;
+	}
+
+	public double getLocalMouseY() {
+		return localMouseY;
+	}
+
+	public void setLocalMouseY(double localMouseY) {
+		this.localMouseY = localMouseY;
+	}
+
+	public double getCurX() {
+		return curX;
+	}
+
+	public void setCurX(double curX) {
+		this.curX = curX;
+	}
+
+	public double getCurY() {
+		return curY;
+	}
+
+	public void setCurY(double curY) {
+		this.curY = curY;
+	}
+
+	public double getpX() {
+		return pX;
+	}
+
+	public void setpX(double pX) {
+		this.pX = pX;
+	}
+
+	public double getpY() {
+		return pY;
+	}
+
+	public void setpY(double pY) {
+		this.pY = pY;
+	}
+
 	public Canvas getCanvas() {
 		return this.canvas;
 	}
@@ -87,9 +145,12 @@ public class GBackground extends Pane {
 		final int right = (int) snappedRightInset();
 		final int bottom = (int) snappedBottomInset();
 		final int left = (int) snappedLeftInset();
-		final int width = (int) getWidth() + left + right;
-		final int height = (int) getHeight() + top + bottom;
+		width = (int) getWidth() + left + right;
+		height = (int) getHeight() + top + bottom;
 		final double spacing = lineSpacing;
+
+		// width *= (scaleValue);
+		// height *= (scaleValue);
 
 		canvas.setLayoutX(left);
 		canvas.setLayoutY(top);
@@ -168,6 +229,13 @@ public class GBackground extends Pane {
 				}
 				if (scaleValue < 1.0) {
 					scaleValue = 1.0;
+
+					// resize(getWidth(), getHeight());
+					// relocate(getBoundsInLocal().getMinX(), getHeight() -
+					// getBoundsInLocal().getMinY());
+					// setWidth(getScene().getWidth());
+					// setHeight(getScene().getHeight());
+
 					// lineSpacing = 25;
 				}
 				zoomTo(scaleValue);

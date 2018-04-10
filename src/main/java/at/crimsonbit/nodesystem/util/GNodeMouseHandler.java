@@ -32,8 +32,6 @@ public class GNodeMouseHandler {
 
 	}
 
-	
-
 	EventHandler<MouseEvent> onMousePressedEventHandler = new EventHandler<MouseEvent>() {
 
 		public void handle(MouseEvent event) {

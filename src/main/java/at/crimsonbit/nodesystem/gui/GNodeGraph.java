@@ -53,10 +53,7 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 	private GNodeLayer nodeLayer;
 	private GLineLayer lineLayer;
 
-	private double curX;
-	private double curY;
-	private double pX;
-	private double pY;
+	
 
 	private HashMap<INodeType, Color> colorLookup = new HashMap<INodeType, Color>();
 	private HashMap<String, Color> nodeLookup = new HashMap<String, Color>();
@@ -99,16 +96,6 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 
 		this.setPopUpDialog(graphDialog);
 		addSelectGroupSupport();
-		setOnMouseMoved(new EventHandler<MouseEvent>() {
-
-			@Override
-			public void handle(MouseEvent event) {
-				pX = event.getScreenX();
-				pY = event.getScreenY();
-				curX = event.getSceneX();
-				curY = event.getSceneY();
-			}
-		});
 		
 		addSetting("curve_width", 4d);
 
@@ -202,7 +189,7 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 				}
 			}
 			if (event.isControlDown() && event.getCode().equals(KeyCode.N)) {
-				popUpDialog.show(nodeMaster.getNodeGraph(), pX, pY);
+				popUpDialog.show(nodeMaster.getNodeGraph(), getpX(), getpY());
 			}
 		}
 	};
@@ -268,8 +255,8 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 	 */
 	private void addPopUpHandler(GPopUp dialog) {
 		this.addEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, event -> {
-			curX = event.getSceneX();
-			curY = event.getSceneY();
+			setCurX(event.getSceneX());
+			setCurY(event.getSceneY());
 			dialog.show(this, event.getScreenX(), event.getScreenY());
 			event.consume();
 		});
@@ -296,7 +283,7 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 		Set<INodeType> map = getGuiMaster().getNodeMaster().getAllNodeClasses();
 		for (INodeType type : map) {
 			if (source.getName().toUpperCase() == type.toString())
-				getGuiMaster().addNode(source.getName(), type, true, this, curX, curY);
+				getGuiMaster().addNode(source.getName(), type, true, this, getCurX(), getCurY());
 		}
 
 		// }
