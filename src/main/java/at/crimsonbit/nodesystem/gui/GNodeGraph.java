@@ -53,8 +53,6 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 	private GNodeLayer nodeLayer;
 	private GLineLayer lineLayer;
 
-	
-
 	private HashMap<INodeType, Color> colorLookup = new HashMap<INodeType, Color>();
 	private HashMap<String, Color> nodeLookup = new HashMap<String, Color>();
 	private HashMap<String, Object> settings = new HashMap<String, Object>();
@@ -96,7 +94,7 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 
 		this.setPopUpDialog(graphDialog);
 		addSelectGroupSupport();
-		
+
 		addSetting("curve_width", 4d);
 
 	}
@@ -166,9 +164,14 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 					toCopy = new GNode(getActive());
 				}
 				if (event.isControlDown() && event.getCode().equals(KeyCode.V) && toCopy != null) {
+					if (toCopy != null) {
+						toCopy = new GNode(getActive());
+					}
 					getGuiMaster().addNode(toCopy);
 					toCopy.relocate(getActive().getBoundsInParent().getMinX(),
 							getActive().getBoundsInParent().getMinY());
+					setActive(toCopy);
+					toCopy.toFront();
 					update();
 				}
 				if (event.getCode().equals(KeyCode.DELETE)) {
