@@ -21,6 +21,8 @@ public class GPortLabel extends Text {
 		else
 			setX(x + (off + 6));
 		setY(y + 6);
+		
 	}
-
+	
+	
 }

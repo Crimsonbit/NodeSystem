@@ -52,28 +52,36 @@ public class GNodeMaster {
 		this.inPort = null;
 	}
 
-	public void connectPorts() {
+	public boolean connectPorts() {
+
 		if (this.outPort != null && this.inPort != null) {
 			if (this.outPort.isInput()) {
 				this.outPort = null;
 				this.inPort = null;
-				return;
+				return false;
 			}
 			if (!this.inPort.isInput()) {
 				this.inPort = null;
 				this.outPort = null;
-				return;
+				return false;
 			}
 			if (this.outPort != null && this.inPort != null) {
-				addConnection(this.outPort, this.inPort);
-				this.inPort.getPortRectangle()
-						.setInputColor(graph.getColorLookup().get(this.outPort.getNode().getNodeType()));
-				this.inPort.getPortRectangle().redraw();
-				this.inPort.redraw();
-				this.outPort = null;
-				this.inPort = null;
+
+				if (addConnection(this.outPort, this.inPort)) {
+					// System.out.println("INFO!");
+
+					this.inPort.getPortRectangle()
+							.setInputColor(graph.getColorLookup().get(this.outPort.getNode().getNodeType()));
+					this.inPort.getPortRectangle().redraw();
+					this.inPort.redraw();
+					this.outPort = null;
+					this.inPort = null;
+					getNodeGraph().update();
+					return true;
+				}
 			}
 		}
+		return false;
 	}
 
 	public void removeConnection(GPort port) {
@@ -145,6 +153,7 @@ public class GNodeMaster {
 		}
 		removedNodes.add(node);
 		nodeMap.remove(node.getName());
+		getNodeGraph().update();
 	}
 
 	public List<GNode> getAddedCells() {
@@ -204,12 +213,20 @@ public class GNodeMaster {
 	 * 
 	 */
 
-	public void addConnection(GPort node1, GPort node2) {
+	public boolean addConnection(GPort node1, GPort node2) {
 
 		if (node1.getNode() == node2.getNode())
-			return;
+			return false;
 
 		GNodeConnection con = new GNodeConnection(node1, node2);
+		for (int i = 0; i < getAllEdges().size(); i++) {
+			GNodeConnection c = getAllEdges().get(i);
+			if (c.getSource() == con.getSource() && c.getTarget() == con.getTarget()) {
+				this.outPort = null;
+				this.inPort = null;
+				return false;
+			}
+		}
 		try {
 			if (node1.isInput()) {
 				getNodeMaster().setConnection(node1.getNode().getNode(), node1.getStringID(), node2.getNode().getNode(),
@@ -218,11 +235,13 @@ public class GNodeMaster {
 				getNodeMaster().setConnection(node2.getNode().getNode(), node2.getStringID(), node1.getNode().getNode(),
 						node1.getStringID());
 			}
+
 		} catch (NoSuchNodeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		addedConnections.add(con);
+		return true;
 	}
 
 	/**

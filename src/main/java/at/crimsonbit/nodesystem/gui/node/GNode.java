@@ -434,7 +434,7 @@ public class GNode extends Pane implements IGNode {
 
 	public void setOutput() {
 		if (getNodeType().equals(BaseType.OUTPUT)) {
-			setName("Output - " + this.calcNode.get("output"));
+			setName("Output - " + String.valueOf(this.calcNode.get("output")));
 			redraw();
 		}
 	}
@@ -450,14 +450,14 @@ public class GNode extends Pane implements IGNode {
 			Optional<String> result = dialog.showAndWait();
 			if (result.isPresent()) {
 				this.nameAddition = result.get();
-				int i = 0;
-				try {
-					i = Integer.valueOf(result.get());
-				} catch (Exception e) {
-
-				}
+				// int i = 0;
+				// try {
+				// i = Integer.valueOf(result.get());
+				// } catch (Exception e) {
+				//
+				// }
 				setName(this.nameAddition);
-				this.calcNode.set("constant", i);
+				this.calcNode.set("constant", result.get());
 				redraw();
 				removeBlur();
 			} else {

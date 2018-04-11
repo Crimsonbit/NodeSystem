@@ -63,6 +63,7 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 
 	private Rectangle selection;
 	private Text nodeInfo = new Text();
+	private GState state = GState.DEFAULT;
 
 	private final boolean DEBUG = true;
 
@@ -104,6 +105,14 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 		addSetting("curve_width", 4d);
 		addInfo();
 
+	}
+
+	public GState getState() {
+		return state;
+	}
+
+	public void setState(GState state) {
+		this.state = state;
 	}
 
 	public Text getNodeInfo() {
@@ -193,8 +202,12 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 					update();
 				}
 				if (event.getCode().equals(KeyCode.DELETE)) {
-					getGuiMaster().removeNode(getActive());
-					update();
+					if (getActive() != null) {
+						getGuiMaster().removeNode(getActive());
+						update();
+					} else if (getState().equals(GState.PORTCON)) {
+						setState(GState.DEFAULT);
+					}
 				}
 				if (event.isShiftDown() && event.getCode().equals(KeyCode.C)) {
 					if (getActive().getNodeType().equals(BaseType.CONSTANT)) {

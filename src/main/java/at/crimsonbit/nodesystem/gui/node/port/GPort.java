@@ -6,9 +6,9 @@ import at.crimsonbit.nodesystem.gui.dialog.GPopUp;
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.gui.node.IGConsumable;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.scene.Group;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.CubicCurve;
@@ -37,96 +37,28 @@ public class GPort extends Group implements IGConsumable {
 
 	private long currentRemoveTime;
 	private long lastRemoveTime;
+	private boolean isSet = false;
+	private final Tooltip tooltip = new Tooltip();
+	
 
-	private void addPopUpHandler(GPopUp dialog) {
-		addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
+	/*
+	 * for (MenuItem item : this.dialog.getItems()) { int id =
+	 * Integer.valueOf(item.getId()); item.setOnAction(event -> { consumeMessage(id,
+	 * (GEntry) item); event.consume(); }); }
+	 * 
+	 */
+	// addSubeMenuHandlers();
 
-			@Override
-			public void handle(MouseEvent event) {
-				// TODO Auto-generated method stub
-				long diff = 0;
-				currentTime = System.currentTimeMillis();
-				dialog.hide();
-				if (lastTime != 0 && currentTime != 0) {
-					diff = currentTime - lastTime;
-
-					if (diff <= 215) {
-
-						// System.out.println("double");
-						GNodeGraph graph = node.getNodeGraph();
-						// graph.getGuiMaster().addConnection(node1, node2);
-						if (isInput())
-							graph.getGuiMaster().setSecondPort(thisPort);
-						else
-							graph.getGuiMaster().setFirstPort(thisPort);
-						graph.getGuiMaster().connectPorts();
-						graph.update();
-					}
-
-				}
-
-				lastTime = currentTime;
-			}
-
-		});
-
-		this.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
-
-			node.setPortPressed(false);
-		});
-		this.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
-			if (event.isSecondaryButtonDown()) {
-				long diff = 0;
-				currentRemoveTime = System.currentTimeMillis();
-				dialog.hide();
-				if (lastRemoveTime != 0 && currentRemoveTime != 0) {
-					diff = currentRemoveTime - lastRemoveTime;
-
-					if (diff <= 700) {
-						GNodeGraph graph = node.getNodeGraph();
-						graph.getGuiMaster().removeConnection(this);
-						graph.update();
-					}
-				}
-				lastRemoveTime = currentRemoveTime;
-			}
-		});
-
-		/*
-		 * for (MenuItem item : this.dialog.getItems()) { int id =
-		 * Integer.valueOf(item.getId()); item.setOnAction(event -> { consumeMessage(id,
-		 * (GEntry) item); event.consume(); }); }
-		 * 
-		 */
-		// addSubeMenuHandlers();
-
-		/*
-		 * for (MenuItem item : this.popUpDialog.getItems()) { int id =
-		 * Integer.valueOf(item.getId()); item.setOnAction(event -> { //
-		 * System.out.println(id); consumeMessage(id); event.consume(); });
-		 * 
-		 * }
-		 */
-	}
-
-	public void draw() {
-		getChildren().add(label);
-		getChildren().add(rect);
-	}
-
-	public void redraw() {
-		getChildren().clear();
-		getChildren().add(label);
-		getChildren().add(rect);
-	}
-
-	public GPortRect getPortRectangle() {
-		return this.rect;
-	}
+	/*
+	 * for (MenuItem item : this.popUpDialog.getItems()) { int id =
+	 * Integer.valueOf(item.getId()); item.setOnAction(event -> { //
+	 * System.out.println(id); consumeMessage(id); event.consume(); });
+	 * 
+	 * }
+	 */
 
 	public GPort(int id, boolean input, String labels, double x, double y, GNode node) {
 		this.node = node;
-
 		this.id = id;
 		this.stringID = labels;
 		this.input = input;
@@ -141,9 +73,31 @@ public class GPort extends Group implements IGConsumable {
 		pop.addItem(1, "Disconnect");
 		this.dialog = pop;
 
-		addPopUpHandler(pop);
+		// mouseHandler();
 		draw();
 		this.thisPort = this;
+
+		for (MenuItem item : this.dialog.getItems()) {
+			int idd = Integer.valueOf(item.getId());
+			item.setOnAction(event -> { //
+				// System.out.println(idd);
+				consumeMessage(idd, (GEntry) event.getSource());
+				event.consume();
+			});
+		}
+		this.addEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, event -> {
+			dialog.show(this, event.getScreenX(), event.getScreenY());
+			event.consume();
+		});
+
+		this.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
+			dialog.hide();
+		});
+		
+
+		tooltip.setText("GPort: " + this.id + "\n" + "Input: " + this.input + "\n" + "Type: " + node.getNode().get(labels));
+		Tooltip.install(this, tooltip);
+		
 		// getChildren().add(line);
 		/*
 		 * setOnMouseEntered(new EventHandler<MouseEvent>() {
@@ -184,17 +138,78 @@ public class GPort extends Group implements IGConsumable {
 
 	}
 
+	private void mouseHandler() {
+
+		addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+				// System.out.println("entered");
+				// if (event.isPrimaryButtonDown()) {
+				GNodeGraph graph = node.getNodeGraph();
+
+				if (isInput()) {
+					graph.getGuiMaster().setSecondPort(thisPort);
+				} else {
+					graph.getGuiMaster().setFirstPort(thisPort);
+				}
+				if (graph.getGuiMaster().connectPorts()) {
+					graph.update();
+					graph.getGuiMaster().removecurConnectPorts();
+				}
+
+				graph = node.getNodeGraph();
+				if (graph.getGuiMaster().connectPorts()) {
+					graph.update();
+					graph.getGuiMaster().removecurConnectPorts();
+				}
+				node.setPortPressed(false);
+			}
+			// }
+		});
+
+		this.addEventHandler(MouseEvent.MOUSE_CLICKED, event ->
+
+		{
+			node.setPortPressed(true);
+			GNodeGraph graph = node.getNodeGraph();
+			// graph.getGuiMaster().addConnection(node1, node2);
+			if (isInput()) {
+				graph.getGuiMaster().setSecondPort(thisPort);
+
+			} else {
+				graph.getGuiMaster().setFirstPort(thisPort);
+			}
+
+			if (graph.getGuiMaster().connectPorts()) {
+				graph.update();
+				graph.getGuiMaster().removecurConnectPorts();
+			}
+
+		});
+	}
+
+	public void draw() {
+		getChildren().add(label);
+		getChildren().add(rect);
+	}
+
+	public void redraw() {
+		getChildren().clear();
+		getChildren().add(label);
+		getChildren().add(rect);
+	}
+
+	public GPortRect getPortRectangle() {
+		return this.rect;
+	}
+
 	public String getStringID() {
 		return stringID;
 	}
 
 	public void setStringID(String stringID) {
 		this.stringID = stringID;
-	}
-
-	public void setPopUpDialog(GPopUp pop) {
-		this.dialog = pop;
-		addPopUpHandler(dialog);
 	}
 
 	public GPopUp getPopUpDialog() {

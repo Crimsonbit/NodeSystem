@@ -1,6 +1,7 @@
 package at.crimsonbit.nodesystem.util;
 
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
+import at.crimsonbit.nodesystem.gui.GState;
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
@@ -35,7 +36,7 @@ public class GNodeMouseHandler {
 	EventHandler<MouseEvent> onMousePressedEventHandler = new EventHandler<MouseEvent>() {
 
 		public void handle(MouseEvent event) {
-			if (event.isPrimaryButtonDown()) {
+			if (event.isPrimaryButtonDown() && !node.getNodeGraph().getState().equals(GState.PORTCON)) {
 				GNode node = (GNode) event.getSource();
 				if (!(node.isPortPressed())) {
 					graph.setActive(node);
@@ -55,22 +56,25 @@ public class GNodeMouseHandler {
 	EventHandler<MouseEvent> onMouseDraggedEventHandler = new EventHandler<MouseEvent>() {
 
 		public void handle(MouseEvent event) {
-			GNode n = (GNode) event.getSource();
-			if (!n.isPortPressed()) {
-				if (event.isPrimaryButtonDown()) {
-					Node node = (Node) event.getSource();
+			if (!node.getNodeGraph().getState().equals(GState.PORTCON)) {
+				GNode n = (GNode) event.getSource();
+				if (!n.isPortPressed()) {
+					if (event.isPrimaryButtonDown()) {
+						Node node = (Node) event.getSource();
 
-					double offsetX = event.getScreenX() + dragContext.x;
-					double offsetY = event.getScreenY() + dragContext.y;
+						double offsetX = event.getScreenX() + dragContext.x;
+						double offsetY = event.getScreenY() + dragContext.y;
 
-					// adjust the offset in case we are zoomed
-					double scale = graph.getScaleValue();
+						// adjust the offset in case we are zoomed
+						double scale = graph.getScaleValue();
 
-					offsetX /= scale;
-					offsetY /= scale;
+						offsetX /= scale;
+						offsetY /= scale;
 
-					node.relocate(offsetX, offsetY);
-					node.setCursor(Cursor.MOVE);
+						node.relocate(offsetX, offsetY);
+						node.setCursor(Cursor.MOVE);
+						n.getNodeGraph().update();
+					}
 				}
 			}
 		}
@@ -79,20 +83,21 @@ public class GNodeMouseHandler {
 	EventHandler<MouseEvent> onMouseReleasedEventHandler = new EventHandler<MouseEvent>() {
 
 		public void handle(MouseEvent event) {
+			if (!node.getNodeGraph().getState().equals(GState.PORTCON)) {
+				// makeDraggable(node);
+				GNode node = (GNode) event.getSource();
 
-			// makeDraggable(node);
-			GNode node = (GNode) event.getSource();
-
-			if (!(node.isPortPressed())) {
-				for (GNode n : graph.getGuiMaster().getAllCells()) {
-					n.setActive(false);
-					n.redraw();
-					addMouseHandler(n);
+				if (!(node.isPortPressed())) {
+					for (GNode n : graph.getGuiMaster().getAllCells()) {
+						n.setActive(false);
+						n.redraw();
+						addMouseHandler(n);
+					}
+					node.setActive(true);
+					node.redraw();
+					graph.setActive(node);
+					node.setCursor(Cursor.DEFAULT);
 				}
-				node.setActive(true);
-				node.redraw();
-				graph.setActive(node);
-				node.setCursor(Cursor.DEFAULT);
 			}
 		}
 	};

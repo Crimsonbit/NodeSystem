@@ -31,10 +31,13 @@ public class ImageSaverNode extends AbstractNode implements INodeType {
 
 	}
 
-	public void genImage() {
+	public void saveImage() {
 		if (image != null && path != null && path != " ") {
 			try {
-				ImageIO.write(image, ".PNG", new File(path));
+				ImageIO.write(image, "PNG", new File(path));
+				System.out.println(image);
+				System.out.println(path);
+				System.out.println("Saving image....");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

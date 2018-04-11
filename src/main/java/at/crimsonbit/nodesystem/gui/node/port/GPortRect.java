@@ -23,6 +23,7 @@ public class GPortRect extends Rectangle {
 	private Color outputColor;
 
 	public void redraw() {
+		
 		setX(x);
 		setY(y);
 		setWidth(6);
