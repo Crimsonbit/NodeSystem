@@ -25,7 +25,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 
-@SuppressWarnings({ "restriction", "unused" })
 public class GNode extends Pane implements IGNode {
 
 	private GNodeGraph nodeGraph;
