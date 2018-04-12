@@ -41,8 +41,7 @@ public class GNodeMouseHandler {
 				if (!(node.isPortPressed())) {
 					graph.setActive(node);
 					node.setActive(true);
-					graph.getSettingsPane().setNode(graph.getActive());
-					graph.getSettingsPane().draw();
+
 					node.redraw(true);
 					node.toFront();
 
@@ -98,8 +97,6 @@ public class GNodeMouseHandler {
 					node.setActive(true);
 					node.redraw();
 					graph.setActive(node);
-					graph.getSettingsPane().setNode(graph.getActive());
-					graph.getSettingsPane().draw();
 					node.setCursor(Cursor.DEFAULT);
 				}
 			}

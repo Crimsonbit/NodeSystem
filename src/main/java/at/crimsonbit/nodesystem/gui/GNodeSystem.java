@@ -12,8 +12,8 @@ public class GNodeSystem {
 
 	private GNodeView nodeView;
 
-	public GNodeSystem() {
-		this.nodeView = new GNodeView();
+	public GNodeSystem(boolean addPane) {
+		this.nodeView = new GNodeView(addPane);
 	}
 
 	public GNodeView getGUI() {

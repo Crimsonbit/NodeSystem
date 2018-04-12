@@ -5,10 +5,10 @@ import at.crimsonbit.nodesystem.gui.node.GNode;
 public class GSettingsEntry {
 
 	private String stringID;
-	private GNode node;
+	private GSBase gsOBJ;
 
-	public GSettingsEntry(GNode node, String id) {
-		this.node = node;
+	public GSettingsEntry(GSBase node, String id) {
+		this.gsOBJ = node;
 		this.stringID = id;
 	}
 
@@ -20,12 +20,12 @@ public class GSettingsEntry {
 		this.stringID = stringID;
 	}
 
-	public GNode getNode() {
-		return node;
+	public GSBase getObject() {
+		return gsOBJ;
 	}
 
-	public void setNode(GNode node) {
-		this.node = node;
+	public void setObject(GSBase node) {
+		this.gsOBJ = node;
 	}
 
 }

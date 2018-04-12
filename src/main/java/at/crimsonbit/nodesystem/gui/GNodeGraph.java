@@ -331,6 +331,8 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 
 	public void setActive(Node n) {
 		activeCell = (GNode) n;
+		getSettingsPane().setNode((GNode) n);
+		getSettingsPane().redraw();
 	}
 
 	public GNode getActive() {

@@ -6,6 +6,9 @@ import java.util.Set;
 
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.node.GNode;
+import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.layout.Pane;
@@ -29,16 +32,21 @@ public class GSettingsPane extends Pane {
 	private Rectangle rect;
 
 	private boolean baseShapeDrawn = false;
+	private boolean doDraw = true;
+	private GSApply applyButton;
 
 	public GSettingsPane(GNodeGraph graph) {
 		this.settingsEntries = new ArrayList<GSettingsEntry>();
 		this.nodeGraph = graph;
+		getChildren().add(drawGroup);
 	}
 
-	@Override
-	public void layoutChildren() {
+	public boolean isDraw() {
+		return doDraw;
+	}
 
-		draw();
+	public void setDraw(boolean doDraw) {
+		this.doDraw = doDraw;
 	}
 
 	public GNodeGraph getNodeGraph() {
@@ -62,11 +70,18 @@ public class GSettingsPane extends Pane {
 		BoxBlur blur = new BoxBlur(1, 1, 1);
 		rect.setEffect(blur);
 		rect.setFill(new Color(0, 0, 0, 0.3));
-		if (!baseShapeDrawn) {
-			drawGroup.getChildren().add(rect);
-			getChildren().add(drawGroup);
-			baseShapeDrawn = true;
-		}
+		drawGroup.getChildren().add(rect);
+	}
+
+	private void redraw(boolean draw) {
+		setDraw(draw);
+		draw();
+		// setDraw(!draw);
+	}
+
+	public void redraw() {
+		redraw(false);
+		redraw(true);
 	}
 
 	private void getFieldEntries() {
@@ -75,15 +90,75 @@ public class GSettingsPane extends Pane {
 			Set<String> fieldNames;
 			fieldNames = nodeGraph.getGuiMaster().getNodeMaster().getAllFieldNames(currentNode.getNode());
 			for (String s : fieldNames) {
-				GSettingsEntry entry = new GSettingsEntry(currentNode, s);
-				settingsEntries.add(entry);
+				Object d = null;
+				try {
+					d = nodeGraph.getGuiMaster().getNodeMaster().getFieldType(currentNode.getNode(), s);
+				} catch (NoSuchNodeException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				GSBase obj = null;
+				if (d != null) {
+
+					if (d instanceof String) {
+						obj = new GSString((String) currentNode.getNode().get(s));
+
+					} else if (d instanceof Float) {
+						obj = new GSFloat((float) currentNode.getNode().get(s));
+
+					} else if (d instanceof Double) {
+						obj = new GSDouble((double) currentNode.getNode().get(s));
+
+					} else if (d instanceof Long) {
+						obj = new GSLong((long) currentNode.getNode().get(s));
+
+					} else if (d instanceof Short) {
+						obj = new GSShort((short) currentNode.getNode().get(s));
+
+					} else {
+						obj = new GSObject((Object) currentNode.getNode().get(s));
+
+					}
+					if (obj != null) {
+						GSettingsEntry entry = new GSettingsEntry(obj, s);
+						settingsEntries.add(entry);
+					}
+				}
 			}
 		}
 	}
 
 	public void draw() {
-		getFieldEntries();
-		drawBackground();
+
+		if (doDraw) {
+			getFieldEntries();
+			drawBackground();
+			for (GSettingsEntry entry : settingsEntries) {
+
+				GSBase setting = entry.getObject();
+
+				if (setting instanceof GSObject) {
+
+				}
+			}
+
+			applyButton = new GSApply("Apply Settings");
+			applyButton.relocate(0, 500);
+			applyButton.setOnAction(new EventHandler<ActionEvent>() {
+
+				@Override
+				public void handle(ActionEvent event) {
+					for (GSettingsEntry e : settingsEntries) {
+
+					}
+				}
+
+			});
+
+			drawGroup.getChildren().add(applyButton);
+		} else {
+			drawGroup.getChildren().clear();
+		}
 	}
 
 }
