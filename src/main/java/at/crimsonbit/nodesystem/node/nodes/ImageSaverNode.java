@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import at.crimsonbit.nodesystem.node.types.ImageType;
+import at.crimsonbit.nodesystem.node.types.Image;
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeInput;
@@ -16,7 +16,7 @@ import at.crimsonbit.nodesystem.nodebackend.api.NodeType;
 public class ImageSaverNode extends AbstractNode implements INodeType {
 
 	@NodeType
-	private static final ImageType type = ImageType.IMAGE_SAVER;
+	private static final Image type = Image.IMAGE_SAVER;
 
 	@NodeInput
 	BufferedImage image;

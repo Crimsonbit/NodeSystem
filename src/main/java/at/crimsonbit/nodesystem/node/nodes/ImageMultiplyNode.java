@@ -1,31 +1,35 @@
 package at.crimsonbit.nodesystem.node.nodes;
 
-import at.crimsonbit.nodesystem.node.types.Math;
+import java.awt.image.BufferedImage;
+
+import at.crimsonbit.nodesystem.node.types.ImageFilter;
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeInput;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeOutput;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeType;
+import at.crimsonbit.nodesystem.util.ImageUtils;
 
-public class MultiplyNode extends AbstractNode implements INodeType {
+public class ImageMultiplyNode extends AbstractNode implements INodeType {
+
 	@NodeType
-	private static final Math type = Math.MULTIPLY;
 
 	@NodeInput
-	double in_1;
+	BufferedImage image_1;
 
 	@NodeInput
-	double in_2;
+	BufferedImage image_2;
 
 	@NodeOutput("computeMultiply")
-	double output;
+	BufferedImage output;
 
-	public MultiplyNode() {
-		
+	public ImageMultiplyNode() {
+
 	}
 
 	public void computeMultiply() {
-		output = in_1 * in_2;
+		if (image_1 != null && image_2 != null)
+			output = ImageUtils.multiply(image_1, image_2);
 	}
 
 }

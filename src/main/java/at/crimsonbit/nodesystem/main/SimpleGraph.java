@@ -13,7 +13,7 @@ public class SimpleGraph extends Application {
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("Node Editor");
 
-		GNodeSystem nodeSystem = new GNodeSystem(true);
+		GNodeSystem nodeSystem = new GNodeSystem(false);
 		GNodeView view = nodeSystem.getGUI();
 		GSettingsPane settings = view.getSettingsPane();
 

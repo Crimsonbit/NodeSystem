@@ -12,10 +12,11 @@ import at.crimsonbit.nodesystem.gui.layer.GNodeLayer;
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.gui.node.IGConsumable;
 import at.crimsonbit.nodesystem.gui.settings.GSettingsPane;
-import at.crimsonbit.nodesystem.node.types.BaseType;
-import at.crimsonbit.nodesystem.node.types.CalculateType;
-import at.crimsonbit.nodesystem.node.types.ImageType;
-import at.crimsonbit.nodesystem.node.types.MathType;
+import at.crimsonbit.nodesystem.node.types.Base;
+import at.crimsonbit.nodesystem.node.types.Calculate;
+import at.crimsonbit.nodesystem.node.types.Image;
+import at.crimsonbit.nodesystem.node.types.ImageFilter;
+import at.crimsonbit.nodesystem.node.types.Math;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.util.DragContext;
 import at.crimsonbit.nodesystem.util.GNodeMouseHandler;
@@ -39,7 +40,7 @@ import javafx.scene.text.Text;
  *
  */
 @SuppressWarnings({ "restriction", "unused" })
-public class GNodeGraph extends GBackground implements IGConsumable {
+public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 	private GNodeMaster nodeMaster;
 	private Group canvas;
@@ -209,13 +210,13 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 					}
 				}
 				if (event.isShiftDown() && event.getCode().equals(KeyCode.C)) {
-					if (getActive().getNodeType().equals(BaseType.CONSTANT)) {
+					if (getActive().getNodeType().equals(Base.CONSTANT)) {
 						getActive().setConstant();
 						// update();
 					}
 				}
 				if (event.isShiftDown() && event.getCode().equals(KeyCode.O)) {
-					if (getActive().getNodeType().equals(BaseType.OUTPUT)) {
+					if (getActive().getNodeType().equals(Base.OUTPUT)) {
 						getActive().setOutput();
 						// update();
 					}
@@ -325,7 +326,7 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 		update();
 	}
 
-	public GBackground getGrid() {
+	public GGraphScene getGrid() {
 		return this;
 	}
 
@@ -379,7 +380,7 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 		// merge added & removed cells with all cells
 		getGuiMaster().merge();
 		if (getActive() != null) {
-			if (getActive().getNodeType().equals(BaseType.OUTPUT) && getActive().getOutput() != null) {
+			if (getActive().getNodeType().equals(Base.OUTPUT) && getActive().getOutput() != null) {
 				nodeInfo.setText(SystemUsage.getRamInfo() + ", Current Output Value: " + getActive().getOutput());
 			}
 		} else
@@ -392,16 +393,19 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 	}
 
 	private void setDefualtColorLookup() {
-		getColorLookup().put(BaseType.OUTPUT, Color.LIGHTBLUE);
-		getColorLookup().put(BaseType.CONSTANT, Color.RED);
-		for (INodeType t : MathType.values())
+		getColorLookup().put(Base.OUTPUT, Color.LIGHTBLUE);
+		getColorLookup().put(Base.CONSTANT, Color.RED);
+		for (INodeType t : Math.values())
 			getColorLookup().put(t, Color.ORANGE);
-		for (INodeType t : CalculateType.values()) {
+		for (INodeType t : Calculate.values()) {
 			getColorLookup().put(t, Color.DARKORANGE);
 		}
-		for (INodeType t : ImageType.values())
+		for (INodeType t : Image.values())
 			getColorLookup().put(t, Color.BROWN);
-
+		
+		for (INodeType t : ImageFilter.values()) {
+			getColorLookup().put(t, Color.SADDLEBROWN);
+		}
 		getNodeColorLookup().put("input", Color.LIGHTBLUE);
 		getNodeColorLookup().put("output", Color.LIGHTGREEN);
 		getNodeColorLookup().put("curve", Color.CRIMSON);

@@ -16,8 +16,7 @@ import javafx.scene.transform.Scale;
  * @author NeonArtworks
  *
  */
-@SuppressWarnings({ "restriction", "unused" })
-public class GBackground extends Pane {
+public class GGraphScene extends Pane {
 
 	// This is to make the stroke be drawn 'on pixel'.
 	private static final double HALF_PIXEL_OFFSET = -0.5;
@@ -46,7 +45,7 @@ public class GBackground extends Pane {
 	double width;
 	double height;
 
-	public GBackground() {
+	public GGraphScene() {
 
 		scaleTransform = new Scale(scaleValue, scaleValue, 0, 0);
 		getTransforms().add(scaleTransform);
@@ -58,8 +57,8 @@ public class GBackground extends Pane {
 			@Override
 			public void handle(MouseEvent event) {
 
-				localMouseX = event.getSceneX();
-				localMouseY = event.getSceneY();
+				localMouseX = event.getSceneX() / scaleValue;
+				localMouseY = event.getSceneY() / scaleValue;
 				pX = event.getScreenX();
 				pY = event.getScreenY();
 				curX = event.getSceneX();

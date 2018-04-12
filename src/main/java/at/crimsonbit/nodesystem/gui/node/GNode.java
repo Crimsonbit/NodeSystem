@@ -7,7 +7,7 @@ import java.util.Optional;
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.dialog.GPopUp;
 import at.crimsonbit.nodesystem.gui.node.port.GPort;
-import at.crimsonbit.nodesystem.node.types.BaseType;
+import at.crimsonbit.nodesystem.node.types.Base;
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.util.RangeMapper;
@@ -163,11 +163,11 @@ public class GNode extends Pane implements IGNode {
 		pop.addItem(2, "remove Active");
 		pop.addItem(3, "Rename");
 		pop.addItem(0, "Remove");
-		if (this.type == BaseType.OUTPUT) {
+		if (this.type == Base.OUTPUT) {
 			pop.addItem(4, "Get Output");
 		}
 
-		if (this.type == BaseType.CONSTANT) {
+		if (this.type == Base.CONSTANT) {
 			pop.addItem(5, "Set Constant");
 		}
 		// pop.addItem(1, "set Active");
@@ -430,21 +430,21 @@ public class GNode extends Pane implements IGNode {
 	}
 
 	public Object getOutput() {
-		if (getNodeType().equals(BaseType.OUTPUT)) {
+		if (getNodeType().equals(Base.OUTPUT)) {
 			return this.calcNode.get("output");
 		}
 		return null;
 	}
 
 	public void setOutput() {
-		if (getNodeType().equals(BaseType.OUTPUT)) {
+		if (getNodeType().equals(Base.OUTPUT)) {
 			setName("Output - " + String.valueOf(this.calcNode.get("output")));
 			redraw();
 		}
 	}
 
 	public void setConstant() {
-		if (getNodeType().equals(BaseType.CONSTANT)) {
+		if (getNodeType().equals(Base.CONSTANT)) {
 			doBlur();
 			TextInputDialog dialog = new TextInputDialog(getName());
 			dialog.setTitle("Constant");

@@ -6,7 +6,7 @@ import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
  * @author NeonArtworks
  *
  */
-public enum MathType implements INodeType {
+public enum Math implements INodeType {
 	CONSTANT, ADD, SUBTRACT, MULTIPLY, DIVIDE, MODULO
 
 }

@@ -2,35 +2,37 @@ package at.crimsonbit.nodesystem.node.nodes;
 
 import java.awt.image.BufferedImage;
 
+import at.crimsonbit.nodesystem.node.types.ImageFilter;
 import at.crimsonbit.nodesystem.node.types.Image;
+import at.crimsonbit.nodesystem.node.types.Math;
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeInput;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeOutput;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeType;
+import at.crimsonbit.nodesystem.util.ImageUtils;
 
-public class ImageNode extends AbstractNode implements INodeType {
+public class ImageAddNode extends AbstractNode implements INodeType {
 
 	@NodeType
-	private static final Image type = Image.IMAGE_EMPTY;
+	private static final ImageFilter type = ImageFilter.IMAGE_ADD;
 
 	@NodeInput
-	int width;
+	BufferedImage image_1;
 
 	@NodeInput
-	int height;
-	
-	@NodeOutput("genImage")
+	BufferedImage image_2;
+
+	@NodeOutput("computeAdd")
 	BufferedImage output;
 
-	public ImageNode() {
+	public ImageAddNode() {
 
 	}
 
-	public void genImage() {
-		if (width > 0 && height > 0) {
-			output = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		}
+	public void computeAdd() {
+		if (image_1 != null && image_2 != null)
+			output = ImageUtils.add(image_1, image_2);
 	}
 
 }

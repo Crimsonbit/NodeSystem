@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import at.crimsonbit.nodesystem.node.types.ImageType;
+import at.crimsonbit.nodesystem.node.types.Image;
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeField;
@@ -17,7 +17,7 @@ import at.crimsonbit.nodesystem.nodebackend.api.NodeType;
 public class ImageLoaderNode extends AbstractNode implements INodeType {
 
 	@NodeType
-	private static final ImageType type = ImageType.IMAGE_LOADER;
+	private static final Image type = Image.IMAGE_LOADER;
 
 	@NodeField
 	@NodeInput
@@ -31,11 +31,12 @@ public class ImageLoaderNode extends AbstractNode implements INodeType {
 	}
 
 	public void genImage() {
-		try {
-			output = ImageIO.read(new File(path));
-		} catch (IOException e) {
-			output = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
-		}
+		if (path != null && path != " " && path != "")
+			try {
+				output = ImageIO.read(new File(path));
+			} catch (IOException e) {
+				output = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+			}
 
 	}
 

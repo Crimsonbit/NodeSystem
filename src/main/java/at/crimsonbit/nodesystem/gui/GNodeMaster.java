@@ -8,7 +8,7 @@ import java.util.Map;
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.gui.node.GNodeConnection;
 import at.crimsonbit.nodesystem.gui.node.port.GPort;
-import at.crimsonbit.nodesystem.node.types.BaseType;
+import at.crimsonbit.nodesystem.node.types.Base;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeMaster;
 import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
@@ -192,7 +192,7 @@ public class GNodeMaster {
 
 	}
 
-	public void addNode(String id, BaseType type, boolean draw, GNodeGraph graph) {
+	public void addNode(String id, Base type, boolean draw, GNodeGraph graph) {
 		addNode(new GNode(id, type, draw, graph));
 	}
 

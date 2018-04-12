@@ -1,7 +1,7 @@
 package at.crimsonbit.nodesystem.node.nodes;
 
-import at.crimsonbit.nodesystem.node.types.CalculateType;
-import at.crimsonbit.nodesystem.node.types.MathType;
+import at.crimsonbit.nodesystem.node.types.Calculate;
+import at.crimsonbit.nodesystem.node.types.Math;
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeInput;
@@ -10,7 +10,7 @@ import at.crimsonbit.nodesystem.nodebackend.api.NodeType;
 
 public class RangeMapNode extends AbstractNode implements INodeType {
 	@NodeType
-	private static final CalculateType type = CalculateType.RANGEMAP;
+	private static final Calculate type = Calculate.RANGEMAP;
 
 	@NodeInput
 	double value;

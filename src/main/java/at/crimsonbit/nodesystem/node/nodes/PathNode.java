@@ -7,11 +7,11 @@ import at.crimsonbit.nodesystem.nodebackend.api.NodeField;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeOutput;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeType;
 
-public class ConstantNode extends AbstractNode implements INodeType {
+public class PathNode extends AbstractNode implements INodeType {
 
 	@NodeType
-	private static final Base type = Base.CONSTANT;
-	
+	private static final Base type = Base.PATH;
+
 	@NodeField
 	@NodeOutput("compute")
 	Object constant;
