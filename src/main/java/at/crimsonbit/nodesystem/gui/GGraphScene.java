@@ -65,6 +65,7 @@ public class GGraphScene extends Pane {
 				curY = event.getSceneY();
 			}
 		});
+		
 		/*
 		 * setOnMouseDragged(new EventHandler<MouseEvent>() {
 		 * 
