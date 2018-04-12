@@ -9,6 +9,9 @@
 </sup>
 </p>
 
+# INFORMATION
+Before you start using NodeSystem, keep in mind, that this is a work in progress! 
+
 # How to use
 Creating a new Node-Graph is really easy!
 You only have to create a new GNodeSystem and get its GNodeGraph. Then you can add it wherever you want.
