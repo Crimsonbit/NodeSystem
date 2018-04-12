@@ -25,6 +25,11 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 
+/**
+ * 
+ * @author NeonArtworks
+ *
+ */
 public class GNode extends Pane implements IGNode {
 
 	private GNodeGraph nodeGraph;

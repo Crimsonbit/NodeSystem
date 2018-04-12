@@ -10,13 +10,13 @@ import javafx.scene.layout.Pane;
 @SuppressWarnings({ "restriction", "unused" })
 public class GNodeSystem {
 
-	private GNodeGraph nodeView;
+	private GNodeView nodeView;
 
 	public GNodeSystem() {
-		this.nodeView = new GNodeGraph();
+		this.nodeView = new GNodeView();
 	}
 
-	public GNodeGraph getGUI() {
+	public GNodeView getGUI() {
 		return this.nodeView;
 	}
 

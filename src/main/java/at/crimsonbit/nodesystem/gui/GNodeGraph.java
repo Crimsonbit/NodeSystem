@@ -11,6 +11,7 @@ import at.crimsonbit.nodesystem.gui.layer.GLineLayer;
 import at.crimsonbit.nodesystem.gui.layer.GNodeLayer;
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.gui.node.IGConsumable;
+import at.crimsonbit.nodesystem.gui.settings.GSettingsPane;
 import at.crimsonbit.nodesystem.node.types.BaseType;
 import at.crimsonbit.nodesystem.node.types.CalculateType;
 import at.crimsonbit.nodesystem.node.types.ImageType;
@@ -74,8 +75,6 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 		this.selection.setArcWidth(21.0);
 		this.selection.setArcHeight(21.0);
 		this.selection.setStrokeWidth(1);
-
-		this.settingsPane = new GSettingsPane();
 		this.nodeMaster = new GNodeMaster(this);
 		this.canvas = new Group();
 		this.nodeLayer = new GNodeLayer();
@@ -421,5 +420,14 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 
 	public HashMap<INodeType, Color> getColorLookup() {
 		return colorLookup;
+	}
+
+	public void setSettingsPane(GSettingsPane settingsPane2) {
+		this.settingsPane = settingsPane2;
+
+	}
+
+	public GSettingsPane getSettingsPane() {
+		return this.settingsPane;
 	}
 }

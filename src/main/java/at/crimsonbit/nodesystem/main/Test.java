@@ -2,8 +2,8 @@ package at.crimsonbit.nodesystem.main;
 
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.GNodeSystem;
+import at.crimsonbit.nodesystem.gui.GNodeView;
 import at.crimsonbit.nodesystem.gui.node.GNode;
-import at.crimsonbit.nodesystem.gui.node.GNodeConnection;
 import at.crimsonbit.nodesystem.node.types.BaseType;
 import at.crimsonbit.nodesystem.node.types.MathType;
 import javafx.application.Application;
@@ -19,7 +19,9 @@ public class Test extends Application {
 
 		GNodeSystem nodeSystem = new GNodeSystem();
 		// nodeSystem.getNodeGraph().getGuiMaster().getNodeMaster().registerNodes("at.crimsonbit.nodesystem.node.nodes");
-		GNodeGraph graph = nodeSystem.getGUI();
+		GNodeView view = nodeSystem.getGUI();
+		GNodeGraph graph = view.getNodeGraph();
+		
 		GNode constNode1 = new GNode("Constant Node", BaseType.CONSTANT, true, graph);
 		GNode constNode2 = new GNode("Constant Node 2", BaseType.CONSTANT, true, graph);
 		GNode additionNode1 = new GNode("Addition Node", MathType.ADD, true, graph);
@@ -47,7 +49,7 @@ public class Test extends Application {
 		graph.getGuiMaster().addConnection(additionNode2.getOutputPorts().get(0), outputNode.getInputPortById(0));
 		graph.update();
 		
-		Scene scene = new Scene(graph, 1024, 768);
+		Scene scene = new Scene(view, 1024, 768);
 		scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		primaryStage.setScene(scene);
 		primaryStage.show();

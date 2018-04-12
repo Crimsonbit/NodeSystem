@@ -128,6 +128,14 @@ public class NodeMaster {
 		return getAllFieldNames(node.getClass());
 	}
 
+	public Collection<Field> getAllFields(Class<? extends AbstractNode> clazz) {
+		return fieldKeyMap.get(clazz).values();
+	}
+
+	public Collection<Field> getAllFields(AbstractNode node) {
+		return getAllFields(node.getClass());
+	}
+
 	public AbstractNode createNode(INodeType type) {
 		Class<? extends AbstractNode> clazz = registeredNodes.get(type);
 		if (clazz == null) {
