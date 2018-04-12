@@ -136,6 +136,87 @@ public class NodeMaster {
 		return getAllFields(node.getClass());
 	}
 
+	/**
+	 * Returns the type of the field with name field in the Node class of node
+	 * 
+	 * @param node
+	 *            An instance of any NodeClass
+	 * @param field
+	 *            The name of the field within the Node class, has to be annotated
+	 *            with {@link NodeField}
+	 * @return
+	 * @throws NoSuchNodeException
+	 *             If the Class of node is no known NodeType or the Class of node
+	 *             has no field with name field
+	 */
+	public Class<?> getFieldType(AbstractNode node, String field) throws NoSuchNodeException {
+		Map<String, Field> fieldMap = fieldKeyMap.get(node.getClass());
+		if (fieldMap == null) {
+			throw new NoSuchNodeException(
+					"No node with class " + node.getClass().getCanonicalName() + " is registered");
+		}
+		Field f = fieldMap.get(field);
+		if (f == null) {
+			throw new NoSuchNodeException(
+					"No NodeField with name " + field + " in Node Class " + node.getClass().getCanonicalName());
+		}
+		return f.getType();
+	}
+
+	/**
+	 * Returns the type of the input with name field in the Node class of node
+	 * 
+	 * @param node
+	 *            An instance of any NodeClass
+	 * @param field
+	 *            The name of the field within the Node class, has to be annotated
+	 *            with {@link NodeInput}
+	 * @return
+	 * @throws NoSuchNodeException
+	 *             If the Class of node is no known NodeType or the Class of node
+	 *             has no input with name field
+	 */
+	public Class<?> getInputType(AbstractNode node, String field) throws NoSuchNodeException {
+		Map<String, Field> fieldMap = inputKeyMap.get(node.getClass());
+		if (fieldMap == null) {
+			throw new NoSuchNodeException(
+					"No node with class " + node.getClass().getCanonicalName() + " is registered");
+		}
+		Field f = fieldMap.get(field);
+		if (f == null) {
+			throw new NoSuchNodeException(
+					"No NodeField with name " + field + " in Node Class " + node.getClass().getCanonicalName());
+		}
+		return f.getType();
+	}
+
+	/**
+	 * Returns the type of the output with name field in the Node class of node
+	 * 
+	 * @param node
+	 *            An instance of any NodeClass
+	 * @param field
+	 *            The name of the field within the Node class, has to be annotated
+	 *            with {@link NodeOutput}
+	 * @return
+	 * @throws NoSuchNodeException
+	 *             If the Class of node is no known NodeType or the Class of node
+	 *             has no output with name field
+	 */
+	public Class<?> getOutputType(AbstractNode node, String field) throws NoSuchNodeException {
+		Map<String, Field> fieldMap = outputKeyMap.get(node.getClass());
+		if (fieldMap == null) {
+			throw new NoSuchNodeException(
+					"No node with class " + node.getClass().getCanonicalName() + " is registered");
+		}
+		Field f = fieldMap.get(field);
+		if (f == null) {
+			throw new NoSuchNodeException(
+					"No NodeField with name " + field + " in Node Class " + node.getClass().getCanonicalName());
+		}
+		return f.getType();
+	}
+
 	public AbstractNode createNode(INodeType type) {
 		Class<? extends AbstractNode> clazz = registeredNodes.get(type);
 		if (clazz == null) {
