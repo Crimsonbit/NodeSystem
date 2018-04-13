@@ -10,7 +10,7 @@ import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 public enum Calculate implements INodeType {
 
 	ABSOLUTE("Abs. Node"), CLAMP("Clamp Node"), NEGATE("Negate Node"), RANGEMAP("Range-Map node"), BOOL(
-			"Bool Node"), EQUAL("Equal Node"), IF("If-Condition Node");
+			"Bool Node"), EQUAL("Equal Node"), IF("If-Condition Node"), IF_ELSE("If-Else-Condition Node");
 	private String name;
 
 	private Calculate(String s) {

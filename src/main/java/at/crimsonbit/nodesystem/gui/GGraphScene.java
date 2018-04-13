@@ -74,6 +74,7 @@ public class GGraphScene extends AnchorPane {
 		});
 
 		setOnMouseClicked(new EventHandler<MouseEvent>() {
+
 			@Override
 			public void handle(MouseEvent event) {
 				if (graph.getActive() != null) {
@@ -83,8 +84,9 @@ public class GGraphScene extends AnchorPane {
 				}
 			}
 		});
+
 	}
-	
+
 	private void init() {
 		setBackground(new Background(
 				new BackgroundFill(graph.getGeneralColorLookup().get("background"), CornerRadii.EMPTY, Insets.EMPTY)));

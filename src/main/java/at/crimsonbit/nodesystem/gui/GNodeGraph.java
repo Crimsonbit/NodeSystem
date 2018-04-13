@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Set;
 
 import at.crimsonbit.nodesystem.gui.dialog.GEntry;
-import at.crimsonbit.nodesystem.gui.dialog.GMenuBar;
 import at.crimsonbit.nodesystem.gui.dialog.GPopUp;
 import at.crimsonbit.nodesystem.gui.dialog.GSubMenu;
 import at.crimsonbit.nodesystem.gui.layer.GLineLayer;
@@ -15,6 +14,7 @@ import at.crimsonbit.nodesystem.gui.node.IGConsumable;
 import at.crimsonbit.nodesystem.gui.settings.GSettingsPane;
 import at.crimsonbit.nodesystem.node.types.Base;
 import at.crimsonbit.nodesystem.node.types.Calculate;
+import at.crimsonbit.nodesystem.node.types.Constant;
 import at.crimsonbit.nodesystem.node.types.Image;
 import at.crimsonbit.nodesystem.node.types.ImageFilter;
 import at.crimsonbit.nodesystem.node.types.Math;
@@ -34,6 +34,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 /**
  * 
@@ -67,7 +68,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private Text nodeInfo = new Text();
 	private GState state = GState.DEFAULT;
 	private GSubMenu nodeMenu = new GSubMenu(0, "Add Node");
-	private GMenuBar menuBar = new GMenuBar();
+	private GSubMenu fileMenu = new GSubMenu(1, "File");
 
 	public GNodeGraph() {
 		setDefualtColorLookup();
@@ -89,20 +90,18 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		this.getChildren().add(canvas);
 		this.handler = new GNodeMouseHandler(this);
 		// this.getChildren().add(this.settingsPane);
-		
+
 		graphDialog = new GPopUp();
 		graphDialog.addItem(-1, "Node Editor", true);
 		graphDialog.addSeparator(-2);
-
-		// addNodeMenus();
-
 		graphDialog.addItem(nodeMenu);
+		graphDialog.addItem(fileMenu);
 
 		this.setPopUpDialog(graphDialog);
 		// addSelectGroupSupport();
 
 		addSetting("curve_width", 4d);
-		getChildren().add(menuBar);
+
 		// addInfo();
 
 	}
@@ -238,7 +237,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	}
 
 	public void loadMenus() {
-		menuBar.addMenu(nodeMenu);
+
 		Set<INodeType> map = getGuiMaster().getNodeMaster().getAllNodeClasses();
 
 		Map<String, GSubMenu> cache = new HashMap<>();
@@ -262,19 +261,35 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		}
 		for (GSubMenu menu : cache.values()) {
 			nodeMenu.addMenu(menu);
+
 			// menuBar.addMenu(menu);
 		}
-		/*
-		 * for (String s : map.keySet()) { GSubMenu baseNodeMenu = new
-		 * GSubMenu(subMenuCount++, s); baseNodeMenu.addItem(-1, s, true); for
-		 * (INodeType t : map.values()) { GEntry ent = new GEntry(idCount++, "hi",
-		 * false); baseNodeMenu.addItem(ent); int id = Integer.valueOf(ent.getId());
-		 * ent.setOnAction(event -> { consumeMessage(id, (GEntry) ent); event.consume();
-		 * 
-		 * }); }
-		 */
-		// nodeMenu.addMenu(baseNodeMenu);
-		// }
+
+		GEntry saveGraph = new GEntry(1000, "Save Graph", false);
+		GEntry loadGraph = new GEntry(1001, "Load Graph", false);
+		GEntry closeGraph = new GEntry(1002, "Close Graph", false);
+		int id = Integer.valueOf(saveGraph.getId());
+		saveGraph.setOnAction(event -> {
+			consumeMessage(id, (GEntry) saveGraph);
+			event.consume();
+
+		});
+		int idd = Integer.valueOf(loadGraph.getId());
+		loadGraph.setOnAction(event -> {
+			consumeMessage(idd, (GEntry) loadGraph);
+			event.consume();
+
+		});
+		int iddd = Integer.valueOf(closeGraph.getId());
+		closeGraph.setOnAction(event -> {
+			consumeMessage(iddd, (GEntry) closeGraph);
+			event.consume();
+
+		});
+		fileMenu.addItem(saveGraph);
+		fileMenu.addItem(loadGraph);
+		fileMenu.addSeparator(1003);
+		fileMenu.addItem(closeGraph);
 
 	}
 
@@ -321,10 +336,22 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	public void consumeMessage(int id, GEntry source) {
 		// for(int i = 0; i<idCount;i++) {
 		// if(i == id) {
-		Set<INodeType> map = getGuiMaster().getNodeMaster().getAllNodeClasses();
-		for (INodeType type : map) {
-			if (source.getName() == type.toString())
-				getGuiMaster().addNode(source.getName(), type, true, this, getCurX(), getCurY());
+		if (id < 1000) {
+			Set<INodeType> map = getGuiMaster().getNodeMaster().getAllNodeClasses();
+			for (INodeType type : map) {
+				if (source.getName() == type.toString())
+					getGuiMaster().addNode(source.getName(), type, true, this, getCurX(), getCurY());
+			}
+		}
+		if (id == 1001) {
+			System.out.println("loading!");
+		}
+		if (id == 1000) {
+			System.out.println("saving!");
+		}
+		if (id == 1002) {
+			Stage stage = (Stage) getScene().getWindow();
+			stage.close();
 		}
 
 		// }
@@ -406,19 +433,22 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 	private void setDefualtColorLookup() {
 		getColorLookup().put(Base.OUTPUT, Color.LIGHTBLUE);
-		getColorLookup().put(Base.CONSTANT, Color.RED);
 		getColorLookup().put(Base.PATH, Color.DARKSEAGREEN);
+
+		for (INodeType t : Constant.values())
+			getColorLookup().put(t, Color.INDIANRED);
+		
 		for (INodeType t : Math.values())
 			getColorLookup().put(t, Color.ORANGE);
-		for (INodeType t : Calculate.values()) {
+
+		for (INodeType t : Calculate.values())
 			getColorLookup().put(t, Color.DARKORANGE);
-		}
+
 		for (INodeType t : Image.values())
 			getColorLookup().put(t, Color.BROWN);
 
-		for (INodeType t : ImageFilter.values()) {
+		for (INodeType t : ImageFilter.values())
 			getColorLookup().put(t, Color.SADDLEBROWN);
-		}
 
 		getGeneralColorLookup().put("active", new Color(0.992, 0.647, 0.305, 1));
 		getGeneralColorLookup().put("input", Color.LIGHTBLUE);

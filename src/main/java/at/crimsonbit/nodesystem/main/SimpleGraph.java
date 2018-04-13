@@ -22,6 +22,8 @@ public class SimpleGraph extends Application {
 		graph.registerNodes("at.crimsonbit.nodesystem.node.math");
 		graph.registerNodes("at.crimsonbit.nodesystem.node.calculate");
 		graph.registerNodes("at.crimsonbit.nodesystem.node.image_filter");
+		graph.registerNodes("at.crimsonbit.nodesystem.node.constant");
+		
 		graph.loadMenus();
 		// graph.addInfo();
 		Scene scene = new Scene(view, 1024, 768);
