@@ -18,7 +18,7 @@ public class CreateGraphFromCode extends Application {
 		primaryStage.setTitle("Node Editor");
 
 		GNodeSystem nodeSystem = new GNodeSystem(false);
-		// nodeSystem.getNodeGraph().getGuiMaster().getNodeMaster().registerNodes("at.crimsonbit.nodesystem.node.nodes");
+		// nodeSystem.getNodeGraph().getGuiMaster().getNodeMaster().registerNodes("at.crimson bit.nodesystem.node.nodes");
 		GNodeView view = nodeSystem.getGUI();
 		GNodeGraph graph = view.getNodeGraph();
 
