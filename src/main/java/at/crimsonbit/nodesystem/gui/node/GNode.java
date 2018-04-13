@@ -15,6 +15,7 @@ import at.crimsonbit.nodesystem.util.RangeMapper;
 import javafx.scene.Node;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.Tooltip;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.effect.DropShadow;
@@ -69,6 +70,7 @@ public class GNode extends Pane implements IGNode {
 	private Rectangle top;
 	private Text text;
 	private DropShadow e;
+	private final Tooltip tooltip = new Tooltip();
 
 	public GNode(String name, boolean draw) {
 		this.doDraw = draw;
@@ -76,7 +78,6 @@ public class GNode extends Pane implements IGNode {
 		defaultTopColor();
 		defaultBackColor();
 		defaultPopUpDialog();
-		// addKeyHandler();
 		draw();
 	}
 
@@ -90,7 +91,22 @@ public class GNode extends Pane implements IGNode {
 		defaultBackColor();
 		defaultPopUpDialog();
 		addAllNodes();
-		// addKeyHandler();
+		addToolTip();
+		draw();
+	}
+
+	public GNode(String name, INodeType type, boolean draw, GNodeGraph graph, double x, double y) {
+		this.nodeGraph = graph;
+		this.doDraw = draw;
+		this.name = name;
+		this.type = type;
+		this.calcNode = this.nodeGraph.getGuiMaster().getNodeMaster().createNode(type);
+		defaultTopColor();
+		defaultBackColor();
+		defaultPopUpDialog();
+		addAllNodes();
+		relocate(x, y);
+		addToolTip();
 		draw();
 	}
 
@@ -105,10 +121,15 @@ public class GNode extends Pane implements IGNode {
 		defaultPopUpDialog();
 
 		addAllNodes();
-		// addKeyHandler();
+		addToolTip();
 		draw();
 	}
 
+	private void addToolTip() {
+		tooltip.setText("Name: " + this.name + "\n" + "type: " + this.type.toString() + "\n");
+		Tooltip.install(this, tooltip);
+	}
+	
 	private void addAllNodes() {
 
 		getInputPorts().clear();

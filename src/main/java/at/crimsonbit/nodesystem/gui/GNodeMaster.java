@@ -241,6 +241,8 @@ public class GNodeMaster {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		node1.getNode().redraw();
+		node2.getNode().redraw();
 		addedConnections.add(con);
 		return true;
 	}

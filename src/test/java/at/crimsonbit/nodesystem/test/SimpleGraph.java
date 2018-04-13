@@ -1,4 +1,4 @@
-package at.crimsonbit.nodesystem.main;
+package at.crimsonbit.nodesystem.test;
 
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.GNodeSystem;

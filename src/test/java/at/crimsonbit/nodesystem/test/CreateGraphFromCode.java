@@ -1,16 +1,17 @@
-package at.crimsonbit.nodesystem.main;
+package at.crimsonbit.nodesystem.test;
 
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.GNodeSystem;
 import at.crimsonbit.nodesystem.gui.GNodeView;
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.node.types.Base;
+import at.crimsonbit.nodesystem.node.types.Constant;
 import at.crimsonbit.nodesystem.node.types.Math;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class Test extends Application {
+public class CreateGraphFromCode extends Application {
 
 	@Override
 	public void start(Stage primaryStage) {
@@ -20,20 +21,22 @@ public class Test extends Application {
 		// nodeSystem.getNodeGraph().getGuiMaster().getNodeMaster().registerNodes("at.crimsonbit.nodesystem.node.nodes");
 		GNodeView view = nodeSystem.getGUI();
 		GNodeGraph graph = view.getNodeGraph();
-		
+
 		graph.registerNodes("at.crimsonbit.nodesystem.node.base");
 		graph.registerNodes("at.crimsonbit.nodesystem.node.image");
 		graph.registerNodes("at.crimsonbit.nodesystem.node.math");
 		graph.registerNodes("at.crimsonbit.nodesystem.node.calculate");
 		graph.registerNodes("at.crimsonbit.nodesystem.node.image_filter");
+		graph.registerNodes("at.crimsonbit.nodesystem.node.constant");
+
 		graph.loadMenus();
-		
-		GNode constNode1 = new GNode("Constant Node", Base.CONSTANT, true, graph);
-		GNode constNode2 = new GNode("Constant Node 2", Base.CONSTANT, true, graph);
-		GNode additionNode1 = new GNode("Addition Node", Math.ADD, true, graph);
-		GNode additionNode2 = new GNode("Addition Node", Math.ADD, true, graph);
-		GNode multiplyNode1 = new GNode("Multiply Node 1", Math.MULTIPLY, true, graph);
-		GNode outputNode = new GNode("Output", Base.OUTPUT, true, graph);
+
+		GNode constNode1 = new GNode("Constant Node", Constant.DOUBLE, true, graph, 70, 250);
+		GNode constNode2 = new GNode("Constant Node 2", Constant.INTEGER, true, graph, 70, 350);
+		GNode additionNode1 = new GNode("Addition Node", Math.ADD, true, graph, 300, 200);
+		GNode additionNode2 = new GNode("Addition Node", Math.ADD, true, graph, 500, 300);
+		GNode multiplyNode1 = new GNode("Multiply Node 1", Math.MULTIPLY, true, graph, 300, 400);
+		GNode outputNode = new GNode("Output", Base.OUTPUT, true, graph, 700, 300);
 
 		constNode1.getNode().set("constant", 10);
 		constNode2.getNode().set("constant", 2);
