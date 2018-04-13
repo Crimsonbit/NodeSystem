@@ -316,7 +316,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		// if(i == id) {
 		Set<INodeType> map = getGuiMaster().getNodeMaster().getAllNodeClasses();
 		for (INodeType type : map) {
-			if (source.getName().toUpperCase() == type.toString())
+			if (source.getName() == type.toString())
 				getGuiMaster().addNode(source.getName(), type, true, this, getCurX(), getCurY());
 		}
 

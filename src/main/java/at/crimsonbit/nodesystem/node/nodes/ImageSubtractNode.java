@@ -28,7 +28,7 @@ public class ImageSubtractNode extends AbstractNode implements INodeType {
 
 	}
 
-	public void computeAdd() {
+	public void computeSubtract() {
 		if (image_1 != null && image_2 != null)
 			output = ImageUtils.subtract(image_1, image_2);
 	}

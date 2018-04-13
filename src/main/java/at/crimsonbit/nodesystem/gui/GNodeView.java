@@ -1,6 +1,7 @@
 package at.crimsonbit.nodesystem.gui;
 
 import at.crimsonbit.nodesystem.gui.settings.GSettingsPane;
+import at.crimsonbit.nodesystem.util.NameSpace;
 import javafx.scene.layout.AnchorPane;
 
 /**
@@ -16,6 +17,7 @@ public class GNodeView extends AnchorPane {
 	private GNodeGraph nodeGraph;
 	private GSettingsPane settingsPane;
 	private boolean addSettingsPane = true;
+	private NameSpace dummy;
 
 	public GNodeView(boolean addSettingsPane) {
 		this.addSettingsPane = addSettingsPane;
@@ -29,6 +31,8 @@ public class GNodeView extends AnchorPane {
 		}
 		// getChildren().add(nodeGraph.getNodeInfo());
 		setupScene();
+
+		dummy = NameSpace.getInstane();
 	}
 
 	/**

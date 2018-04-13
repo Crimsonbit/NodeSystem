@@ -65,7 +65,7 @@ public class GGraphScene extends Pane {
 				curY = event.getSceneY();
 			}
 		});
-		
+
 		/*
 		 * setOnMouseDragged(new EventHandler<MouseEvent>() {
 		 * 
@@ -197,10 +197,10 @@ public class GGraphScene extends Pane {
 
 		needsLayout = true;
 		layoutChildren();
-
-		scaleTransform.setX(scaleValue);
 		scaleTransform.setPivotX(localMouseX);
 		scaleTransform.setPivotY(localMouseY);
+		scaleTransform.setX(scaleValue);
+
 		scaleTransform.setY(scaleValue);
 
 	}
@@ -230,13 +230,6 @@ public class GGraphScene extends Pane {
 				if (scaleValue < 1.0) {
 					scaleValue = 1.0;
 
-					// resize(getWidth(), getHeight());
-					// relocate(getBoundsInLocal().getMinX(), getHeight() -
-					// getBoundsInLocal().getMinY());
-					// setWidth(getScene().getWidth());
-					// setHeight(getScene().getHeight());
-
-					// lineSpacing = 25;
 				}
 				zoomTo(scaleValue);
 

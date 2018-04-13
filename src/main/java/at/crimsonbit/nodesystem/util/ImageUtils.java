@@ -330,7 +330,7 @@ public class ImageUtils {
 		int[][] heightmap = retrivePixels(img, size, sizey);
 		for (int y = 0; y < size; y++) {
 			for (int x = 0; x < size; x++) {
-				heightmap[x][y] = (heightmap[x][y] - -1) / (1 - -1);
+				heightmap[x][y] = (heightmap[x][y] - 1) / (1 - -1);
 			}
 		}
 		for (int y = 0; y < size; y++)

@@ -4,8 +4,22 @@ import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 
 public enum ImageFilter implements INodeType {
 
-	IMAGE_ADD, IMAGE_SUBTRACT, IMAGE_MULTIPLY, 
-	IMAGE_NEGATE, IMAGE_DIVIDE, IMAGE_SOBEL, IMAGE_SMOOTHEN, 
-	IMAGE_NORMALIZE, IMAGE_BLUR, IMAGE_GRAYSCALE
+	IMAGE_ADD("Add-Filter Node"), IMAGE_SUBTRACT("Subtract-Filer Node"), IMAGE_MULTIPLY(
+			"Multiply-Filter Node"), IMAGE_NEGATE("Negate-Filter Node"), IMAGE_DIVIDE(
+					"Divide-Filter Node"), IMAGE_SOBEL("Sobel-Filter Node"), IMAGE_SMOOTHEN(
+							"Smoothen-Filter Node"), IMAGE_NORMALIZE("Normalize-Filter Node"), IMAGE_BLUR(
+									"Blur-Filter Node"), IMAGE_GRAYSCALE("Grayscale-Filter Node");
+
+	private String name;
+
+	private ImageFilter(String s) {
+
+		this.name = s;
+	}
+
+	@Override
+	public String toString() {
+		return this.name;
+	}
 
 }

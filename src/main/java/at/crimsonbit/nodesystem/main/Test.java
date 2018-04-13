@@ -4,8 +4,8 @@ import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.GNodeSystem;
 import at.crimsonbit.nodesystem.gui.GNodeView;
 import at.crimsonbit.nodesystem.gui.node.GNode;
-import at.crimsonbit.nodesystem.node.types.BaseType;
-import at.crimsonbit.nodesystem.node.types.MathType;
+import at.crimsonbit.nodesystem.node.types.Base;
+import at.crimsonbit.nodesystem.node.types.Math;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -22,12 +22,12 @@ public class Test extends Application {
 		GNodeView view = nodeSystem.getGUI();
 		GNodeGraph graph = view.getNodeGraph();
 		
-		GNode constNode1 = new GNode("Constant Node", BaseType.CONSTANT, true, graph);
-		GNode constNode2 = new GNode("Constant Node 2", BaseType.CONSTANT, true, graph);
-		GNode additionNode1 = new GNode("Addition Node", MathType.ADD, true, graph);
-		GNode additionNode2 = new GNode("Addition Node", MathType.ADD, true, graph);
-		GNode multiplyNode1 = new GNode("Multiply Node 1", MathType.MULTIPLY, true, graph);
-		GNode outputNode = new GNode("Output", BaseType.OUTPUT, true, graph);
+		GNode constNode1 = new GNode("Constant Node", Base.CONSTANT, true, graph);
+		GNode constNode2 = new GNode("Constant Node 2", Base.CONSTANT, true, graph);
+		GNode additionNode1 = new GNode("Addition Node", Math.ADD, true, graph);
+		GNode additionNode2 = new GNode("Addition Node", Math.ADD, true, graph);
+		GNode multiplyNode1 = new GNode("Multiply Node 1", Math.MULTIPLY, true, graph);
+		GNode outputNode = new GNode("Output", Base.OUTPUT, true, graph);
 
 		constNode1.getNode().set("constant", 10);
 		constNode2.getNode().set("constant", 2);

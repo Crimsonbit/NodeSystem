@@ -9,6 +9,17 @@ import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
  */
 public enum Calculate implements INodeType {
 
-	ABSOLUTE, CLAMP, NEGATE, RANGEMAP, BOOL, EQUAL
-
+	ABSOLUTE("Abs. Node"), CLAMP("Clamp Node"), NEGATE("Negate Node"), RANGEMAP("Range-Map node"), 
+	BOOL("Bool Node"), EQUAL("Equal Node");
+	private String name;
+	
+	private Calculate(String s) {
+		
+		this.name = s;
+	}
+	
+	@Override
+	public String toString() {
+		return this.name;
+	}
 }

@@ -56,8 +56,8 @@ public class GNode extends Pane implements IGNode {
 	private int outPortcount = 0;
 	private final int PORT_INPUT_START_X = 5;
 	private final int PORT_INPUT_START_Y = 35;
-	private final int PORT_OUTPUT_START_X = 140;
-	private final int PORT_OUTPUT_START_Y = 35;
+	private int PORT_OUTPUT_START_X = 140;
+	private int PORT_OUTPUT_START_Y = 35;
 	private final int PORT_OFFSET = 40;
 	private double height = 52;
 	private final FileChooser fileChooser = new FileChooser();
@@ -89,7 +89,9 @@ public class GNode extends Pane implements IGNode {
 		defaultTopColor();
 		defaultBackColor();
 		defaultPopUpDialog();
-
+		
+		
+		
 		for (String n : calcNode.getNodeMaster().getAllInputNames(calcNode)) {
 			addInputPort(inPortCount, n, PORT_INPUT_START_X, PORT_INPUT_START_Y + (inPortCount * PORT_OFFSET));
 			inPortCount++;
@@ -111,7 +113,9 @@ public class GNode extends Pane implements IGNode {
 		defaultTopColor();
 		defaultBackColor();
 		defaultPopUpDialog();
-
+		
+		
+		
 		for (String n : calcNode.getNodeMaster().getAllInputNames(calcNode)) {
 			addInputPort(inPortCount, n, PORT_INPUT_START_X, PORT_INPUT_START_Y + (inPortCount * PORT_OFFSET));
 			inPortCount++;
@@ -272,8 +276,13 @@ public class GNode extends Pane implements IGNode {
 			if (inPortCount < outPortcount) {
 				h = height * outPortcount;
 			}
+			double width = 150;
+			text = new Text(name);
+			text.setFill(Color.WHITE);
+			text.setTranslateY(12.5);
 
-			outline = new Rectangle(150, h - 5);
+			///width = text.getBoundsInLocal().getWidth();
+			outline = new Rectangle(width, h - 5);
 			outline.setTranslateY(5);
 			outline.setFill(Color.TRANSPARENT);
 			outline.setStroke(Color.LIGHTSKYBLUE);
@@ -281,14 +290,14 @@ public class GNode extends Pane implements IGNode {
 			outline.setArcHeight(21.0);
 			outline.setStrokeWidth(1);
 
-			base = new Rectangle(150, h);
+			base = new Rectangle(width, h);
 			base.setStroke(backColor);
 			base.setFill(backColor);
 			base.setAccessibleText("node_base");
 			base.setArcWidth(20.0);
 			base.setArcHeight(20.0);
 
-			top = new Rectangle(150, 50 / 3);
+			top = new Rectangle(width, 50 / 3);
 
 			top.setStroke(topColor);
 			top.setFill(topColor);
@@ -298,10 +307,7 @@ public class GNode extends Pane implements IGNode {
 			top.setStroke(nodeGraph.getColorLookup().get(type));
 			top.setFill(nodeGraph.getColorLookup().get(type));
 
-			text = new Text(name);
-			text.setFill(Color.WHITE);
-			text.setTranslateY(12.5);
-			text.setTranslateX(35);
+			// text.setTranslateX(35);
 
 			e = new DropShadow();
 			e.setBlurType(BlurType.GAUSSIAN);
