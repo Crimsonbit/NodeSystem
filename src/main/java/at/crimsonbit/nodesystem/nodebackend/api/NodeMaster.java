@@ -2,6 +2,7 @@ package at.crimsonbit.nodesystem.nodebackend.api;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,6 +48,10 @@ public class NodeMaster {
 						if (!f.isAccessible()) {
 							f.setAccessible(true);
 						}
+						if((f.getModifiers() & Modifier.STATIC) == 0) {
+							throw new IllegalArgumentException("Field annotated with @NodeType in class " + clazz.getCanonicalName()
+									+ " is not static, but must be");
+						}
 						registeredNodes.put((INodeType) f.get(null), clazz);
 					}
 				}
@@ -59,7 +64,7 @@ public class NodeMaster {
 						+ " is not static, but must be", e);
 			} catch (IllegalAccessException e) {
 				throw new RuntimeException("Field annotated with @NodeType is not accessible", e);
-			}
+			} 
 		}
 	}
 

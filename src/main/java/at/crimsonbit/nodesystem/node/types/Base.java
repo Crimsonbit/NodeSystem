@@ -8,5 +8,7 @@ import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
  *
  */
 public enum Base implements INodeType {
-	CONSTANT, OUTPUT, PATH
+
+	CONSTANT, OUTPUT, PATH;
+
 }

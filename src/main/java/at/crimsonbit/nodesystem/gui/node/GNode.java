@@ -1,5 +1,6 @@
 package at.crimsonbit.nodesystem.gui.node;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,6 +25,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 
 /**
  * 
@@ -58,6 +60,7 @@ public class GNode extends Pane implements IGNode {
 	private final int PORT_OUTPUT_START_Y = 35;
 	private final int PORT_OFFSET = 40;
 	private double height = 52;
+	private final FileChooser fileChooser = new FileChooser();
 
 	private AbstractNode calcNode;
 
@@ -167,8 +170,10 @@ public class GNode extends Pane implements IGNode {
 			pop.addItem(4, "Get Output");
 		}
 
-		if (this.type == Base.CONSTANT) {
+		else if (this.type == Base.CONSTANT) {
 			pop.addItem(5, "Set Constant");
+		} else if (this.type == Base.PATH) {
+			pop.addItem(7, "Set Path");
 		}
 		// pop.addItem(1, "set Active");
 
@@ -426,7 +431,27 @@ public class GNode extends Pane implements IGNode {
 			node.relocate(getBoundsInParent().getMinX(), getBoundsInParent().getMinY());
 			nodeGraph.getGuiMaster().addNode(node);
 			nodeGraph.update();
+		} else if (id == 7) {
+			if (getNodeType() == Base.PATH) {
+				setPath();
+			}
 		}
+	}
+
+	public String getPath() {
+		if (getNodeType().equals(Base.PATH)) {
+			return (String) this.calcNode.get("path");
+		}
+
+		return null;
+	}
+
+	public void setPath() {
+		if (getNodeType().equals(Base.PATH)) {
+			File f = fileChooser.showOpenDialog(getParent().getScene().getWindow());
+			this.calcNode.set("path", f.getPath());
+		}
+		System.out.println(getPath());
 	}
 
 	public Object getOutput() {

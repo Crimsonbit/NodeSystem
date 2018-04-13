@@ -14,7 +14,7 @@ public class PathNode extends AbstractNode implements INodeType {
 
 	@NodeField
 	@NodeOutput("compute")
-	Object constant;
+	Object path;
 
 	public void compute() {
 	}

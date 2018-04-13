@@ -17,7 +17,7 @@ public class Test extends Application {
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("Node Editor");
 
-		GNodeSystem nodeSystem = new GNodeSystem();
+		GNodeSystem nodeSystem = new GNodeSystem(false);
 		// nodeSystem.getNodeGraph().getGuiMaster().getNodeMaster().registerNodes("at.crimsonbit.nodesystem.node.nodes");
 		GNodeView view = nodeSystem.getGUI();
 		GNodeGraph graph = view.getNodeGraph();

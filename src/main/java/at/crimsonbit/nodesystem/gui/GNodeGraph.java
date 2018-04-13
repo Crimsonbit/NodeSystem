@@ -379,12 +379,14 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 		// merge added & removed cells with all cells
 		getGuiMaster().merge();
-		if (getActive() != null) {
-			if (getActive().getNodeType().equals(Base.OUTPUT) && getActive().getOutput() != null) {
-				nodeInfo.setText(SystemUsage.getRamInfo() + ", Current Output Value: " + getActive().getOutput());
-			}
-		} else
-			nodeInfo.setText(SystemUsage.getRamInfo());
+
+		/*
+		 * if (getActive() != null) { if (getActive().getNodeType().equals(Base.OUTPUT)
+		 * && getActive().getOutput() != null) {
+		 * nodeInfo.setText(SystemUsage.getRamInfo() + ", Current Output Value: " +
+		 * getActive().getOutput()); } } else
+		 */
+		nodeInfo.setText(SystemUsage.getRamInfo());
 
 	}
 
@@ -395,6 +397,8 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private void setDefualtColorLookup() {
 		getColorLookup().put(Base.OUTPUT, Color.LIGHTBLUE);
 		getColorLookup().put(Base.CONSTANT, Color.RED);
+		getColorLookup().put(Base.PATH, Color.DARKSEAGREEN);
+
 		for (INodeType t : Math.values())
 			getColorLookup().put(t, Color.ORANGE);
 		for (INodeType t : Calculate.values()) {
@@ -402,7 +406,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		}
 		for (INodeType t : Image.values())
 			getColorLookup().put(t, Color.BROWN);
-		
+
 		for (INodeType t : ImageFilter.values()) {
 			getColorLookup().put(t, Color.SADDLEBROWN);
 		}

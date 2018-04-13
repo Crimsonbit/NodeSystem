@@ -13,6 +13,7 @@ import at.crimsonbit.nodesystem.util.ImageUtils;
 public class ImageMultiplyNode extends AbstractNode implements INodeType {
 
 	@NodeType
+	private static final ImageFilter type = ImageFilter.IMAGE_MULTIPLY;
 
 	@NodeInput
 	BufferedImage image_1;

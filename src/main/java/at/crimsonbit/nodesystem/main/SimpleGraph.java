@@ -28,12 +28,15 @@ public class SimpleGraph extends Application {
 		primaryStage.setScene(scene);
 		primaryStage.show();
 		// view.addExternalDEBUGThreads();
+		
 		/*
-		 * Stage s2 = new Stage(); Scene scene2 = new Scene(settings, 1024, 768);
-		 * 
-		 * scene2.getStylesheets().add(getClass().getResource("application.css").
-		 * toExternalForm()); s2.setScene(scene2); s2.show();
-		 */
+		Stage s2 = new Stage();
+		Scene scene2 = new Scene(settings, 1024, 768);
+
+		scene2.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+		s2.setScene(scene2);
+		s2.show();
+		*/
 	}
 
 	public static void main(String[] args) {

@@ -326,7 +326,8 @@ public class ImageUtils {
 	public static BufferedImage Normalize(BufferedImage img) {
 		BufferedImage out = img;
 		int size = img.getWidth();
-		int[][] heightmap = retrivePixels(img, size, size);
+		int sizey = img.getHeight();
+		int[][] heightmap = retrivePixels(img, size, sizey);
 		for (int y = 0; y < size; y++) {
 			for (int x = 0; x < size; x++) {
 				heightmap[x][y] = (heightmap[x][y] - -1) / (1 - -1);

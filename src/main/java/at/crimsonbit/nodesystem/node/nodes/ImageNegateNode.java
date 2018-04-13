@@ -13,6 +13,7 @@ import at.crimsonbit.nodesystem.util.ImageUtils;
 public class ImageNegateNode extends AbstractNode implements INodeType {
 
 	@NodeType
+	private static final ImageFilter type = ImageFilter.IMAGE_NEGATE;
 
 	@NodeInput
 	BufferedImage image;
