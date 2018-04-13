@@ -110,6 +110,7 @@ public class GNode extends Pane implements IGNode {
 	}
 
 	private void addAllNodes() {
+
 		getInputPorts().clear();
 		getOutputPorts().clear();
 		for (String n : calcNode.getNodeMaster().getAllInputNames(calcNode)) {
@@ -274,19 +275,19 @@ public class GNode extends Pane implements IGNode {
 
 			double width = 150;
 			text = new Text(name);
-			text.setFill(Color.WHITE);
+			text.setFill(nodeGraph.getGeneralColorLookup().get("text"));
 			text.setTranslateY(12.5);
 			double tWidth = text.getBoundsInLocal().getWidth();
 			if (width < tWidth)
 				width = tWidth;
-			
+
 			PORT_OUTPUT_START_X = (int) width;
-			addAllNodes();
+			// addAllNodes();
 
 			outline = new Rectangle(width, h - 5);
 			outline.setTranslateY(5);
 			outline.setFill(Color.TRANSPARENT);
-			outline.setStroke(Color.LIGHTSKYBLUE);
+			outline.setStroke(nodeGraph.getGeneralColorLookup().get("active"));
 			outline.setArcWidth(21.0);
 			outline.setArcHeight(21.0);
 			outline.setStrokeWidth(1);
@@ -456,7 +457,8 @@ public class GNode extends Pane implements IGNode {
 	public void setPath() {
 		if (getNodeType().equals(Base.PATH)) {
 			File f = fileChooser.showOpenDialog(getParent().getScene().getWindow());
-			this.calcNode.set("path", f.getPath());
+			if (f != null)
+				this.calcNode.set("path", f.getPath());
 		}
 		System.out.println(getPath());
 	}

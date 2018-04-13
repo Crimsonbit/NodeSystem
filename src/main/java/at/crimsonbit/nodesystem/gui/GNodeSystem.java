@@ -1,13 +1,13 @@
 package at.crimsonbit.nodesystem.gui;
 
-import javafx.scene.layout.Pane;
-
 /**
+ * 
+ * The NodeSystem main class.
  * 
  * @author NeonArtworks
  *
  */
-@SuppressWarnings({ "restriction", "unused" })
+
 public class GNodeSystem {
 
 	private GNodeView nodeView;

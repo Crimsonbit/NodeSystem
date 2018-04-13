@@ -1,7 +1,5 @@
 package at.crimsonbit.nodesystem.gui.settings;
 
-import at.crimsonbit.nodesystem.gui.node.GNode;
-
 public class GSettingsEntry {
 
 	private String stringID;

@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import at.crimsonbit.nodesystem.gui.dialog.GEntry;
+import at.crimsonbit.nodesystem.gui.dialog.GMenuBar;
 import at.crimsonbit.nodesystem.gui.dialog.GPopUp;
 import at.crimsonbit.nodesystem.gui.dialog.GSubMenu;
 import at.crimsonbit.nodesystem.gui.layer.GLineLayer;
@@ -39,7 +40,7 @@ import javafx.scene.text.Text;
  * @author NeonArtworks
  *
  */
-@SuppressWarnings({ "restriction", "unused" })
+
 public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 	private GNodeMaster nodeMaster;
@@ -48,7 +49,6 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private GNodeMouseHandler handler;
 	private GPopUp popUpDialog;
 	private int subMenuCount = 0;
-	private int subsubMenuCount = 0;
 	private int idCount = 100;
 	private GPopUp graphDialog;
 	private GSettingsPane settingsPane;
@@ -66,13 +66,14 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private Rectangle selection;
 	private Text nodeInfo = new Text();
 	private GState state = GState.DEFAULT;
-
-	private final boolean DEBUG = true;
 	private GSubMenu nodeMenu = new GSubMenu(0, "Add Node");
+	private GMenuBar menuBar = new GMenuBar();
 
 	public GNodeGraph() {
+		setDefualtColorLookup();
+		setNodeGraph(this);
+
 		this.selection = new Rectangle();
-		// this.selection.setFill(Color.TRANSPARENT);
 		this.selection.setStroke(Color.LIGHTSKYBLUE);
 		this.selection.setArcWidth(21.0);
 		this.selection.setArcHeight(21.0);
@@ -88,9 +89,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		this.getChildren().add(canvas);
 		this.handler = new GNodeMouseHandler(this);
 		// this.getChildren().add(this.settingsPane);
-
-		setDefualtColorLookup();
-
+		
 		graphDialog = new GPopUp();
 		graphDialog.addItem(-1, "Node Editor", true);
 		graphDialog.addSeparator(-2);
@@ -103,7 +102,8 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		// addSelectGroupSupport();
 
 		addSetting("curve_width", 4d);
-		addInfo();
+		getChildren().add(menuBar);
+		// addInfo();
 
 	}
 
@@ -235,10 +235,10 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 	public void registerNodes(String path) {
 		getGuiMaster().registerNodes(path);
-		addNodeMenus();
 	}
 
-	public void addNodeMenus() {
+	public void loadMenus() {
+		menuBar.addMenu(nodeMenu);
 		Set<INodeType> map = getGuiMaster().getNodeMaster().getAllNodeClasses();
 
 		Map<String, GSubMenu> cache = new HashMap<>();
@@ -260,8 +260,10 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 			menu.addItem(ent);
 
 		}
-		for (GSubMenu menu : cache.values())
+		for (GSubMenu menu : cache.values()) {
 			nodeMenu.addMenu(menu);
+			// menuBar.addMenu(menu);
+		}
 		/*
 		 * for (String s : map.keySet()) { GSubMenu baseNodeMenu = new
 		 * GSubMenu(subMenuCount++, s); baseNodeMenu.addItem(-1, s, true); for
@@ -336,9 +338,12 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	}
 
 	public void setActive(Node n) {
-		activeCell = (GNode) n;
-		getSettingsPane().setNode((GNode) n);
-		getSettingsPane().redraw();
+		if (!(n == null))
+			activeCell = (GNode) n;
+		else
+			activeCell = null;
+		// getSettingsPane().setNode((GNode) n);
+		// getSettingsPane().redraw();
 	}
 
 	public GNode getActive() {
@@ -403,7 +408,6 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		getColorLookup().put(Base.OUTPUT, Color.LIGHTBLUE);
 		getColorLookup().put(Base.CONSTANT, Color.RED);
 		getColorLookup().put(Base.PATH, Color.DARKSEAGREEN);
-
 		for (INodeType t : Math.values())
 			getColorLookup().put(t, Color.ORANGE);
 		for (INodeType t : Calculate.values()) {
@@ -415,17 +419,21 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		for (INodeType t : ImageFilter.values()) {
 			getColorLookup().put(t, Color.SADDLEBROWN);
 		}
-		getNodeColorLookup().put("input", Color.LIGHTBLUE);
-		getNodeColorLookup().put("output", Color.LIGHTGREEN);
-		getNodeColorLookup().put("curve", Color.CRIMSON);
-		getNodeColorLookup().put("text", Color.WHITE);
+
+		getGeneralColorLookup().put("active", new Color(0.992, 0.647, 0.305, 1));
+		getGeneralColorLookup().put("input", Color.LIGHTBLUE);
+		getGeneralColorLookup().put("output", Color.LIGHTGREEN);
+		getGeneralColorLookup().put("curve", Color.CRIMSON);
+		getGeneralColorLookup().put("text", Color.WHITE);
+		getGeneralColorLookup().put("background", new Color(0.16, 0.16, 0.16, 1));
+		getGeneralColorLookup().put("line_color", new Color(0.992, 0.647, 0.305, 1));
 	}
 
 	public void addNodeColorLookup(String string, Color c) {
 		this.nodeLookup.put(string, c);
 	}
 
-	public HashMap<String, Color> getNodeColorLookup() {
+	public HashMap<String, Color> getGeneralColorLookup() {
 		return this.nodeLookup;
 	}
 

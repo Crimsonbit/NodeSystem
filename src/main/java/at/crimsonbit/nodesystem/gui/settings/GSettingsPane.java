@@ -24,14 +24,13 @@ import javafx.scene.shape.Rectangle;
  *
  */
 public class GSettingsPane extends Pane {
-
+	/*
 	private GNode currentNode;
 	private GNodeGraph nodeGraph;
 	private Group drawGroup = new Group();
 	private List<GSettingsEntry> settingsEntries;
 	private Rectangle rect;
 
-	private boolean baseShapeDrawn = false;
 	private boolean doDraw = true;
 	private GSApply applyButton;
 
@@ -148,9 +147,9 @@ public class GSettingsPane extends Pane {
 
 				@Override
 				public void handle(ActionEvent event) {
-					for (GSettingsEntry e : settingsEntries) {
-
-					}
+					// for (GSettingsEntry e : settingsEntries) {
+					//
+					// }
 				}
 
 			});
@@ -160,5 +159,5 @@ public class GSettingsPane extends Pane {
 			drawGroup.getChildren().clear();
 		}
 	}
-
+	*/
 }

@@ -1,13 +1,16 @@
 package at.crimsonbit.nodesystem.gui;
 
-import at.crimsonbit.nodesystem.util.DragContext;
 import at.crimsonbit.nodesystem.util.RangeMapper;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Scale;
 
@@ -16,28 +19,26 @@ import javafx.scene.transform.Scale;
  * @author NeonArtworks
  *
  */
-public class GGraphScene extends Pane {
+public class GGraphScene extends AnchorPane {
 
-	// This is to make the stroke be drawn 'on pixel'.
 	private static final double HALF_PIXEL_OFFSET = -0.5;
 
 	private final Canvas canvas = new Canvas();
+	private GNodeGraph graph;
 	private boolean needsLayout = false;
 	private Scale scaleTransform;
 	private double scaleValue = 1.0;
-	private double strokeValue = 1.0;
+	private double strokeValue = 0.2;
 	private double delta = 0.1;
 
 	private double lineSpacing = 25;
 	private double r = RangeMapper.mapValue(27, 0, 255, 0, 1);
-	private double gr = RangeMapper.mapValue(28, 0, 255, 0, 1);
+	private double g = RangeMapper.mapValue(28, 0, 255, 0, 1);
 	private double b = RangeMapper.mapValue(29, 0, 255, 0, 1);
+	private Color lineColor;
 
 	private double localMouseX = getWidth() / 2;
 	private double localMouseY = getHeight() / 2;
-	private double lX;
-	private double lY;
-	private final DragContext dragContext = new DragContext();
 	private double curX;
 	private double curY;
 	private double pX;
@@ -50,15 +51,21 @@ public class GGraphScene extends Pane {
 		scaleTransform = new Scale(scaleValue, scaleValue, 0, 0);
 		getTransforms().add(scaleTransform);
 		getChildren().add(canvas);
-		setStyle("-fx-background-color: #363b3f");
+		// setStyle("-fx-background-color: #363b3f");
+
 		setOnScroll(new ZoomHandler());
+
+		setTopAnchor(canvas, 0d);
+		setBottomAnchor(canvas, 0d);
+		setLeftAnchor(canvas, 0d);
+		setRightAnchor(canvas, 0d);
 
 		setOnMouseMoved(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
 
-				localMouseX = event.getSceneX() / scaleValue;
-				localMouseY = event.getSceneY() / scaleValue;
+				localMouseX = event.getSceneX();
+				localMouseY = event.getSceneY();
 				pX = event.getScreenX();
 				pY = event.getScreenY();
 				curX = event.getSceneX();
@@ -66,24 +73,28 @@ public class GGraphScene extends Pane {
 			}
 		});
 
-		/*
-		 * setOnMouseDragged(new EventHandler<MouseEvent>() {
-		 * 
-		 * @Override public void handle(MouseEvent event) { if
-		 * (event.isMiddleButtonDown()) { lX = event.getSceneX(); lY =
-		 * event.getSceneY();
-		 * 
-		 * double scale = getScaleValue(); dragContext.x = getBoundsInParent().getMinX()
-		 * * scale - event.getScreenX(); dragContext.y = getBoundsInParent().getMinY() *
-		 * scale - event.getScreenY(); double offsetX = event.getScreenX() +
-		 * dragContext.x; double offsetY = event.getScreenY() + dragContext.y;
-		 * 
-		 * // adjust the offset in case we are zoomed
-		 * 
-		 * offsetX /= scale; offsetY /= scale; relocate(offsetX, offsetY);
-		 * 
-		 * } } });
-		 */
+		setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				if (graph.getActive() != null) {
+					graph.getActive().setActive(false);
+					graph.getActive().redraw();
+					graph.setActive(null);
+				}
+			}
+		});
+	}
+	
+	private void init() {
+		setBackground(new Background(
+				new BackgroundFill(graph.getGeneralColorLookup().get("background"), CornerRadii.EMPTY, Insets.EMPTY)));
+		this.lineColor = graph.getGeneralColorLookup().get("line_color");
+	}
+
+	protected void setNodeGraph(GNodeGraph graph) {
+		this.graph = graph;
+		init();
+		layoutChildren();
 	}
 
 	public double getLocalMouseX() {
@@ -140,41 +151,41 @@ public class GGraphScene extends Pane {
 
 	@Override
 	protected void layoutChildren() {
+		if (lineColor != null) {
+			final int top = (int) snappedTopInset();
+			final int right = (int) snappedRightInset();
+			final int bottom = (int) snappedBottomInset();
+			final int left = (int) snappedLeftInset();
+			width = (int) (getWidth() + left + right);
+			height = (int) (getHeight() + top + bottom);
+			final double spacing = lineSpacing;
 
-		final int top = (int) snappedTopInset();
-		final int right = (int) snappedRightInset();
-		final int bottom = (int) snappedBottomInset();
-		final int left = (int) snappedLeftInset();
-		width = (int) getWidth() + left + right;
-		height = (int) getHeight() + top + bottom;
-		final double spacing = lineSpacing;
+			canvas.setLayoutX(left);
+			canvas.setLayoutY(top);
 
-		// width *= (scaleValue);
-		// height *= (scaleValue);
+			if (width != canvas.getWidth() || height != canvas.getHeight() || needsLayout) {
+				canvas.setWidth(width);
+				canvas.setHeight(height);
 
-		canvas.setLayoutX(left);
-		canvas.setLayoutY(top);
+				GraphicsContext gc = canvas.getGraphicsContext2D();
+				gc.clearRect(0, 0, width, height);
 
-		if (width != canvas.getWidth() || height != canvas.getHeight() || needsLayout) {
-			canvas.setWidth(width);
-			canvas.setHeight(height);
+				gc.setStroke(new Color(lineColor.getRed(), lineColor.getGreen(), lineColor.getBlue(), 1d));
+				gc.setLineWidth(strokeValue);
 
-			GraphicsContext g = canvas.getGraphicsContext2D();
-			g.clearRect(0, 0, width, height);
-			g.setStroke(new Color(r, gr, b, 1d));
-			g.setLineWidth(strokeValue);
-			final int hLineCount = (int) Math.floor((height + 1) / spacing);
-			final int vLineCount = (int) Math.floor((width + 1) / spacing);
+				final int hLineCount = (int) Math.floor((height + 1) / spacing);
+				final int vLineCount = (int) Math.floor((width + 1) / spacing);
 
-			for (int i = 0; i < hLineCount; i++) {
-				g.strokeLine(0, snap((i + 1) * spacing), width, snap((i + 1) * spacing));
+				for (int i = 0; i < hLineCount; i++) {
+					gc.strokeLine(0, snap((i + 1) * spacing), width, snap((i + 1) * spacing));
+				}
+
+				for (int i = 0; i < vLineCount; i++) {
+					gc.strokeLine(snap((i + 1) * spacing), 0, snap((i + 1) * spacing), height);
+				}
+				// getChildren().add(settingsPane);
+				needsLayout = false;
 			}
-
-			for (int i = 0; i < vLineCount; i++) {
-				g.strokeLine(snap((i + 1) * spacing), 0, snap((i + 1) * spacing), height);
-			}
-			// getChildren().add(settingsPane);
-			needsLayout = false;
 		}
 	}
 
@@ -197,10 +208,10 @@ public class GGraphScene extends Pane {
 
 		needsLayout = true;
 		layoutChildren();
+
 		scaleTransform.setPivotX(localMouseX);
 		scaleTransform.setPivotY(localMouseY);
 		scaleTransform.setX(scaleValue);
-
 		scaleTransform.setY(scaleValue);
 
 	}
@@ -215,22 +226,39 @@ public class GGraphScene extends Pane {
 		layoutChildren();
 	}
 
-	public class ZoomHandler implements EventHandler<ScrollEvent> {
+	/**
+	 * 
+	 * @author NeonArtworks
+	 *
+	 */
+	protected class ZoomHandler implements EventHandler<ScrollEvent> {
+		private static final double MAX_SCALE = 10.0d;
+		private static final double MIN_SCALE = 1d;
+
+		public double clamp(double value, double min, double max) {
+
+			if (Double.compare(value, min) < 0)
+				return min;
+
+			if (Double.compare(value, max) > 0)
+				return max;
+
+			return value;
+		}
 
 		public void handle(ScrollEvent scrollEvent) {
+
 			if (!scrollEvent.isControlDown()) {
 
 				if (scrollEvent.getDeltaY() < 0) {
 					scaleValue -= delta;
-					// lineSpacing -= delta * 5;
+
 				} else {
 					scaleValue += delta;
-					// lineSpacing += delta * 5;
-				}
-				if (scaleValue < 1.0) {
-					scaleValue = 1.0;
 
 				}
+				scaleValue = clamp(scaleValue, MIN_SCALE, MAX_SCALE);
+
 				zoomTo(scaleValue);
 
 				scrollEvent.consume();
@@ -245,7 +273,9 @@ public class GGraphScene extends Pane {
 				strokeWidth(strokeValue);
 				scrollEvent.consume();
 			}
+
 		}
+
 	}
 
 }

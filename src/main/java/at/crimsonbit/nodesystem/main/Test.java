@@ -10,7 +10,6 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-@SuppressWarnings({ "restriction", "unused" })
 public class Test extends Application {
 
 	@Override
@@ -21,6 +20,13 @@ public class Test extends Application {
 		// nodeSystem.getNodeGraph().getGuiMaster().getNodeMaster().registerNodes("at.crimsonbit.nodesystem.node.nodes");
 		GNodeView view = nodeSystem.getGUI();
 		GNodeGraph graph = view.getNodeGraph();
+		
+		graph.registerNodes("at.crimsonbit.nodesystem.node.base");
+		graph.registerNodes("at.crimsonbit.nodesystem.node.image");
+		graph.registerNodes("at.crimsonbit.nodesystem.node.math");
+		graph.registerNodes("at.crimsonbit.nodesystem.node.calculate");
+		graph.registerNodes("at.crimsonbit.nodesystem.node.image_filter");
+		graph.loadMenus();
 		
 		GNode constNode1 = new GNode("Constant Node", Base.CONSTANT, true, graph);
 		GNode constNode2 = new GNode("Constant Node 2", Base.CONSTANT, true, graph);
@@ -48,7 +54,7 @@ public class Test extends Application {
 
 		graph.getGuiMaster().addConnection(additionNode2.getOutputPorts().get(0), outputNode.getInputPortById(0));
 		graph.update();
-		
+
 		Scene scene = new Scene(view, 1024, 768);
 		scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		primaryStage.setScene(scene);

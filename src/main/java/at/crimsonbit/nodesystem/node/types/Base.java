@@ -1,7 +1,6 @@
 package at.crimsonbit.nodesystem.node.types;
 
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
-import at.crimsonbit.nodesystem.util.NameSpace;
 
 /**
  * 
@@ -11,18 +10,17 @@ import at.crimsonbit.nodesystem.util.NameSpace;
 public enum Base implements INodeType {
 
 	CONSTANT("Constant Node"), OUTPUT("Output Node"), PATH("Path Node");
-	
+
 	private String name;
-	
+
 	private Base(String s) {
-		
+
 		this.name = s;
 	}
-	
+
 	@Override
 	public String toString() {
 		return this.name;
 	}
-	
-	
+
 }

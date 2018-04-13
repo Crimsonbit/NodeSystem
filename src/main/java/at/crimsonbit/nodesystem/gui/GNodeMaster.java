@@ -221,12 +221,13 @@ public class GNodeMaster {
 		GNodeConnection con = new GNodeConnection(node1, node2);
 		for (int i = 0; i < getAllEdges().size(); i++) {
 			GNodeConnection c = getAllEdges().get(i);
-			if (c.getSource() == con.getSource() && c.getTarget() == con.getTarget()) {
+			if (c.getSourcePort() == con.getSourcePort() && c.getTargetPort() == con.getTargetPort()) {
 				this.outPort = null;
 				this.inPort = null;
 				return false;
 			}
 		}
+
 		try {
 			if (node1.isInput()) {
 				getNodeMaster().setConnection(node1.getNode().getNode(), node1.getStringID(), node2.getNode().getNode(),
