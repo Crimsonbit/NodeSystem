@@ -38,7 +38,7 @@ public class CreateGraphFromCode extends Application {
 		GNode multiplyNode1 = new GNode("Multiply Node 1", Math.MULTIPLY, true, graph, 300, 400);
 		GNode outputNode = new GNode("Output", Base.OUTPUT, true, graph, 700, 300);
 
-		constNode1.getNode().set("constant", 10);
+		constNode1.getNode().set("constant", 1337.12345);
 		constNode2.getNode().set("constant", 2);
 
 		graph.getGuiMaster().addNode(constNode1);
