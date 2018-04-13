@@ -70,10 +70,6 @@ public class GNodeMaster {
 				if (addConnection(this.outPort, this.inPort)) {
 					// System.out.println("INFO!");
 
-					this.inPort.getPortRectangle()
-							.setInputColor(graph.getColorLookup().get(this.outPort.getNode().getNodeType()));
-					this.inPort.getPortRectangle().redraw();
-					this.inPort.redraw();
 					this.outPort = null;
 					this.inPort = null;
 					getNodeGraph().update();
@@ -232,17 +228,23 @@ public class GNodeMaster {
 			if (node1.isInput()) {
 				getNodeMaster().setConnection(node1.getNode().getNode(), node1.getStringID(), node2.getNode().getNode(),
 						node2.getStringID());
+				node1.getPortRectangle().setInputColor(graph.getColorLookup().get(node2.getNode().getNodeType()));
+				node1.getPortRectangle().redraw();
+				node1.redraw();
+
 			} else if (node2.isInput()) {
 				getNodeMaster().setConnection(node2.getNode().getNode(), node2.getStringID(), node1.getNode().getNode(),
 						node1.getStringID());
+				node2.getPortRectangle().setInputColor(graph.getColorLookup().get(node1.getNode().getNodeType()));
+				node2.getPortRectangle().redraw();
+				node2.redraw();
 			}
 
 		} catch (NoSuchNodeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		node1.getNode().redraw();
-		node2.getNode().redraw();
+
 		addedConnections.add(con);
 		return true;
 	}
