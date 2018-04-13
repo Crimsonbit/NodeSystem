@@ -12,7 +12,7 @@ import javafx.scene.shape.Rectangle;
  * @author NeonArtworks
  *
  */
-@SuppressWarnings({ "restriction", "unused" })
+
 public class GPortRect extends Rectangle {
 
 	private GNode node;
@@ -23,7 +23,7 @@ public class GPortRect extends Rectangle {
 	private Color outputColor;
 
 	public void redraw() {
-		
+
 		setX(x);
 		setY(y);
 		setWidth(6);

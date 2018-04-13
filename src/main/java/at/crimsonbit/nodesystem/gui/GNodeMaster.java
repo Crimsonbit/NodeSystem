@@ -105,7 +105,7 @@ public class GNodeMaster {
 	public GNodeMaster(GNodeGraph graph) {
 		this.graph = graph;
 		this.nodeMaster = new NodeMaster();
-		this.nodeMaster.registerNodes("at.crimsonbit.nodesystem.node.nodes");
+		// this.nodeMaster.registerNodes("at.crimsonbit.nodesystem.node.nodes");
 		this.graphParent = new GNode("_ROOT_", false);
 
 		// clear model, create lists

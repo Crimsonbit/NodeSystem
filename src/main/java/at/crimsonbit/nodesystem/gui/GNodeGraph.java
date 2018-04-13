@@ -68,6 +68,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private GState state = GState.DEFAULT;
 
 	private final boolean DEBUG = true;
+	private GSubMenu nodeMenu = new GSubMenu(0, "Add Node");
 
 	public GNodeGraph() {
 		this.selection = new Rectangle();
@@ -94,8 +95,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		graphDialog.addItem(-1, "Node Editor", true);
 		graphDialog.addSeparator(-2);
 
-		GSubMenu nodeMenu = new GSubMenu(0, "Add Node");
-		addNodeMenus(nodeMenu);
+		// addNodeMenus();
 
 		graphDialog.addItem(nodeMenu);
 
@@ -233,7 +233,12 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		addPopUpHandler(this.popUpDialog);
 	}
 
-	private void addNodeMenus(GSubMenu nodeMenu) {
+	public void registerNodes(String path) {
+		getGuiMaster().registerNodes(path);
+		addNodeMenus();
+	}
+
+	public void addNodeMenus() {
 		Set<INodeType> map = getGuiMaster().getNodeMaster().getAllNodeClasses();
 
 		Map<String, GSubMenu> cache = new HashMap<>();

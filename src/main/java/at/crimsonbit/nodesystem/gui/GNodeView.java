@@ -18,7 +18,7 @@ public class GNodeView extends AnchorPane {
 	private GSettingsPane settingsPane;
 	private boolean addSettingsPane = true;
 	private NameSpace dummy;
-
+	
 	public GNodeView(boolean addSettingsPane) {
 		this.addSettingsPane = addSettingsPane;
 		nodeGraph = new GNodeGraph();

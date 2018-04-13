@@ -89,17 +89,7 @@ public class GNode extends Pane implements IGNode {
 		defaultTopColor();
 		defaultBackColor();
 		defaultPopUpDialog();
-		
-		
-		
-		for (String n : calcNode.getNodeMaster().getAllInputNames(calcNode)) {
-			addInputPort(inPortCount, n, PORT_INPUT_START_X, PORT_INPUT_START_Y + (inPortCount * PORT_OFFSET));
-			inPortCount++;
-		}
-		for (String n : calcNode.getNodeMaster().getAllOutputNames(calcNode)) {
-			addOutputPort(inPortCount, n, PORT_OUTPUT_START_X, PORT_OUTPUT_START_Y + (outPortcount * PORT_OFFSET));
-			outPortcount++;
-		}
+		addAllNodes();
 		// addKeyHandler();
 		draw();
 	}
@@ -113,9 +103,15 @@ public class GNode extends Pane implements IGNode {
 		defaultTopColor();
 		defaultBackColor();
 		defaultPopUpDialog();
-		
-		
-		
+
+		addAllNodes();
+		// addKeyHandler();
+		draw();
+	}
+
+	private void addAllNodes() {
+		getInputPorts().clear();
+		getOutputPorts().clear();
 		for (String n : calcNode.getNodeMaster().getAllInputNames(calcNode)) {
 			addInputPort(inPortCount, n, PORT_INPUT_START_X, PORT_INPUT_START_Y + (inPortCount * PORT_OFFSET));
 			inPortCount++;
@@ -124,8 +120,6 @@ public class GNode extends Pane implements IGNode {
 			addOutputPort(inPortCount, n, PORT_OUTPUT_START_X, PORT_OUTPUT_START_Y + (outPortcount * PORT_OFFSET));
 			outPortcount++;
 		}
-		// addKeyHandler();
-		draw();
 	}
 
 	public boolean doDraw() {
@@ -272,16 +266,23 @@ public class GNode extends Pane implements IGNode {
 	public void draw() {
 
 		if (this.doDraw) {
+
 			double h = height * inPortCount;
 			if (inPortCount < outPortcount) {
 				h = height * outPortcount;
 			}
+
 			double width = 150;
 			text = new Text(name);
 			text.setFill(Color.WHITE);
 			text.setTranslateY(12.5);
+			double tWidth = text.getBoundsInLocal().getWidth();
+			if (width < tWidth)
+				width = tWidth;
+			
+			PORT_OUTPUT_START_X = (int) width;
+			addAllNodes();
 
-			///width = text.getBoundsInLocal().getWidth();
 			outline = new Rectangle(width, h - 5);
 			outline.setTranslateY(5);
 			outline.setFill(Color.TRANSPARENT);
