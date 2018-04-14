@@ -8,7 +8,7 @@ import java.util.Map;
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.gui.node.GNodeConnection;
 import at.crimsonbit.nodesystem.gui.node.port.GPort;
-import at.crimsonbit.nodesystem.node.types.BaseType;
+import at.crimsonbit.nodesystem.node.types.Base;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeMaster;
 import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
@@ -70,10 +70,6 @@ public class GNodeMaster {
 				if (addConnection(this.outPort, this.inPort)) {
 					// System.out.println("INFO!");
 
-					this.inPort.getPortRectangle()
-							.setInputColor(graph.getColorLookup().get(this.outPort.getNode().getNodeType()));
-					this.inPort.getPortRectangle().redraw();
-					this.inPort.redraw();
 					this.outPort = null;
 					this.inPort = null;
 					getNodeGraph().update();
@@ -105,7 +101,7 @@ public class GNodeMaster {
 	public GNodeMaster(GNodeGraph graph) {
 		this.graph = graph;
 		this.nodeMaster = new NodeMaster();
-		this.nodeMaster.registerNodes("at.crimsonbit.nodesystem.node.nodes");
+		// this.nodeMaster.registerNodes("at.crimsonbit.nodesystem.node.nodes");
 		this.graphParent = new GNode("_ROOT_", false);
 
 		// clear model, create lists
@@ -192,7 +188,7 @@ public class GNodeMaster {
 
 	}
 
-	public void addNode(String id, BaseType type, boolean draw, GNodeGraph graph) {
+	public void addNode(String id, Base type, boolean draw, GNodeGraph graph) {
 		addNode(new GNode(id, type, draw, graph));
 	}
 
@@ -221,25 +217,34 @@ public class GNodeMaster {
 		GNodeConnection con = new GNodeConnection(node1, node2);
 		for (int i = 0; i < getAllEdges().size(); i++) {
 			GNodeConnection c = getAllEdges().get(i);
-			if (c.getSource() == con.getSource() && c.getTarget() == con.getTarget()) {
+			if (c.getSourcePort() == con.getSourcePort() && c.getTargetPort() == con.getTargetPort()) {
 				this.outPort = null;
 				this.inPort = null;
 				return false;
 			}
 		}
+
 		try {
 			if (node1.isInput()) {
 				getNodeMaster().setConnection(node1.getNode().getNode(), node1.getStringID(), node2.getNode().getNode(),
 						node2.getStringID());
+				node1.getPortRectangle().setInputColor(graph.getColorLookup().get(node2.getNode().getNodeType()));
+				node1.getPortRectangle().redraw();
+				node1.redraw();
+
 			} else if (node2.isInput()) {
 				getNodeMaster().setConnection(node2.getNode().getNode(), node2.getStringID(), node1.getNode().getNode(),
 						node1.getStringID());
+				node2.getPortRectangle().setInputColor(graph.getColorLookup().get(node1.getNode().getNodeType()));
+				node2.getPortRectangle().redraw();
+				node2.redraw();
 			}
 
 		} catch (NoSuchNodeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 		addedConnections.add(con);
 		return true;
 	}

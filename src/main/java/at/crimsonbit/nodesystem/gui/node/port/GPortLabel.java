@@ -8,7 +8,7 @@ import javafx.scene.text.Text;
  * @author NeonArtworks
  *
  */
-@SuppressWarnings({ "restriction", "unused" })
+
 public class GPortLabel extends Text {
 
 	public GPortLabel(double x, double y, String label, boolean input) {
@@ -21,8 +21,7 @@ public class GPortLabel extends Text {
 		else
 			setX(x + (off + 6));
 		setY(y + 6);
-		
+
 	}
-	
-	
+
 }

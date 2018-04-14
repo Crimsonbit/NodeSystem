@@ -14,15 +14,19 @@ import javafx.scene.layout.AnchorPane;
 public class GNodeView extends AnchorPane {
 
 	private GNodeGraph nodeGraph;
-	private GSettingsPane settingsPane;
+	//private GSettingsPane settingsPane;
+	private boolean addSettingsPane = true;
 
-	public GNodeView() {
+	public GNodeView(boolean addSettingsPane) {
+		this.addSettingsPane = addSettingsPane;
 		nodeGraph = new GNodeGraph();
-		settingsPane = new GSettingsPane(nodeGraph);
-		nodeGraph.setSettingsPane(settingsPane);
+		//settingsPane = new GSettingsPane(nodeGraph);
+		//nodeGraph.setSettingsPane(settingsPane);
 		getChildren().add(nodeGraph);
-		getChildren().add(settingsPane);
-		settingsPane.draw();
+		//if (addSettingsPane) {
+			//getChildren().add(settingsPane);
+			//settingsPane.draw();
+		//}
 		// getChildren().add(nodeGraph.getNodeInfo());
 		setupScene();
 	}
@@ -36,14 +40,19 @@ public class GNodeView extends AnchorPane {
 		return this.nodeGraph;
 	}
 
+	//public GSettingsPane getSettingsPane() {
+	//	return this.settingsPane;
+	//}
+
 	private void setupScene() {
 		setTopAnchor(nodeGraph, 0d);
 		setBottomAnchor(nodeGraph, 0d);
 		setLeftAnchor(nodeGraph, 0d);
 		setRightAnchor(nodeGraph, 0d);
-
-		setBottomAnchor(settingsPane, 0d);
-		setRightAnchor(settingsPane, 0d);
+		//if (this.addSettingsPane) {
+		//	setBottomAnchor(settingsPane, 0d);
+		//	setRightAnchor(settingsPane, 0d);
+		//}
 
 	}
 

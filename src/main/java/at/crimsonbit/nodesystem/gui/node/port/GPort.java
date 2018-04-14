@@ -11,14 +11,13 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.shape.CubicCurve;
 
 /**
  * 
  * @author NeonArtworks
  *
  */
-@SuppressWarnings({ "restriction", "unused" })
+
 public class GPort extends Group implements IGConsumable {
 
 	private double x;
@@ -26,20 +25,14 @@ public class GPort extends Group implements IGConsumable {
 	private int id;
 	private boolean input;
 	private GNode node;
-	private CubicCurve line = new CubicCurve();
+
 	private GPopUp dialog;
 	private String stringID;
 	private GPort thisPort;
 	private GPortLabel label;
 	private GPortRect rect;
-	private long currentTime;
-	private long lastTime;
 
-	private long currentRemoveTime;
-	private long lastRemoveTime;
-	private boolean isSet = false;
 	private final Tooltip tooltip = new Tooltip();
-	
 
 	/*
 	 * for (MenuItem item : this.dialog.getItems()) { int id =
@@ -93,11 +86,11 @@ public class GPort extends Group implements IGConsumable {
 		this.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
 			dialog.hide();
 		});
-		
 
-		tooltip.setText("GPort: " + this.id + "\n" + "Input: " + this.input + "\n" + "Type: " + node.getNode().get(labels));
+		tooltip.setText(
+				"GPort: " + this.id + "\n" + "Input: " + this.input + "\n" + "Type: " + node.getNode().get(labels));
 		Tooltip.install(this, tooltip);
-		
+
 		// getChildren().add(line);
 		/*
 		 * setOnMouseEntered(new EventHandler<MouseEvent>() {
@@ -138,6 +131,7 @@ public class GPort extends Group implements IGConsumable {
 
 	}
 
+	@SuppressWarnings("unused")
 	private void mouseHandler() {
 
 		addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {

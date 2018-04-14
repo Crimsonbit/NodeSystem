@@ -6,8 +6,6 @@ import at.crimsonbit.nodesystem.gui.node.GNode;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
 /**
@@ -41,8 +39,7 @@ public class GNodeMouseHandler {
 				if (!(node.isPortPressed())) {
 					graph.setActive(node);
 					node.setActive(true);
-					graph.getSettingsPane().setNode(graph.getActive());
-					graph.getSettingsPane().draw();
+
 					node.redraw(true);
 					node.toFront();
 
@@ -98,8 +95,6 @@ public class GNodeMouseHandler {
 					node.setActive(true);
 					node.redraw();
 					graph.setActive(node);
-					graph.getSettingsPane().setNode(graph.getActive());
-					graph.getSettingsPane().draw();
 					node.setCursor(Cursor.DEFAULT);
 				}
 			}

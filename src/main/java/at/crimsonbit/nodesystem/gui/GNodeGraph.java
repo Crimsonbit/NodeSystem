@@ -12,10 +12,12 @@ import at.crimsonbit.nodesystem.gui.layer.GNodeLayer;
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.gui.node.IGConsumable;
 import at.crimsonbit.nodesystem.gui.settings.GSettingsPane;
-import at.crimsonbit.nodesystem.node.types.BaseType;
-import at.crimsonbit.nodesystem.node.types.CalculateType;
-import at.crimsonbit.nodesystem.node.types.ImageType;
-import at.crimsonbit.nodesystem.node.types.MathType;
+import at.crimsonbit.nodesystem.node.types.Base;
+import at.crimsonbit.nodesystem.node.types.Calculate;
+import at.crimsonbit.nodesystem.node.types.Constant;
+import at.crimsonbit.nodesystem.node.types.Image;
+import at.crimsonbit.nodesystem.node.types.ImageFilter;
+import at.crimsonbit.nodesystem.node.types.Math;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.util.DragContext;
 import at.crimsonbit.nodesystem.util.GNodeMouseHandler;
@@ -32,14 +34,15 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 /**
  * 
  * @author NeonArtworks
  *
  */
-@SuppressWarnings({ "restriction", "unused" })
-public class GNodeGraph extends GBackground implements IGConsumable {
+
+public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 	private GNodeMaster nodeMaster;
 	private Group canvas;
@@ -47,7 +50,6 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 	private GNodeMouseHandler handler;
 	private GPopUp popUpDialog;
 	private int subMenuCount = 0;
-	private int subsubMenuCount = 0;
 	private int idCount = 100;
 	private GPopUp graphDialog;
 	private GSettingsPane settingsPane;
@@ -65,12 +67,14 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 	private Rectangle selection;
 	private Text nodeInfo = new Text();
 	private GState state = GState.DEFAULT;
-
-	private final boolean DEBUG = true;
+	private GSubMenu nodeMenu = new GSubMenu(0, "Add Node");
+	private GSubMenu fileMenu = new GSubMenu(1, "File");
 
 	public GNodeGraph() {
+		setDefualtColorLookup();
+		setNodeGraph(this);
+
 		this.selection = new Rectangle();
-		// this.selection.setFill(Color.TRANSPARENT);
 		this.selection.setStroke(Color.LIGHTSKYBLUE);
 		this.selection.setArcWidth(21.0);
 		this.selection.setArcHeight(21.0);
@@ -87,22 +91,18 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 		this.handler = new GNodeMouseHandler(this);
 		// this.getChildren().add(this.settingsPane);
 
-		setDefualtColorLookup();
-
 		graphDialog = new GPopUp();
 		graphDialog.addItem(-1, "Node Editor", true);
 		graphDialog.addSeparator(-2);
-
-		GSubMenu nodeMenu = new GSubMenu(0, "Add Node");
-		addNodeMenus(nodeMenu);
-
 		graphDialog.addItem(nodeMenu);
+		graphDialog.addItem(fileMenu);
 
 		this.setPopUpDialog(graphDialog);
 		// addSelectGroupSupport();
 
 		addSetting("curve_width", 4d);
-		addInfo();
+
+		// addInfo();
 
 	}
 
@@ -209,13 +209,13 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 					}
 				}
 				if (event.isShiftDown() && event.getCode().equals(KeyCode.C)) {
-					if (getActive().getNodeType().equals(BaseType.CONSTANT)) {
+					if (getActive().getNodeType().equals(Base.CONSTANT)) {
 						getActive().setConstant();
 						// update();
 					}
 				}
 				if (event.isShiftDown() && event.getCode().equals(KeyCode.O)) {
-					if (getActive().getNodeType().equals(BaseType.OUTPUT)) {
+					if (getActive().getNodeType().equals(Base.OUTPUT)) {
 						getActive().setOutput();
 						// update();
 					}
@@ -232,7 +232,12 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 		addPopUpHandler(this.popUpDialog);
 	}
 
-	private void addNodeMenus(GSubMenu nodeMenu) {
+	public void registerNodes(String path) {
+		getGuiMaster().registerNodes(path);
+	}
+
+	public void loadMenus() {
+
 		Set<INodeType> map = getGuiMaster().getNodeMaster().getAllNodeClasses();
 
 		Map<String, GSubMenu> cache = new HashMap<>();
@@ -254,19 +259,37 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 			menu.addItem(ent);
 
 		}
-		for (GSubMenu menu : cache.values())
+		for (GSubMenu menu : cache.values()) {
 			nodeMenu.addMenu(menu);
-		/*
-		 * for (String s : map.keySet()) { GSubMenu baseNodeMenu = new
-		 * GSubMenu(subMenuCount++, s); baseNodeMenu.addItem(-1, s, true); for
-		 * (INodeType t : map.values()) { GEntry ent = new GEntry(idCount++, "hi",
-		 * false); baseNodeMenu.addItem(ent); int id = Integer.valueOf(ent.getId());
-		 * ent.setOnAction(event -> { consumeMessage(id, (GEntry) ent); event.consume();
-		 * 
-		 * }); }
-		 */
-		// nodeMenu.addMenu(baseNodeMenu);
-		// }
+
+			// menuBar.addMenu(menu);
+		}
+
+		GEntry saveGraph = new GEntry(1000, "Save Graph", false);
+		GEntry loadGraph = new GEntry(1001, "Load Graph", false);
+		GEntry closeGraph = new GEntry(1002, "Close Graph", false);
+		int id = Integer.valueOf(saveGraph.getId());
+		saveGraph.setOnAction(event -> {
+			consumeMessage(id, (GEntry) saveGraph);
+			event.consume();
+
+		});
+		int idd = Integer.valueOf(loadGraph.getId());
+		loadGraph.setOnAction(event -> {
+			consumeMessage(idd, (GEntry) loadGraph);
+			event.consume();
+
+		});
+		int iddd = Integer.valueOf(closeGraph.getId());
+		closeGraph.setOnAction(event -> {
+			consumeMessage(iddd, (GEntry) closeGraph);
+			event.consume();
+
+		});
+		fileMenu.addItem(saveGraph);
+		fileMenu.addItem(loadGraph);
+		fileMenu.addSeparator(1003);
+		fileMenu.addItem(closeGraph);
 
 	}
 
@@ -313,10 +336,22 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 	public void consumeMessage(int id, GEntry source) {
 		// for(int i = 0; i<idCount;i++) {
 		// if(i == id) {
-		Set<INodeType> map = getGuiMaster().getNodeMaster().getAllNodeClasses();
-		for (INodeType type : map) {
-			if (source.getName().toUpperCase() == type.toString())
-				getGuiMaster().addNode(source.getName(), type, true, this, getCurX(), getCurY());
+		if (id < 1000) {
+			Set<INodeType> map = getGuiMaster().getNodeMaster().getAllNodeClasses();
+			for (INodeType type : map) {
+				if (source.getName() == type.toString())
+					getGuiMaster().addNode(source.getName(), type, true, this, getCurX(), getCurY());
+			}
+		}
+		if (id == 1001) {
+			System.out.println("loading!");
+		}
+		if (id == 1000) {
+			System.out.println("saving!");
+		}
+		if (id == 1002) {
+			Stage stage = (Stage) getScene().getWindow();
+			stage.close();
 		}
 
 		// }
@@ -325,12 +360,17 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 		update();
 	}
 
-	public GBackground getGrid() {
+	public GGraphScene getGrid() {
 		return this;
 	}
 
 	public void setActive(Node n) {
-		activeCell = (GNode) n;
+		if (!(n == null))
+			activeCell = (GNode) n;
+		else
+			activeCell = null;
+		// getSettingsPane().setNode((GNode) n);
+		// getSettingsPane().redraw();
 	}
 
 	public GNode getActive() {
@@ -376,12 +416,14 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 
 		// merge added & removed cells with all cells
 		getGuiMaster().merge();
-		if (getActive() != null) {
-			if (getActive().getNodeType().equals(BaseType.OUTPUT) && getActive().getOutput() != null) {
-				nodeInfo.setText(SystemUsage.getRamInfo() + ", Current Output Value: " + getActive().getOutput());
-			}
-		} else
-			nodeInfo.setText(SystemUsage.getRamInfo());
+
+		/*
+		 * if (getActive() != null) { if (getActive().getNodeType().equals(Base.OUTPUT)
+		 * && getActive().getOutput() != null) {
+		 * nodeInfo.setText(SystemUsage.getRamInfo() + ", Current Output Value: " +
+		 * getActive().getOutput()); } } else
+		 */
+		nodeInfo.setText(SystemUsage.getRamInfo());
 
 	}
 
@@ -390,27 +432,38 @@ public class GNodeGraph extends GBackground implements IGConsumable {
 	}
 
 	private void setDefualtColorLookup() {
-		getColorLookup().put(BaseType.OUTPUT, Color.LIGHTBLUE);
-		getColorLookup().put(BaseType.CONSTANT, Color.RED);
-		for (INodeType t : MathType.values())
+		getColorLookup().put(Base.OUTPUT, Color.LIGHTBLUE);
+		getColorLookup().put(Base.PATH, Color.DARKSEAGREEN);
+
+		for (INodeType t : Constant.values())
+			getColorLookup().put(t, Color.INDIANRED);
+		
+		for (INodeType t : Math.values())
 			getColorLookup().put(t, Color.ORANGE);
-		for (INodeType t : CalculateType.values()) {
+
+		for (INodeType t : Calculate.values())
 			getColorLookup().put(t, Color.DARKORANGE);
-		}
-		for (INodeType t : ImageType.values())
+
+		for (INodeType t : Image.values())
 			getColorLookup().put(t, Color.BROWN);
 
-		getNodeColorLookup().put("input", Color.LIGHTBLUE);
-		getNodeColorLookup().put("output", Color.LIGHTGREEN);
-		getNodeColorLookup().put("curve", Color.CRIMSON);
-		getNodeColorLookup().put("text", Color.WHITE);
+		for (INodeType t : ImageFilter.values())
+			getColorLookup().put(t, Color.SADDLEBROWN);
+
+		getGeneralColorLookup().put("active", new Color(0.992, 0.647, 0.305, 1));
+		getGeneralColorLookup().put("input", Color.LIGHTBLUE);
+		getGeneralColorLookup().put("output", Color.LIGHTGREEN);
+		getGeneralColorLookup().put("curve", Color.CRIMSON);
+		getGeneralColorLookup().put("text", Color.WHITE);
+		getGeneralColorLookup().put("background", new Color(0.16, 0.16, 0.16, 1));
+		getGeneralColorLookup().put("line_color", new Color(0.992, 0.647, 0.305, 1));
 	}
 
 	public void addNodeColorLookup(String string, Color c) {
 		this.nodeLookup.put(string, c);
 	}
 
-	public HashMap<String, Color> getNodeColorLookup() {
+	public HashMap<String, Color> getGeneralColorLookup() {
 		return this.nodeLookup;
 	}
 
