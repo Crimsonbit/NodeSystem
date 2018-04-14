@@ -63,6 +63,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private HashMap<INodeType, Color> colorLookup = new HashMap<INodeType, Color>();
 	private HashMap<String, Color> nodeLookup = new HashMap<String, Color>();
 	private HashMap<String, Object> settings = new HashMap<String, Object>();
+
 	private Map<INodeType, Class<? extends GNode>> nodeMap = new HashMap<INodeType, Class<? extends GNode>>();
 
 	private final DragContext dragContext = new DragContext();
@@ -102,6 +103,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		graphDialog.addItem(fileMenu);
 
 		this.setPopUpDialog(graphDialog);
+
 		addSetting("curve_width", 4d);
 
 	}
@@ -118,15 +120,10 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 	private void fillNodeList() {
 		GNode dummy_tmp = new GNode("dummy", false);
-
 		Set<INodeType> map = getGuiMaster().getNodeMaster().getAllNodeClasses();
-
 		for (INodeType type : map) {
-
 			nodeMap.put(type, dummy_tmp.getClass());
-
 		}
-
 	}
 
 	public GState getState() {
@@ -141,6 +138,9 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		return this.nodeInfo;
 	}
 
+	/**
+	 * DEBUG ONLY!
+	 */
 	public void addInfo() {
 		nodeInfo.setFill(Color.WHITE);
 		nodeInfo.relocate(getWidth() / 2, getHeight() / 2);
@@ -157,7 +157,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	}
 
 	/**
-	 * Adds support to select multiple nodes at once.
+	 * Adds support to select multiple nodes at once. TODO!
 	 */
 	public void addSelectGroupSupport() {
 		setOnMousePressed(new EventHandler<MouseEvent>() {
@@ -199,7 +199,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		});
 	}
 
-	public void addKeySupport() {
+	private void addKeySupport() {
 		if (getScene() != null)
 			getScene().setOnKeyPressed(onKeyPressedEventHandler);
 	}
@@ -317,22 +317,6 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 	}
 
-	/*
-	 * private void addSubeMenuHandlers() { for (int i = 0; i < subMenuCount; i++) {
-	 * GSubMenu menu = (GSubMenu) this.popUpDialog.getItems().get(2 + i); // for
-	 * (int j = 0; i < subsubMenuCount; j++) { GSubMenu subMenu = (GSubMenu)
-	 * menu.getItems().get(0); if (subMenu instanceof GSubMenu) {
-	 * 
-	 * for (MenuItem item : menu.getItems()) { if (!(item instanceof GSubMenu)) {
-	 * int id = Integer.valueOf(item.getId()); item.setOnAction(event -> {
-	 * consumeMessage(id, (GEntry) item); event.consume();
-	 * 
-	 * }); } } // } } for (MenuItem item : menu.getItems()) { if (!(item instanceof
-	 * GSubMenu)) { int id = Integer.valueOf(item.getId()); item.setOnAction(event
-	 * -> { consumeMessage(id, (GEntry) item); event.consume();
-	 * 
-	 * }); } } } }
-	 */
 	private void addPopUpHandler(GPopUp dialog) {
 		this.addEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, event -> {
 			setCurX(event.getSceneX());
@@ -344,16 +328,6 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		this.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
 			dialog.hide();
 		});
-
-		// addSubeMenuHandlers();
-
-		/*
-		 * for (MenuItem item : this.popUpDialog.getItems()) { int id =
-		 * Integer.valueOf(item.getId()); item.setOnAction(event -> { //
-		 * System.out.println(id); consumeMessage(id); event.consume(); });
-		 * 
-		 * }
-		 */
 	}
 
 	@Override
@@ -366,22 +340,21 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 			try {
 				con = clazz.getConstructor(String.class, INodeType.class, boolean.class, GNodeGraph.class, double.class,
 						double.class);
-
 				GNode node = con.newInstance(source.getName(), type, true, this, getCurX(), getCurY());
-
 				getGuiMaster().addNode(node);
 			} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
 					| IllegalArgumentException | InvocationTargetException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
 		}
 
 		if (id == 1001) {
+			// TODO
 			System.out.println("loading!");
 		}
 		if (id == 1000) {
+			// TODO
 			System.out.println("saving!");
 		}
 		if (id == 1002) {
@@ -401,12 +374,15 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 			activeCell = (GNode) n;
 		else
 			activeCell = null;
+		update();
 		// getSettingsPane().setNode((GNode) n);
 		// getSettingsPane().redraw();
 	}
 
 	public GNode getActive() {
+
 		return this.activeCell;
+
 	}
 
 	public Pane getLineLayer() {
@@ -421,41 +397,22 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		return nodeMaster;
 	}
 
-	public void beginUpdate() {
-	}
-
 	public void update() {
-
-		// add components to graph pane
-
 		getNodeLayer().getChildren().addAll(nodeMaster.getAddedCells());
 		getLineLayer().getChildren().addAll(nodeMaster.getAddedEdges());
-		// remove components from graph pane
 		getNodeLayer().getChildren().removeAll(nodeMaster.getRemovedCells());
 		getLineLayer().getChildren().removeAll(nodeMaster.getRemovedEdges());
 		getNodeLayer().toFront();
-		// enable dragging of cells
 		for (GNode cell : nodeMaster.getAddedCells()) {
 			handler.addMouseHandler(cell);
 		}
-
-		// every cell must have a parent, if it doesn't, then the graphParent is
-		// the parent
 		getGuiMaster().attachOrphansToGraphParent(nodeMaster.getAddedCells());
-
-		// remove reference to graphParent
 		getGuiMaster().disconnectFromGraphParent(nodeMaster.getRemovedCells());
-
-		// merge added & removed cells with all cells
 		getGuiMaster().merge();
-
-		/*
-		 * if (getActive() != null) { if (getActive().getNodeType().equals(Base.OUTPUT)
-		 * && getActive().getOutput() != null) {
-		 * nodeInfo.setText(SystemUsage.getRamInfo() + ", Current Output Value: " +
-		 * getActive().getOutput()); } } else
-		 */
-		nodeInfo.setText(SystemUsage.getRamInfo());
+		if (getActive() != null)
+			nodeInfo.setText(SystemUsage.getRamInfo() + ", active node: " + getActive().getName());
+		else
+			nodeInfo.setText(SystemUsage.getRamInfo());
 
 	}
 

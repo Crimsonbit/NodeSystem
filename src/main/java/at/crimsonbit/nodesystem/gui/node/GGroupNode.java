@@ -13,11 +13,9 @@ public class GGroupNode extends GNode {
 
 	public GGroupNode(String name, INodeType type, boolean draw, GNodeGraph graph, double x, double y) {
 		super(name, type, draw, graph, x, y);
-
-		getPopUpDialog().addItem(8, "Make Toast");
-		updatePopUpDialog();
+		addPopUpItem(8, "Make Toast");
 	}
-
+	
 	@Override
 	public void consumeCustomMessage(int id) {
 		if (id == 8) {

@@ -18,9 +18,9 @@ public class SimpleGraph extends Application {
 		GNodeSystem nodeSystem = new GNodeSystem(false);
 		GNodeView view = nodeSystem.getGUI();
 		GNodeGraph graph = view.getNodeGraph();
-		
-		Scene scene = new Scene(view, 1024, 768);
 
+		Scene scene = new Scene(view, 1024, 768);
+		
 		graph.registerNodes("at.crimsonbit.nodesystem.node");
 		graph.addInfo();
 

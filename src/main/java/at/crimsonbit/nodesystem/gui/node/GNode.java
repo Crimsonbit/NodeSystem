@@ -374,14 +374,10 @@ public class GNode extends Pane implements IGNode {
 		return this.popUpDialog;
 	}
 
-	public void updatePopUpDialog() {
-		addPopUpHandler();
-	}
-
 	public void addPopUpItem(int id, String name) {
 		if (id > 7)
 			this.popUpDialog.addItem(id, name);
-		updatePopUpDialog();
+		addPopUpItemHandler();
 	}
 
 	private void defaultPopUpDialog() {
@@ -401,16 +397,7 @@ public class GNode extends Pane implements IGNode {
 		setPopUpDialog(pop);
 	}
 
-	private void addPopUpHandler() {
-		addEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, event -> {
-			this.popUpDialog.show(this, event.getScreenX(), event.getScreenY());
-			event.consume();
-		});
-		
-		addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
-			this.popUpDialog.hide();
-		});
-		
+	private void addPopUpItemHandler() {
 		for (MenuItem item : this.popUpDialog.getItems()) {
 			int id = Integer.valueOf(item.getId());
 			item.setOnAction(event -> {
@@ -421,6 +408,19 @@ public class GNode extends Pane implements IGNode {
 				event.consume();
 			});
 		}
+	}
+
+	private void addPopUpHandler() {
+
+		addEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, event -> {
+			this.popUpDialog.show(this, event.getScreenX(), event.getScreenY());
+			event.consume();
+		});
+
+		addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
+			this.popUpDialog.hide();
+		});
+		addPopUpItemHandler();
 	}
 
 	public void doBlur() {
