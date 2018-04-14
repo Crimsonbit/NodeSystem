@@ -24,11 +24,11 @@ public class SimpleGraph extends Application {
 		graph.registerNodes("at.crimsonbit.nodesystem.node.image_filter");
 		graph.registerNodes("at.crimsonbit.nodesystem.node.constant");
 		
-		graph.loadMenus();
+		
 		// graph.addInfo();
 		Scene scene = new Scene(view, 1024, 768);
 
-		view.getNodeGraph().addKeySupport();
+		graph.initGraph();
 
 		scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		primaryStage.setScene(scene);

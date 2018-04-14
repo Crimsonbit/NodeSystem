@@ -22,4 +22,6 @@ public class OutputNode extends AbstractNode implements INodeType {
 		output = input;
 	}
 
+
+
 }

@@ -129,7 +129,7 @@ public class GNode extends Pane implements IGNode {
 		tooltip.setText("Name: " + this.name + "\n" + "type: " + this.type.toString() + "\n");
 		Tooltip.install(this, tooltip);
 	}
-	
+
 	private void addAllNodes() {
 
 		getInputPorts().clear();
@@ -451,15 +451,19 @@ public class GNode extends Pane implements IGNode {
 				removeBlur();
 			}
 			redraw();
+			
 		} else if (id == 4) {
 			setOutput();
+
 		} else if (id == 5) {
 			setConstant();
+
 		} else if (id == 6) {
 			GNode node = new GNode(this);
 			node.relocate(getBoundsInParent().getMinX(), getBoundsInParent().getMinY());
 			nodeGraph.getGuiMaster().addNode(node);
 			nodeGraph.update();
+			
 		} else if (id == 7) {
 			if (getNodeType() == Base.PATH) {
 				setPath();

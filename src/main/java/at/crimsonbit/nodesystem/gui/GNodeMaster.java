@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.gui.node.GNodeConnection;
@@ -34,6 +35,19 @@ public class GNodeMaster {
 	private GNodeGraph graph;
 	private GPort outPort;
 	private GPort inPort;
+	
+	public GNodeMaster(GNodeGraph graph) {
+		this.graph = graph;
+		this.nodeMaster = new NodeMaster();
+		// this.nodeMaster.registerNodes("at.crimsonbit.nodesystem.node.nodes");
+		this.graphParent = new GNode("_ROOT_", false);
+
+		// clear model, create lists
+
+		clear();
+	}
+	
+	
 
 	public void setFirstPort(GPort port) {
 		this.outPort = port;
@@ -98,15 +112,7 @@ public class GNodeMaster {
 		}
 	}
 
-	public GNodeMaster(GNodeGraph graph) {
-		this.graph = graph;
-		this.nodeMaster = new NodeMaster();
-		// this.nodeMaster.registerNodes("at.crimsonbit.nodesystem.node.nodes");
-		this.graphParent = new GNode("_ROOT_", false);
-
-		// clear model, create lists
-		clear();
-	}
+	
 
 	public void registerNodes(String packag) {
 		this.nodeMaster.registerNodes(packag);

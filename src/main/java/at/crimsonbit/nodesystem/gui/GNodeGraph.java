@@ -61,6 +61,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private HashMap<INodeType, Color> colorLookup = new HashMap<INodeType, Color>();
 	private HashMap<String, Color> nodeLookup = new HashMap<String, Color>();
 	private HashMap<String, Object> settings = new HashMap<String, Object>();
+	private Map<INodeType, Class<? extends GNode>> nodeMap = new HashMap<INodeType, Class<? extends GNode>>();
 
 	private final DragContext dragContext = new DragContext();
 
@@ -71,6 +72,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private GSubMenu fileMenu = new GSubMenu(1, "File");
 
 	public GNodeGraph() {
+
 		setDefualtColorLookup();
 		setNodeGraph(this);
 
@@ -98,11 +100,36 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		graphDialog.addItem(fileMenu);
 
 		this.setPopUpDialog(graphDialog);
-		// addSelectGroupSupport();
-
 		addSetting("curve_width", 4d);
 
-		// addInfo();
+	}
+
+	public void initGraph() {
+		fillNodeList();
+		loadMenus();
+		addKeySupport();
+	}
+
+	public void addCustomNode(INodeType type, Class<? extends GNode> node) {
+		nodeMap.put(type, node);
+	}
+	
+	private void fillNodeList() {
+		GNode dummy_tmp = new GNode("dummy", false);
+
+		Set<INodeType> map = getGuiMaster().getNodeMaster().getAllNodeClasses();
+		for (INodeType type : map) {
+			if (type instanceof Base)
+				nodeMap.put(type, dummy_tmp.getClass());
+			else if (type instanceof Math)
+				nodeMap.put(type, dummy_tmp.getClass());
+			else if (type instanceof Constant)
+				nodeMap.put(type, dummy_tmp.getClass());
+			else if (type instanceof Image)
+				nodeMap.put(type, dummy_tmp.getClass());
+			else if (type instanceof ImageFilter)
+				nodeMap.put(type, dummy_tmp.getClass());
+		}
 
 	}
 
@@ -334,15 +361,14 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 	@Override
 	public void consumeMessage(int id, GEntry source) {
-		// for(int i = 0; i<idCount;i++) {
-		// if(i == id) {
 		if (id < 1000) {
 			Set<INodeType> map = getGuiMaster().getNodeMaster().getAllNodeClasses();
 			for (INodeType type : map) {
-				if (source.getName() == type.toString())
+				if (source.getName().equals(type.toString()))
 					getGuiMaster().addNode(source.getName(), type, true, this, getCurX(), getCurY());
 			}
 		}
+
 		if (id == 1001) {
 			System.out.println("loading!");
 		}
@@ -353,9 +379,6 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 			Stage stage = (Stage) getScene().getWindow();
 			stage.close();
 		}
-
-		// }
-		// }
 
 		update();
 	}
@@ -437,7 +460,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 		for (INodeType t : Constant.values())
 			getColorLookup().put(t, Color.INDIANRED);
-		
+
 		for (INodeType t : Math.values())
 			getColorLookup().put(t, Color.ORANGE);
 
