@@ -2,12 +2,11 @@ package at.crimsonbit.nodesystem.node.calculate;
 
 import at.crimsonbit.nodesystem.node.types.Calculate;
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
-import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeInput;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeOutput;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeType;
 
-public class AbsoluteNode extends AbstractNode implements INodeType {
+public class AbsoluteNode extends AbstractNode {
 	@NodeType
 	private static final Calculate type = Calculate.ABSOLUTE;
 

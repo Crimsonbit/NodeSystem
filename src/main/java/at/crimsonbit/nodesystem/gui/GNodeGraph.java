@@ -1,5 +1,7 @@
 package at.crimsonbit.nodesystem.gui;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -113,22 +115,16 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	public void addCustomNode(INodeType type, Class<? extends GNode> node) {
 		nodeMap.put(type, node);
 	}
-	
+
 	private void fillNodeList() {
 		GNode dummy_tmp = new GNode("dummy", false);
 
 		Set<INodeType> map = getGuiMaster().getNodeMaster().getAllNodeClasses();
+
 		for (INodeType type : map) {
-			if (type instanceof Base)
-				nodeMap.put(type, dummy_tmp.getClass());
-			else if (type instanceof Math)
-				nodeMap.put(type, dummy_tmp.getClass());
-			else if (type instanceof Constant)
-				nodeMap.put(type, dummy_tmp.getClass());
-			else if (type instanceof Image)
-				nodeMap.put(type, dummy_tmp.getClass());
-			else if (type instanceof ImageFilter)
-				nodeMap.put(type, dummy_tmp.getClass());
+
+			nodeMap.put(type, dummy_tmp.getClass());
+
 		}
 
 	}
@@ -363,10 +359,22 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	public void consumeMessage(int id, GEntry source) {
 		if (id < 1000) {
 			Set<INodeType> map = getGuiMaster().getNodeMaster().getAllNodeClasses();
-			for (INodeType type : map) {
-				if (source.getName().equals(type.toString()))
-					getGuiMaster().addNode(source.getName(), type, true, this, getCurX(), getCurY());
+			INodeType type = getGuiMaster().getNodeMaster().getTypeByName(source.getName());
+			Class<? extends GNode> clazz = nodeMap.get(type);
+			Constructor<? extends GNode> con;
+			try {
+				con = clazz.getConstructor(String.class, INodeType.class, boolean.class, GNodeGraph.class, double.class,
+						double.class);
+
+				GNode node = con.newInstance(source.getName(), type, true, this, getCurX(), getCurY());
+
+				getGuiMaster().addNode(node);
+			} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
+					| IllegalArgumentException | InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
+
 		}
 
 		if (id == 1001) {

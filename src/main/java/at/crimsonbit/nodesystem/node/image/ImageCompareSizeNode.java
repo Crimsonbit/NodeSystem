@@ -4,12 +4,11 @@ import java.awt.image.BufferedImage;
 
 import at.crimsonbit.nodesystem.node.types.Image;
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
-import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeInput;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeOutput;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeType;
 
-public class ImageCompareSizeNode extends AbstractNode implements INodeType {
+public class ImageCompareSizeNode extends AbstractNode {
 
 	@NodeType
 	private static final Image type = Image.IMAGE_COMPARE_SIZE;
