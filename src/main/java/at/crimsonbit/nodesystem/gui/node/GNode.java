@@ -5,9 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.sun.prism.GraphicsPipeline;
+
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.dialog.GPopUp;
 import at.crimsonbit.nodesystem.gui.node.port.GPort;
+import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
+import at.crimsonbit.nodesystem.gui.toast.Toast;
+import at.crimsonbit.nodesystem.gui.toast.ToastTime;
 import at.crimsonbit.nodesystem.node.types.Base;
 import at.crimsonbit.nodesystem.node.types.Constant;
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
@@ -63,7 +68,7 @@ public class GNode extends Pane implements IGNode {
 	private final int PORT_OFFSET = 40;
 	private double height = 52;
 	private final FileChooser fileChooser = new FileChooser();
-
+	private int ppc = 0; // popup entry counter
 	private AbstractNode calcNode;
 
 	private Rectangle outline;
@@ -284,7 +289,7 @@ public class GNode extends Pane implements IGNode {
 
 			double width = 150;
 			text = new Text(name);
-			text.setFill(nodeGraph.getGeneralColorLookup().get("text"));
+			text.setFill(nodeGraph.getGeneralColorLookup().get(GraphSettings.COLOR_TEXT_COLOR));
 			text.setTranslateY(12.5);
 			double tWidth = text.getBoundsInLocal().getWidth();
 			if (width < tWidth)
@@ -296,7 +301,7 @@ public class GNode extends Pane implements IGNode {
 			outline = new Rectangle(width, h - 5);
 			outline.setTranslateY(5);
 			outline.setFill(Color.TRANSPARENT);
-			outline.setStroke(nodeGraph.getGeneralColorLookup().get("active"));
+			outline.setStroke(nodeGraph.getGeneralColorLookup().get(GraphSettings.COLOR_NODE_ACTIVE));
 			outline.setArcWidth(21.0);
 			outline.setArcHeight(21.0);
 			outline.setStrokeWidth(1);
@@ -322,12 +327,13 @@ public class GNode extends Pane implements IGNode {
 
 			e = new DropShadow();
 			e.setBlurType(BlurType.GAUSSIAN);
-			e.setColor(new Color(0.1, 0.1, 0.1, 1));
-			e.setWidth(5);
-			e.setHeight(5);
-			e.setOffsetX(5);
-			e.setOffsetY(5);
-			e.setRadius(10);
+			double col = (double) getNodeGraph().getSettings().get(GraphSettings.COLOR_SHADOW_COLOR);
+			e.setColor(new Color(col, col, col, 1));
+			e.setWidth((double) getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_WIDTH));
+			e.setHeight((double) getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_HEIGHT));
+			e.setOffsetX((double) getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_WIDTH));
+			e.setOffsetY((double) getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_HEIGHT));
+			e.setRadius((double) getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_RADIUS));
 			base.setEffect(e);
 
 			setView(base);
@@ -375,23 +381,27 @@ public class GNode extends Pane implements IGNode {
 	}
 
 	public void addPopUpItem(int id, String name) {
-		if (id > 7)
+		if (id > ppc)
 			this.popUpDialog.addItem(id, name);
 		addPopUpItemHandler();
+	}
+
+	public int getInternalIDCounter() {
+		return ppc;
 	}
 
 	private void defaultPopUpDialog() {
 		GPopUp pop = new GPopUp();
 		pop.addItem(-2, getName(), true);
 		pop.addSeparator(-1);
-		pop.addItem(6, "Copy Node");
-		pop.addItem(2, "remove Active");
-		pop.addItem(3, "Rename");
-		pop.addItem(0, "Remove");
+		pop.addItem(ppc++, "Copy Node");
+		pop.addItem(ppc++, "remove Active");
+		pop.addItem(ppc++, "Rename");
+		pop.addItem(ppc++, "Remove");
 		if (this.type == Base.OUTPUT) {
-			pop.addItem(4, "Get Output");
+			pop.addItem(ppc++, "Get Output");
 		} else if (this.type == Base.PATH) {
-			pop.addItem(7, "Set Path");
+			pop.addItem(ppc++, "Set Path");
 		}
 
 		setPopUpDialog(pop);
@@ -435,25 +445,18 @@ public class GNode extends Pane implements IGNode {
 	}
 
 	public void consumeMessage(int id) {
-		if (id == 0) {
+		if (id == 3) {
 
 			nodeGraph.getGuiMaster().removeNode(this);
 			nodeGraph.update();
 
 		} else if (id == 1) {
 
-			nodeGraph.setActive(this);
-			nodeGraph.update();
-			setActive(true);
-			redraw();
-
-		} else if (id == 2) {
-
 			nodeGraph.update();
 			setActive(false);
 			redraw();
 
-		} else if (id == 3) {
+		} else if (id == 2) {
 			doBlur();
 			TextInputDialog dialog = new TextInputDialog(getName());
 			dialog.setTitle("Name");
@@ -470,21 +473,19 @@ public class GNode extends Pane implements IGNode {
 			redraw();
 
 		} else if (id == 4) {
-			setOutput();
+			if (getNodeType() == Base.PATH) {
+				setPath();
+			} else
+				setOutput();
+			redraw();
+			getNodeGraph().update();
 
-		} else if (id == 5) {
-			setConstant();
-
-		} else if (id == 6) {
+		} else if (id == 0) {
 			GNode node = new GNode(this);
 			node.relocate(getBoundsInParent().getMinX(), getBoundsInParent().getMinY());
 			nodeGraph.getGuiMaster().addNode(node);
 			nodeGraph.update();
 
-		} else if (id == 7) {
-			if (getNodeType() == Base.PATH) {
-				setPath();
-			}
 		}
 	}
 
@@ -540,7 +541,7 @@ public class GNode extends Pane implements IGNode {
 					this.calcNode.set("constant", b);
 
 				} catch (Exception e) {
-
+					Toast.makeToast("Invalid input!\nPlease type in a boolean type!", ToastTime.TIME_SHORT);
 				}
 			} else if (this.type == Constant.DOUBLE) {
 				try {
@@ -548,7 +549,7 @@ public class GNode extends Pane implements IGNode {
 					this.calcNode.set("constant", b);
 
 				} catch (Exception e) {
-
+					Toast.makeToast("Invalid input!\nPlease type in a double type!", ToastTime.TIME_SHORT);
 				}
 			} else if (this.type == Constant.FLOAT) {
 				try {
@@ -556,7 +557,7 @@ public class GNode extends Pane implements IGNode {
 					this.calcNode.set("constant", b);
 
 				} catch (Exception e) {
-
+					Toast.makeToast("Invalid input!\nPlease type in a float type!", ToastTime.TIME_SHORT);
 				}
 			} else if (this.type == Constant.INTEGER) {
 				try {
@@ -564,7 +565,7 @@ public class GNode extends Pane implements IGNode {
 					this.calcNode.set("constant", b);
 
 				} catch (Exception e) {
-
+					Toast.makeToast("Invalid input!\nPlease type in a integer type!", ToastTime.TIME_SHORT);
 				}
 			} else if (this.type == Constant.BYTE) {
 				try {
@@ -572,7 +573,7 @@ public class GNode extends Pane implements IGNode {
 					this.calcNode.set("constant", b);
 
 				} catch (Exception e) {
-
+					Toast.makeToast("Invalid input!\nPlease type in a byte type!", ToastTime.TIME_SHORT);
 				}
 
 			} else if (this.type == Constant.LONG) {
@@ -581,7 +582,7 @@ public class GNode extends Pane implements IGNode {
 					this.calcNode.set("constant", b);
 
 				} catch (Exception e) {
-
+					Toast.makeToast("Invalid input!\nPlease type in a long type!", ToastTime.TIME_SHORT);
 				}
 			} else if (this.type == Constant.SHORT) {
 				try {
@@ -589,7 +590,7 @@ public class GNode extends Pane implements IGNode {
 					this.calcNode.set("constant", b);
 
 				} catch (Exception e) {
-
+					Toast.makeToast("Invalid input!\nPlease type in a short type!", ToastTime.TIME_SHORT);
 				}
 			}
 			redraw();

@@ -34,7 +34,7 @@ public class GNodeMaster {
 	private GNodeGraph graph;
 	private GPort outPort;
 	private GPort inPort;
-	
+
 	public GNodeMaster(GNodeGraph graph) {
 		this.graph = graph;
 		this.nodeMaster = new NodeMaster();
@@ -45,8 +45,6 @@ public class GNodeMaster {
 
 		clear();
 	}
-	
-	
 
 	public void setFirstPort(GPort port) {
 		this.outPort = port;
@@ -111,8 +109,6 @@ public class GNodeMaster {
 		}
 	}
 
-	
-
 	public void registerNodes(String packag) {
 		this.nodeMaster.registerNodes(packag);
 	}
@@ -133,7 +129,7 @@ public class GNodeMaster {
 
 	public NodeMaster getNodeMaster() {
 		return nodeMaster;
-	}	
+	}
 
 	public void clearAddedLists() {
 		addedNodes.clear();

@@ -14,6 +14,7 @@ public class GGroupNode extends GNode {
 
 	public GGroupNode(String name, INodeType type, boolean draw, GNodeGraph graph, double x, double y) {
 		super(name, type, draw, graph, x, y);
+		// int ppc = getInternalIDCounter(); //Tells you what the last id of the popup.
 		addPopUpItem(8, "Make Toast");
 		addPopUpItem(9, "Animate");
 	}

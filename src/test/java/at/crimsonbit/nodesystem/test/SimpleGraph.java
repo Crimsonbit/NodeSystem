@@ -4,6 +4,7 @@ import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.GNodeSystem;
 import at.crimsonbit.nodesystem.gui.GNodeView;
 import at.crimsonbit.nodesystem.gui.node.GGroupNode;
+import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
 import at.crimsonbit.nodesystem.node.types.Base;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -20,7 +21,7 @@ public class SimpleGraph extends Application {
 		GNodeGraph graph = view.getNodeGraph();
 
 		Scene scene = new Scene(view, 1024, 768);
-		
+
 		graph.registerNodes("at.crimsonbit.nodesystem.node");
 		graph.addInfo();
 
@@ -31,6 +32,9 @@ public class SimpleGraph extends Application {
 
 		graph.initGraph();
 		graph.addCustomNode(Base.GROUP, new GGroupNode().getClass());
+
+		graph.addSetting(GraphSettings.SETTING_CURVE_WIDTH, 6d);
+		graph.addSetting(GraphSettings.SETTING_CURVE_CURVE, 100d);
 
 		scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		primaryStage.setScene(scene);

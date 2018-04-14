@@ -1,5 +1,6 @@
 package at.crimsonbit.nodesystem.gui;
 
+import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.canvas.Canvas;
@@ -86,8 +87,8 @@ public class GGraphScene extends AnchorPane {
 
 	private void init() {
 		setBackground(new Background(
-				new BackgroundFill(graph.getGeneralColorLookup().get("background"), CornerRadii.EMPTY, Insets.EMPTY)));
-		this.lineColor = graph.getGeneralColorLookup().get("line_color");
+				new BackgroundFill(graph.getGeneralColorLookup().get(GraphSettings.COLOR_BACKGROUND), CornerRadii.EMPTY, Insets.EMPTY)));
+		this.lineColor = graph.getGeneralColorLookup().get(GraphSettings.COLOR_BACKGROUND_LINES);
 	}
 
 	protected void setNodeGraph(GNodeGraph graph) {

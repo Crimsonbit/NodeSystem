@@ -34,22 +34,6 @@ public class GPort extends Group implements IGConsumable {
 
 	private final Tooltip tooltip = new Tooltip();
 
-	/*
-	 * for (MenuItem item : this.dialog.getItems()) { int id =
-	 * Integer.valueOf(item.getId()); item.setOnAction(event -> { consumeMessage(id,
-	 * (GEntry) item); event.consume(); }); }
-	 * 
-	 */
-	// addSubeMenuHandlers();
-
-	/*
-	 * for (MenuItem item : this.popUpDialog.getItems()) { int id =
-	 * Integer.valueOf(item.getId()); item.setOnAction(event -> { //
-	 * System.out.println(id); consumeMessage(id); event.consume(); });
-	 * 
-	 * }
-	 */
-
 	public GPort(int id, boolean input, String labels, double x, double y, GNode node) {
 		this.node = node;
 		this.id = id;

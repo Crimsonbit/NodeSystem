@@ -1,6 +1,8 @@
 package at.crimsonbit.nodesystem.gui.node;
 
 import at.crimsonbit.nodesystem.gui.node.port.GPort;
+import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
+import at.crimsonbit.nodesystem.gui.toast.ToastTime;
 import javafx.scene.Group;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
@@ -41,27 +43,31 @@ public class GNodeConnection extends Group {
 		line.setControlY1(sourcePort.getY());
 		line.setControlX2(targetPort.getY() - 50);
 		line.setControlY2(targetPort.getY());
-		line.controlX1Property().bind(source.layoutXProperty().add(sourcePort.getX() + 50));
+		line.controlX1Property().bind(source.layoutXProperty().add(sourcePort.getX()
+				+ (double) source.getNodeGraph().getSettings().get(GraphSettings.SETTING_CURVE_CURVE)));
 		line.controlY1Property().bind(source.layoutYProperty().add(sourcePort.getY()));
-		line.controlX2Property().bind(target.layoutXProperty().add(targetPort.getX() - 50));
+		line.controlX2Property().bind(target.layoutXProperty().add(targetPort.getX()
+				- (double) source.getNodeGraph().getSettings().get(GraphSettings.SETTING_CURVE_CURVE)));
 		line.controlY2Property().bind(target.layoutYProperty().add(targetPort.getY()));
 
 		line.endXProperty().bind(target.layoutXProperty().add(targetPort.getX()));
 		line.endYProperty().bind(target.layoutYProperty().add(targetPort.getY()));
 		line.setStroke(source.getNodeGraph().getColorLookup().get(source.getNodeType()));
-		line.setStrokeWidth((double) source.getNodeGraph().getSettings().get("curve_width"));
+		line.setStrokeWidth((double) source.getNodeGraph().getSettings().get(GraphSettings.SETTING_CURVE_WIDTH));
 		line.setStrokeLineCap(StrokeLineCap.ROUND);
 		line.setFill(Color.TRANSPARENT);
 		// line.setStrokeWidth(2);
 
 		DropShadow e = new DropShadow();
 		e.setBlurType(BlurType.GAUSSIAN);
-		e.setColor(new Color(0.1, 0.1, 0.1, 1));
-		e.setWidth((double) source.getNodeGraph().getSettings().get("curve_width") + 4);
-		e.setHeight((double) source.getNodeGraph().getSettings().get("curve_width") + 4);
-		e.setOffsetX(5);
-		e.setOffsetY(5);
-		e.setRadius(10);
+		e.setBlurType(BlurType.GAUSSIAN);
+		double col = (double) source.getNodeGraph().getSettings().get(GraphSettings.COLOR_SHADOW_COLOR);
+		e.setColor(new Color(col, col, col, 1));
+		e.setWidth((double) source.getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_WIDTH));
+		e.setHeight((double) source.getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_HEIGHT));
+		e.setOffsetX((double) source.getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_WIDTH));
+		e.setOffsetY((double) source.getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_HEIGHT));
+		e.setRadius((double) source.getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_RADIUS));
 		line.setEffect(e);
 
 		getChildren().add(line);

@@ -15,6 +15,7 @@ import at.crimsonbit.nodesystem.gui.layer.GNodeLayer;
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.gui.node.IGConsumable;
 import at.crimsonbit.nodesystem.gui.settings.GSettingsPane;
+import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
 import at.crimsonbit.nodesystem.node.types.Base;
 import at.crimsonbit.nodesystem.node.types.Calculate;
 import at.crimsonbit.nodesystem.node.types.Constant;
@@ -61,8 +62,8 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private GLineLayer lineLayer;
 	private Pane infoLayer = new Pane();
 	private HashMap<INodeType, Color> colorLookup = new HashMap<INodeType, Color>();
-	private HashMap<String, Color> nodeLookup = new HashMap<String, Color>();
-	private HashMap<String, Object> settings = new HashMap<String, Object>();
+	private HashMap<GraphSettings, Color> nodeLookup = new HashMap<GraphSettings, Color>();
+	private HashMap<GraphSettings, Object> settings = new HashMap<GraphSettings, Object>();
 
 	private Map<INodeType, Class<? extends GNode>> nodeMap = new HashMap<INodeType, Class<? extends GNode>>();
 
@@ -76,7 +77,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 	public GNodeGraph() {
 
-		setDefualtColorLookup();
+		setDefaultColorLookup();
 		setNodeGraph(this);
 
 		this.selection = new Rectangle();
@@ -104,8 +105,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 		this.setPopUpDialog(graphDialog);
 
-		addSetting("curve_width", 4d);
-
+		setDefaulSettings();
 	}
 
 	public void initGraph() {
@@ -148,11 +148,11 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		update();
 	}
 
-	public void addSetting(String s, Object r) {
+	public void addSetting(GraphSettings s, Object r) {
 		this.settings.put(s, r);
 	}
 
-	public HashMap<String, Object> getSettings() {
+	public HashMap<GraphSettings, Object> getSettings() {
 		return this.settings;
 	}
 
@@ -420,7 +420,17 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		return this.getScaleValue();
 	}
 
-	private void setDefualtColorLookup() {
+	private void setDefaulSettings() {
+		addSetting(GraphSettings.SETTING_CURVE_WIDTH, 4d);
+		addSetting(GraphSettings.SETTING_CURVE_CURVE, 50d);
+		addSetting(GraphSettings.COLOR_SHADOW_COLOR, 0.1d);
+		addSetting(GraphSettings.SETTING_SHADOW_WIDTH, 5d);
+		addSetting(GraphSettings.SETTING_SHADOW_HEIGHT, 5d);
+		addSetting(GraphSettings.SETTING_SHADOW_RADIUS, 20d);
+
+	}
+
+	private void setDefaultColorLookup() {
 		getColorLookup().put(Base.OUTPUT, Color.LIGHTBLUE);
 		getColorLookup().put(Base.PATH, Color.DARKSEAGREEN);
 		getColorLookup().put(Base.GROUP, Color.GRAY);
@@ -439,20 +449,20 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		for (INodeType t : ImageFilter.values())
 			getColorLookup().put(t, Color.SADDLEBROWN);
 
-		getGeneralColorLookup().put("active", new Color(0.992, 0.647, 0.305, 1));
-		getGeneralColorLookup().put("input", Color.LIGHTBLUE);
-		getGeneralColorLookup().put("output", Color.LIGHTGREEN);
-		getGeneralColorLookup().put("curve", Color.CRIMSON);
-		getGeneralColorLookup().put("text", Color.WHITE);
-		getGeneralColorLookup().put("background", new Color(0.16, 0.16, 0.16, 1));
-		getGeneralColorLookup().put("line_color", new Color(0.992, 0.647, 0.305, 1));
+		getGeneralColorLookup().put(GraphSettings.COLOR_NODE_ACTIVE, new Color(0.992, 0.647, 0.305, 1));
+		getGeneralColorLookup().put(GraphSettings.COLOR_PORT_INPUT, Color.LIGHTBLUE);
+		getGeneralColorLookup().put(GraphSettings.COLOR_PORT_OUTPUT, Color.LIGHTGREEN);
+		getGeneralColorLookup().put(GraphSettings.COLOR_CURVE_DEFAULT, Color.CRIMSON);
+		getGeneralColorLookup().put(GraphSettings.COLOR_TEXT_COLOR, Color.WHITE);
+		getGeneralColorLookup().put(GraphSettings.COLOR_BACKGROUND, new Color(0.16, 0.16, 0.16, 1));
+		getGeneralColorLookup().put(GraphSettings.COLOR_BACKGROUND_LINES, new Color(0.098, 0.098, 0.098, 1));
 	}
 
-	public void addNodeColorLookup(String string, Color c) {
+	public void addNodeColorLookup(GraphSettings string, Color c) {
 		this.nodeLookup.put(string, c);
 	}
 
-	public HashMap<String, Color> getGeneralColorLookup() {
+	public HashMap<GraphSettings, Color> getGeneralColorLookup() {
 		return this.nodeLookup;
 	}
 
