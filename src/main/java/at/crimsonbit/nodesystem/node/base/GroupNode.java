@@ -6,10 +6,10 @@ import at.crimsonbit.nodesystem.nodebackend.api.NodeField;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeOutput;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeType;
 
-public class PathNode extends AbstractNode {
+public class GroupNode extends AbstractNode {
 
 	@NodeType
-	private static final Base type = Base.PATH;
+	private static final Base type = Base.GROUP;
 
 	@NodeField
 	@NodeOutput("compute")

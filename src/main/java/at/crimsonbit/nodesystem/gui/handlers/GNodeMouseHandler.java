@@ -1,8 +1,9 @@
-package at.crimsonbit.nodesystem.util;
+package at.crimsonbit.nodesystem.gui.handlers;
 
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.GState;
 import at.crimsonbit.nodesystem.gui.node.GNode;
+import at.crimsonbit.nodesystem.util.DragContext;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.Node;

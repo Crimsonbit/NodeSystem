@@ -2,12 +2,11 @@ package at.crimsonbit.nodesystem.node.base;
 
 import at.crimsonbit.nodesystem.node.types.Base;
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
-import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeInput;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeOutput;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeType;
 
-public class OutputNode extends AbstractNode implements INodeType {
+public class OutputNode extends AbstractNode {
 
 	@NodeType
 	private static final Base type = Base.OUTPUT;
@@ -21,7 +20,5 @@ public class OutputNode extends AbstractNode implements INodeType {
 	public void compute() {
 		output = input;
 	}
-
-
 
 }

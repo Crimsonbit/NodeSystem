@@ -1,4 +1,5 @@
 package at.crimsonbit.nodesystem.gui.node;
+
 /**
  * 
  * @author NeonArtworks
@@ -6,8 +7,8 @@ package at.crimsonbit.nodesystem.gui.node;
  */
 
 public interface IGNode {
-	
-	void consumeMessage(int id);
-	void draw();
-	
+
+	abstract void consumeCustomMessage(int id);
+	abstract void draw();
+
 }

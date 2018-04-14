@@ -9,6 +9,7 @@ import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.dialog.GPopUp;
 import at.crimsonbit.nodesystem.gui.node.port.GPort;
 import at.crimsonbit.nodesystem.node.types.Base;
+import at.crimsonbit.nodesystem.node.types.Constant;
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.util.RangeMapper;
@@ -71,6 +72,15 @@ public class GNode extends Pane implements IGNode {
 	private Text text;
 	private DropShadow e;
 	private final Tooltip tooltip = new Tooltip();
+
+	public GNode() {
+		this.doDraw = false;
+		this.name = "";
+		defaultTopColor();
+		defaultBackColor();
+		defaultPopUpDialog();
+		draw();
+	}
 
 	public GNode(String name, boolean draw) {
 		this.doDraw = draw;
@@ -176,28 +186,6 @@ public class GNode extends Pane implements IGNode {
 	public void setBackColor(double r, double g, double b) {
 		this.backColor = new Color(r, g, b, 1);
 		redraw();
-	}
-
-	private void defaultPopUpDialog() {
-		GPopUp pop = new GPopUp();
-		pop.addItem(-2, getName(), true);
-		pop.addSeparator(-1);
-		pop.addItem(6, "Copy Node");
-		pop.addItem(2, "remove Active");
-		pop.addItem(3, "Rename");
-		pop.addItem(0, "Remove");
-		if (this.type == Base.OUTPUT) {
-			pop.addItem(4, "Get Output");
-		}
-
-		else if (this.type == Base.CONSTANT) {
-			pop.addItem(5, "Set Constant");
-		} else if (this.type == Base.PATH) {
-			pop.addItem(7, "Set Path");
-		}
-		// pop.addItem(1, "set Active");
-
-		setPopUpDialog(pop);
 	}
 
 	private void defaultBackColor() {
@@ -379,27 +367,57 @@ public class GNode extends Pane implements IGNode {
 
 	public void setPopUpDialog(GPopUp dialog) {
 		this.popUpDialog = dialog;
-		addPopUpHandler(this.popUpDialog);
+		addPopUpHandler();
 	}
 
 	public GPopUp getPopUpDialog() {
 		return this.popUpDialog;
 	}
 
-	private void addPopUpHandler(GPopUp dialog) {
-		this.addEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, event -> {
-			dialog.show(this, event.getScreenX(), event.getScreenY());
+	public void updatePopUpDialog() {
+		addPopUpHandler();
+	}
+
+	public void addPopUpItem(int id, String name) {
+		if (id > 7)
+			this.popUpDialog.addItem(id, name);
+		updatePopUpDialog();
+	}
+
+	private void defaultPopUpDialog() {
+		GPopUp pop = new GPopUp();
+		pop.addItem(-2, getName(), true);
+		pop.addSeparator(-1);
+		pop.addItem(6, "Copy Node");
+		pop.addItem(2, "remove Active");
+		pop.addItem(3, "Rename");
+		pop.addItem(0, "Remove");
+		if (this.type == Base.OUTPUT) {
+			pop.addItem(4, "Get Output");
+		} else if (this.type == Base.PATH) {
+			pop.addItem(7, "Set Path");
+		}
+
+		setPopUpDialog(pop);
+	}
+
+	private void addPopUpHandler() {
+		addEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, event -> {
+			this.popUpDialog.show(this, event.getScreenX(), event.getScreenY());
 			event.consume();
 		});
-
-		this.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
-			dialog.hide();
+		
+		addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
+			this.popUpDialog.hide();
 		});
-
+		
 		for (MenuItem item : this.popUpDialog.getItems()) {
 			int id = Integer.valueOf(item.getId());
 			item.setOnAction(event -> {
-				consumeMessage(id);
+				if (id <= 7)
+					consumeMessage(id);
+				else
+					consumeCustomMessage(id);
 				event.consume();
 			});
 		}
@@ -416,7 +434,6 @@ public class GNode extends Pane implements IGNode {
 		nodeGraph.setEffect(null);
 	}
 
-	@Override
 	public void consumeMessage(int id) {
 		if (id == 0) {
 
@@ -451,7 +468,7 @@ public class GNode extends Pane implements IGNode {
 				removeBlur();
 			}
 			redraw();
-			
+
 		} else if (id == 4) {
 			setOutput();
 
@@ -463,7 +480,7 @@ public class GNode extends Pane implements IGNode {
 			node.relocate(getBoundsInParent().getMinX(), getBoundsInParent().getMinY());
 			nodeGraph.getGuiMaster().addNode(node);
 			nodeGraph.update();
-			
+
 		} else if (id == 7) {
 			if (getNodeType() == Base.PATH) {
 				setPath();
@@ -503,29 +520,83 @@ public class GNode extends Pane implements IGNode {
 	}
 
 	public void setConstant() {
-		if (getNodeType().equals(Base.CONSTANT)) {
-			doBlur();
-			TextInputDialog dialog = new TextInputDialog(getName());
-			dialog.setTitle("Constant");
-			dialog.setHeaderText("Set a new constant for the node.");
-			dialog.setContentText("Constant: ");
 
-			Optional<String> result = dialog.showAndWait();
-			if (result.isPresent()) {
-				this.nameAddition = result.get();
-				// int i = 0;
-				// try {
-				// i = Integer.valueOf(result.get());
-				// } catch (Exception e) {
-				//
-				// }
-				setName(this.nameAddition);
+		doBlur();
+		TextInputDialog dialog = new TextInputDialog(getName());
+		dialog.setTitle("Constant");
+		dialog.setHeaderText("Set a new constant for the node.");
+		dialog.setContentText("Constant: ");
+
+		Optional<String> result = dialog.showAndWait();
+		if (result.isPresent()) {
+			// this.nameAddition = result.get();
+			// setName(this.nameAddition);
+			if (this.type == Constant.STRING) {
 				this.calcNode.set("constant", result.get());
-				redraw();
-				removeBlur();
-			} else {
-				removeBlur();
+
+			} else if (this.type == Constant.BOOLEAN) {
+				try {
+					boolean b = Boolean.valueOf(result.get());
+					this.calcNode.set("constant", b);
+
+				} catch (Exception e) {
+
+				}
+			} else if (this.type == Constant.DOUBLE) {
+				try {
+					double b = Double.valueOf(result.get());
+					this.calcNode.set("constant", b);
+
+				} catch (Exception e) {
+
+				}
+			} else if (this.type == Constant.FLOAT) {
+				try {
+					float b = Float.valueOf(result.get());
+					this.calcNode.set("constant", b);
+
+				} catch (Exception e) {
+
+				}
+			} else if (this.type == Constant.INTEGER) {
+				try {
+					int b = Integer.valueOf(result.get());
+					this.calcNode.set("constant", b);
+
+				} catch (Exception e) {
+
+				}
+			} else if (this.type == Constant.BYTE) {
+				try {
+					byte b = Byte.valueOf(result.get());
+					this.calcNode.set("constant", b);
+
+				} catch (Exception e) {
+
+				}
+
+			} else if (this.type == Constant.LONG) {
+				try {
+					long b = Long.valueOf(result.get());
+					this.calcNode.set("constant", b);
+
+				} catch (Exception e) {
+
+				}
+			} else if (this.type == Constant.SHORT) {
+				try {
+					short b = Short.valueOf(result.get());
+					this.calcNode.set("constant", b);
+
+				} catch (Exception e) {
+
+				}
 			}
+			redraw();
+			removeBlur();
+		} else {
+			removeBlur();
+
 		}
 	}
 
@@ -582,6 +653,12 @@ public class GNode extends Pane implements IGNode {
 	public boolean isPortPressed() {
 		// TODO Auto-generated method stub
 		return this.portPressed;
+	}
+
+	@Override
+	public void consumeCustomMessage(int id) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

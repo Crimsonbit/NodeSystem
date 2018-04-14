@@ -9,6 +9,7 @@ import java.util.Set;
 import at.crimsonbit.nodesystem.gui.dialog.GEntry;
 import at.crimsonbit.nodesystem.gui.dialog.GPopUp;
 import at.crimsonbit.nodesystem.gui.dialog.GSubMenu;
+import at.crimsonbit.nodesystem.gui.handlers.GNodeMouseHandler;
 import at.crimsonbit.nodesystem.gui.layer.GLineLayer;
 import at.crimsonbit.nodesystem.gui.layer.GNodeLayer;
 import at.crimsonbit.nodesystem.gui.node.GNode;
@@ -22,7 +23,6 @@ import at.crimsonbit.nodesystem.node.types.ImageFilter;
 import at.crimsonbit.nodesystem.node.types.Math;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.util.DragContext;
-import at.crimsonbit.nodesystem.util.GNodeMouseHandler;
 import at.crimsonbit.nodesystem.util.SystemUsage;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
@@ -232,10 +232,11 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 					}
 				}
 				if (event.isShiftDown() && event.getCode().equals(KeyCode.C)) {
-					if (getActive().getNodeType().equals(Base.CONSTANT)) {
-						getActive().setConstant();
-						// update();
-					}
+					for (INodeType t : Constant.values())
+						if (getActive().getNodeType().equals(t)) {
+							getActive().setConstant();
+							// update();
+						}
 				}
 				if (event.isShiftDown() && event.getCode().equals(KeyCode.O)) {
 					if (getActive().getNodeType().equals(Base.OUTPUT)) {
@@ -465,7 +466,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private void setDefualtColorLookup() {
 		getColorLookup().put(Base.OUTPUT, Color.LIGHTBLUE);
 		getColorLookup().put(Base.PATH, Color.DARKSEAGREEN);
-
+		getColorLookup().put(Base.GROUP, Color.GRAY);
 		for (INodeType t : Constant.values())
 			getColorLookup().put(t, Color.INDIANRED);
 
