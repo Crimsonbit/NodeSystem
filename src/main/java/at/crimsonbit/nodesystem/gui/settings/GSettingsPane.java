@@ -1,19 +1,6 @@
 package at.crimsonbit.nodesystem.gui.settings;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import at.crimsonbit.nodesystem.gui.GNodeGraph;
-import at.crimsonbit.nodesystem.gui.node.GNode;
-import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.Group;
-import javafx.scene.effect.BoxBlur;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 
 /**
  * GSettingsPane.

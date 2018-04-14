@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.gui.node.GNodeConnection;
@@ -134,7 +133,7 @@ public class GNodeMaster {
 
 	public NodeMaster getNodeMaster() {
 		return nodeMaster;
-	}
+	}	
 
 	public void clearAddedLists() {
 		addedNodes.clear();

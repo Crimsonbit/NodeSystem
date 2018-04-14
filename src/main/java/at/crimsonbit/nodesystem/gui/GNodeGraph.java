@@ -359,7 +359,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	@Override
 	public void consumeMessage(int id, GEntry source) {
 		if (id < 1000) {
-			Set<INodeType> map = getGuiMaster().getNodeMaster().getAllNodeClasses();
+
 			INodeType type = getGuiMaster().getNodeMaster().getTypeByName(source.getName());
 			Class<? extends GNode> clazz = nodeMap.get(type);
 			Constructor<? extends GNode> con;

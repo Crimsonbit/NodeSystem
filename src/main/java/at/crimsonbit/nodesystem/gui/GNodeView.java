@@ -1,6 +1,5 @@
 package at.crimsonbit.nodesystem.gui;
 
-import at.crimsonbit.nodesystem.gui.settings.GSettingsPane;
 import javafx.scene.layout.AnchorPane;
 
 /**
@@ -15,10 +14,10 @@ public class GNodeView extends AnchorPane {
 
 	private GNodeGraph nodeGraph;
 	//private GSettingsPane settingsPane;
-	private boolean addSettingsPane = true;
+	//private boolean addSettingsPane = true;
 
 	public GNodeView(boolean addSettingsPane) {
-		this.addSettingsPane = addSettingsPane;
+		//this.addSettingsPane = addSettingsPane;
 		nodeGraph = new GNodeGraph();
 		//settingsPane = new GSettingsPane(nodeGraph);
 		//nodeGraph.setSettingsPane(settingsPane);

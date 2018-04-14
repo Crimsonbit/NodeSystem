@@ -1,6 +1,5 @@
 package at.crimsonbit.nodesystem.gui;
 
-import at.crimsonbit.nodesystem.util.RangeMapper;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.canvas.Canvas;
@@ -32,9 +31,7 @@ public class GGraphScene extends AnchorPane {
 	private double delta = 0.1;
 
 	private double lineSpacing = 25;
-	private double r = RangeMapper.mapValue(27, 0, 255, 0, 1);
-	private double g = RangeMapper.mapValue(28, 0, 255, 0, 1);
-	private double b = RangeMapper.mapValue(29, 0, 255, 0, 1);
+
 	private Color lineColor;
 
 	private double localMouseX = getWidth() / 2;

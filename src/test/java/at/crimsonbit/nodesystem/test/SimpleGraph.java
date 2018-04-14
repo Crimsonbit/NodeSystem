@@ -18,20 +18,20 @@ public class SimpleGraph extends Application {
 		GNodeSystem nodeSystem = new GNodeSystem(false);
 		GNodeView view = nodeSystem.getGUI();
 		GNodeGraph graph = view.getNodeGraph();
+		
+		Scene scene = new Scene(view, 1024, 768);
 
 		graph.registerNodes("at.crimsonbit.nodesystem.node");
-		// graph.registerNodes("at.crimsonbit.nodesystem.node.image");
-		// graph.registerNodes("at.crimsonbit.nodesystem.node.math");
-		// graph.registerNodes("at.crimsonbit.nodesystem.node.calculate");
-		// graph.registerNodes("at.crimsonbit.nodesystem.node.image_filter");
-		// graph.registerNodes("at.crimsonbit.nodesystem.node.constant");
-
 		graph.addInfo();
-		Scene scene = new Scene(view, 1024, 768);
+
+		/**
+		 * These two lines have to be called AFTER the GNodeGraph was added to the
+		 * scene!
+		 **/
 
 		graph.initGraph();
 		graph.addCustomNode(Base.GROUP, new GGroupNode().getClass());
-		
+
 		scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		primaryStage.setScene(scene);
 		primaryStage.show();

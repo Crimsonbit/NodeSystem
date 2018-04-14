@@ -42,7 +42,7 @@ public class Toast {
 		scene.setFill(Color.TRANSPARENT);
 		tx_msg.setFill(Color.WHITE);
 
-		root.setStyle(Toast.class.getResource("toaststyle.css").toExternalForm());
+		root.getStylesheets().add(Toast.class.getResource("toaststyle.css").toExternalForm());
 
 		root.setOpacity(0);
 
