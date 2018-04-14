@@ -22,12 +22,7 @@ public class CreateGraphFromCode extends Application {
 		GNodeView view = nodeSystem.getGUI();
 		GNodeGraph graph = view.getNodeGraph();
 
-		graph.registerNodes("at.crimsonbit.nodesystem.node.base");
-		graph.registerNodes("at.crimsonbit.nodesystem.node.image");
-		graph.registerNodes("at.crimsonbit.nodesystem.node.math");
-		graph.registerNodes("at.crimsonbit.nodesystem.node.calculate");
-		graph.registerNodes("at.crimsonbit.nodesystem.node.image_filter");
-		graph.registerNodes("at.crimsonbit.nodesystem.node.constant");
+		graph.registerNodes("at.crimsonbit.nodesystem.node");
 
 		graph.loadMenus();
 
