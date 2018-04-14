@@ -1,8 +1,9 @@
 package at.crimsonbit.nodesystem.gui.node;
 
+import java.io.Serializable;
+
 import at.crimsonbit.nodesystem.gui.node.port.GPort;
 import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
-import at.crimsonbit.nodesystem.gui.toast.ToastTime;
 import javafx.scene.Group;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
@@ -15,8 +16,12 @@ import javafx.scene.shape.StrokeLineCap;
  * @author NeonArtworks
  *
  */
-public class GNodeConnection extends Group {
+public class GNodeConnection extends Group implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7749681570722040474L;
 	protected GPort sourcePort;
 	protected GPort targetPort;
 	protected GNode source;

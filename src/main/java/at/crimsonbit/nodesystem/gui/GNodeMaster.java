@@ -1,5 +1,6 @@
 package at.crimsonbit.nodesystem.gui;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,8 +19,12 @@ import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
  * @author NeonArtworks
  *
  */
-public class GNodeMaster {
+public class GNodeMaster implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3918226732467086627L;
 	private GNode graphParent;
 	private NodeMaster nodeMaster;
 	private List<GNode> allNodes;
@@ -34,7 +39,7 @@ public class GNodeMaster {
 	private GNodeGraph graph;
 	private GPort outPort;
 	private GPort inPort;
-
+	
 	public GNodeMaster(GNodeGraph graph) {
 		this.graph = graph;
 		this.nodeMaster = new NodeMaster();

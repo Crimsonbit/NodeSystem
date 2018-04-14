@@ -1,5 +1,7 @@
 package at.crimsonbit.nodesystem.gui;
 
+import java.io.File;
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -9,6 +11,7 @@ import java.util.Set;
 import at.crimsonbit.nodesystem.gui.dialog.GEntry;
 import at.crimsonbit.nodesystem.gui.dialog.GPopUp;
 import at.crimsonbit.nodesystem.gui.dialog.GSubMenu;
+import at.crimsonbit.nodesystem.gui.handlers.GNodeSystemFileHandler;
 import at.crimsonbit.nodesystem.gui.handlers.GNodeMouseHandler;
 import at.crimsonbit.nodesystem.gui.layer.GLineLayer;
 import at.crimsonbit.nodesystem.gui.layer.GNodeLayer;
@@ -37,6 +40,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 /**
@@ -45,8 +49,12 @@ import javafx.stage.Stage;
  *
  */
 
-public class GNodeGraph extends GGraphScene implements IGConsumable {
+public class GNodeGraph extends GGraphScene implements IGConsumable, Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7370937910226960291L;
 	private GNodeMaster nodeMaster;
 	private Group canvas;
 	private GNode activeCell;
@@ -60,7 +68,6 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 	private GNodeLayer nodeLayer;
 	private GLineLayer lineLayer;
-	private Pane infoLayer = new Pane();
 	private HashMap<INodeType, Color> colorLookup = new HashMap<INodeType, Color>();
 	private HashMap<GraphSettings, Color> nodeLookup = new HashMap<GraphSettings, Color>();
 	private HashMap<GraphSettings, Object> settings = new HashMap<GraphSettings, Object>();
@@ -68,7 +75,8 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private Map<INodeType, Class<? extends GNode>> nodeMap = new HashMap<INodeType, Class<? extends GNode>>();
 
 	private final DragContext dragContext = new DragContext();
-
+	private FileChooser fileChooser = new FileChooser();
+	private GNodeSystemFileHandler fileHandler = new GNodeSystemFileHandler();
 	private Rectangle selection;
 	private Text nodeInfo = new Text();
 	private GState state = GState.DEFAULT;
@@ -92,11 +100,10 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		this.canvas.getChildren().add(nodeLayer);
 		this.canvas.getChildren().add(lineLayer);
 		this.canvas.getChildren().add(this.selection);
-		this.canvas.getChildren().add(infoLayer);
 		this.getChildren().add(canvas);
 		this.handler = new GNodeMouseHandler(this);
 		// this.getChildren().add(this.settingsPane);
-
+		this.canvas.getTransforms().add(getScaleTransform());
 		graphDialog = new GPopUp();
 		graphDialog.addItem(-1, "Node Editor", true);
 		graphDialog.addSeparator(-2);
@@ -144,7 +151,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	public void addInfo() {
 		nodeInfo.setFill(Color.WHITE);
 		nodeInfo.relocate(getWidth() / 2, getHeight() / 2);
-		infoLayer.getChildren().add(nodeInfo);
+		getChildren().add(nodeInfo);
 		update();
 	}
 
@@ -351,11 +358,15 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 		if (id == 1001) {
 			// TODO
-			System.out.println("loading!");
+			File f = fileChooser.showOpenDialog(getParent().getScene().getWindow());
+			this.nodeMaster = fileHandler.getNodeMaster();
+			update();
 		}
 		if (id == 1000) {
 			// TODO
-			System.out.println("saving!");
+			File f = fileChooser.showSaveDialog(getParent().getScene().getWindow());
+			fileHandler.loadNodeSystem(f);
+			fileHandler.saveNodeSystem(f, nodeMaster);
 		}
 		if (id == 1002) {
 			Stage stage = (Stage) getScene().getWindow();

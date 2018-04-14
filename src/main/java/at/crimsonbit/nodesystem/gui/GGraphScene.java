@@ -47,7 +47,7 @@ public class GGraphScene extends AnchorPane {
 	public GGraphScene() {
 
 		scaleTransform = new Scale(scaleValue, scaleValue, 0, 0);
-		getTransforms().add(scaleTransform);
+		// getTransforms().add(scaleTransform);
 		getChildren().add(canvas);
 		// setStyle("-fx-background-color: #363b3f");
 
@@ -85,9 +85,13 @@ public class GGraphScene extends AnchorPane {
 
 	}
 
+	public Scale getScaleTransform() {
+		return this.scaleTransform;
+	}
+
 	private void init() {
-		setBackground(new Background(
-				new BackgroundFill(graph.getGeneralColorLookup().get(GraphSettings.COLOR_BACKGROUND), CornerRadii.EMPTY, Insets.EMPTY)));
+		setBackground(new Background(new BackgroundFill(
+				graph.getGeneralColorLookup().get(GraphSettings.COLOR_BACKGROUND), CornerRadii.EMPTY, Insets.EMPTY)));
 		this.lineColor = graph.getGeneralColorLookup().get(GraphSettings.COLOR_BACKGROUND_LINES);
 	}
 
@@ -200,7 +204,6 @@ public class GGraphScene extends AnchorPane {
 	public void zoomTo(double scaleValue) {
 
 		this.scaleValue = scaleValue;
-
 		if (lineSpacing > 500)
 			lineSpacing = 500;
 		if (lineSpacing <= 1)
@@ -233,7 +236,10 @@ public class GGraphScene extends AnchorPane {
 	 */
 	protected class ZoomHandler implements EventHandler<ScrollEvent> {
 		private static final double MAX_SCALE = 10.0d;
-		private static final double MIN_SCALE = 1d;
+		private static final double MIN_SCALE = 0.4d;
+		private static final double DELTA = 0.7d;
+		private static final double MIN_SPACING = 24;
+		private static final double MAX_SPACING = 30;
 
 		public double clamp(double value, double min, double max) {
 
@@ -251,23 +257,26 @@ public class GGraphScene extends AnchorPane {
 			if (!scrollEvent.isControlDown()) {
 
 				if (scrollEvent.getDeltaY() < 0) {
-					scaleValue -= delta;
-
+					scaleValue -= DELTA;
+					// lineSpacing -= DELTA;
 				} else {
-					scaleValue += delta;
+					scaleValue += DELTA;
+					// lineSpacing += DELTA;
 
 				}
+				// System.out.println(scaleValue);
+				// System.out.println(lineSpacing);
 				scaleValue = clamp(scaleValue, MIN_SCALE, MAX_SCALE);
-
+				// lineSpacing = clamp(lineSpacing, MIN_SPACING, MAX_SPACING);
 				zoomTo(scaleValue);
 
 				scrollEvent.consume();
 			} else {
 				if (scrollEvent.getDeltaY() < 0) {
-					strokeValue -= delta;
+					strokeValue -= DELTA;
 
 				} else {
-					strokeValue += delta;
+					strokeValue += DELTA;
 				}
 
 				strokeWidth(strokeValue);
