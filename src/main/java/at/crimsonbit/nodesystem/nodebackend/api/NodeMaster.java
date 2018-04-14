@@ -12,6 +12,16 @@ import org.reflections.Reflections;
 import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
 import at.crimsonbit.nodesystem.nodebackend.util.NodeConnection;
 
+/**
+ * A Node Master is used to Manage registration and connection of Node, which
+ * are represented by Classes, that extend {@link AbstractNode} <br>
+ * All Node creation and connection management has to happen through an instance
+ * of this class
+ * 
+ * 
+ * @author Alexander Daum
+ *
+ */
 public class NodeMaster {
 	private final Map<INodeType, Class<? extends AbstractNode>> registeredNodes;
 	private final Map<Class<? extends AbstractNode>, Map<String, Field>> inputKeyMap;
@@ -27,7 +37,10 @@ public class NodeMaster {
 
 	/**
 	 * Registers all Nodes in the package and all subpackages specified by path. A
-	 * Node is any class, that extends AbstractNode
+	 * Node is any class, that extends AbstractNode. <br>
+	 * To be valid it must also have a static final Field annotated with
+	 * {@link NodeType}. The Type of this Field has to implement {@link INodeType}
+	 * and can be any object, either an instance of a class or an enum.
 	 * 
 	 * @param path
 	 */
@@ -40,15 +53,18 @@ public class NodeMaster {
 			fieldKeyMap.put(clazz, new HashMap<>());
 
 			try {
-
+				boolean found = false;
 				Field[] decF = clazz.getDeclaredFields();
 				for (Field f : decF) {
 					if (f.isAnnotationPresent(NodeType.class)) {
-						if (!f.isAccessible()) {
-							f.setAccessible(true);
-						}
+						f.setAccessible(true);
 						registeredNodes.put((INodeType) f.get(null), clazz);
+						found = true;
 					}
+				}
+				if (!found) {
+					throw new IllegalArgumentException("Class " + clazz.getCanonicalName()
+							+ " extends AbstractNode but does not declare Field annotated with @NodeType");
 				}
 
 				populateKeys(clazz, inputKeyMap.get(clazz), NodeInput.class);
@@ -84,55 +100,137 @@ public class NodeMaster {
 
 	}
 
+	/**
+	 * 
+	 * @return a Set of all known Node Types
+	 */
 	public Set<INodeType> getAllNodeClasses() {
 		return registeredNodes.keySet();
 	}
 
+	/**
+	 * Returns a Collection of all Input Fields in a NodeClass, intended for use in
+	 * AbstractNode (No checks for validity are perfomed)
+	 * 
+	 * @param clazz
+	 * @return
+	 */
 	protected Collection<Field> getAllInputs(Class<? extends AbstractNode> clazz) {
 		return inputKeyMap.get(clazz).values();
 	}
 
+	/**
+	 * Returns a Collection of all Input Fields in a Node, intended for use in
+	 * AbstractNode (No checks for validity are perfomed)
+	 * 
+	 * @param clazz
+	 * @return
+	 */
 	protected Collection<Field> getAllInputs(AbstractNode node) {
 		return getAllInputs(node.getClass());
 	}
 
+	/**
+	 * Returnes the Output with the name key in the NodeClass clazz, or null if it
+	 * has none. No check are performed if the NodeClass really is registered
+	 * 
+	 * @param clazz
+	 * @param key
+	 * @return
+	 */
 	protected Field getOutput(Class<? extends AbstractNode> clazz, String key) {
 		return outputKeyMap.get(clazz).get(key);
 	}
 
+	/**
+	 * Returnes the Field with the name key in the NodeClass clazz, or null if it
+	 * has none. No check are performed if the NodeClass really is registered
+	 * 
+	 * @param clazz
+	 * @param key
+	 * @return
+	 */
 	protected Field getField(Class<? extends AbstractNode> clazz, String key) {
 		return fieldKeyMap.get(clazz).get(key);
 	}
 
+	/**
+	 * Returns a Set of all input names of a NodeClass
+	 * 
+	 * @param clazz
+	 * @return
+	 */
 	public Set<String> getAllInputNames(Class<? extends AbstractNode> clazz) {
 		return inputKeyMap.get(clazz).keySet();
 	}
 
+	/**
+	 * Returns a Set of all input names of a Node
+	 * 
+	 * @param clazz
+	 * @return
+	 */
 	public Set<String> getAllInputNames(AbstractNode node) {
 		return getAllInputNames(node.getClass());
 	}
 
+	/**
+	 * Returns a Set of all ouput names of a NodeClass
+	 * 
+	 * @param clazz
+	 * @return
+	 */
 	public Set<String> getAllOutputNames(Class<? extends AbstractNode> clazz) {
 		return outputKeyMap.get(clazz).keySet();
 	}
 
+	/**
+	 * Returns a Set of all ouput names of a Node
+	 * 
+	 * @param clazz
+	 * @return
+	 */
 	public Set<String> getAllOutputNames(AbstractNode node) {
 		return getAllOutputNames(node.getClass());
 	}
 
+	/**
+	 * Returns a Set of all field names of a NodeClass
+	 * 
+	 * @param clazz
+	 * @return
+	 */
 	public Set<String> getAllFieldNames(Class<? extends AbstractNode> clazz) {
 		return fieldKeyMap.get(clazz).keySet();
 	}
 
+	/**
+	 * Returns a Set of all field names of a Node
+	 * 
+	 * @param clazz
+	 * @return
+	 */
 	public Set<String> getAllFieldNames(AbstractNode node) {
 		return getAllFieldNames(node.getClass());
 	}
 
-	public Collection<Field> getAllFields(Class<? extends AbstractNode> clazz) {
+	/**
+	 * Returns all Fields of a NodeClass
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	protected Collection<Field> getAllFields(Class<? extends AbstractNode> clazz) {
 		return fieldKeyMap.get(clazz).values();
 	}
 
-	public Collection<Field> getAllFields(AbstractNode node) {
+	/**
+	 * Returns all Fields of a Node
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	protected Collection<Field> getAllFields(AbstractNode node) {
 		return getAllFields(node.getClass());
 	}
 
@@ -217,16 +315,45 @@ public class NodeMaster {
 		return f.getType();
 	}
 
+	/**
+	 * Creates a new Node with the specified type type. If there is no such
+	 * NodeClass registered, an exception is thrown
+	 * 
+	 * @param type
+	 * @return
+	 * @throws IllegalArgumentException
+	 *             if there is no Node with this type registered
+	 */
 	public AbstractNode createNode(INodeType type) {
 		Class<? extends AbstractNode> clazz = registeredNodes.get(type);
 		if (clazz == null) {
 			throw new IllegalArgumentException("Node with type " + type + " is not registered");
 		}
-		return createNode(clazz);
+		for (int i = 0; i < 1000; i++) {
+			if(i > 2000) {
+				i = 0;
+			}
+		}
+		return doCreateNode(clazz);
+
 	}
 
+	/**
+	 * Creates a new Node with the specified type type. If there is no such
+	 * NodeClass registered, an exception is thrown
+	 * 
+	 * @param type
+	 * @return
+	 * @throws IllegalArgumentException
+	 *             if there is no Node with this type registered
+	 */
 	public AbstractNode createNode(Class<? extends AbstractNode> clazz) {
+		if (!registeredNodes.containsValue(clazz))
+			throw new IllegalArgumentException("Node with Class " + clazz.getCanonicalName() + " is not registered");
+		return doCreateNode(clazz);
+	}
 
+	private AbstractNode doCreateNode(Class<? extends AbstractNode> clazz) {
 		try {
 			AbstractNode node = clazz.newInstance();
 			node.master = this;
