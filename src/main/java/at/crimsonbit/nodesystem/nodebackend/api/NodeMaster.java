@@ -28,12 +28,15 @@ public class NodeMaster {
 	private final Map<Class<? extends AbstractNode>, Map<String, Field>> inputKeyMap;
 	private final Map<Class<? extends AbstractNode>, Map<String, Field>> outputKeyMap;
 	private final Map<Class<? extends AbstractNode>, Map<String, Field>> fieldKeyMap;
+	// map to enable creating Nodes by using strings
+	private final Map<String, INodeType> stringToType;
 
 	public NodeMaster() {
 		inputKeyMap = new HashMap<>();
 		registeredNodes = new HashMap<>();
 		outputKeyMap = new HashMap<>();
 		fieldKeyMap = new HashMap<>();
+		stringToType = new HashMap<>();
 	}
 
 	/**
@@ -59,11 +62,18 @@ public class NodeMaster {
 				for (Field f : decF) {
 					if (f.isAnnotationPresent(NodeType.class)) {
 						f.setAccessible(true);
-						if((f.getModifiers() & Modifier.STATIC) == 0) {
-							throw new IllegalArgumentException("Field annotated with @NodeType in class " + clazz.getCanonicalName()
-									+ " is not static, but must be");
+						if ((f.getModifiers() & Modifier.STATIC) == 0) {
+							throw new IllegalArgumentException("Field annotated with @NodeType in class "
+									+ clazz.getCanonicalName() + " is not static, but must be");
 						}
-						registeredNodes.put((INodeType) f.get(null), clazz);
+						INodeType type = (INodeType) f.get(null);
+						if (registeredNodes.containsKey(type)) {
+							throw new IllegalArgumentException("The Node "
+									+ registeredNodes.get(type).getCanonicalName() + " is registered with type " + type
+									+ ", but tried to register " + clazz.getCanonicalName() + " with the same type");
+						}
+						registeredNodes.put(type, clazz);
+						stringToType.put(type.toString(), type);
 						found = true;
 					}
 				}
@@ -80,7 +90,7 @@ public class NodeMaster {
 						+ " is not static, but must be", e);
 			} catch (IllegalAccessException e) {
 				throw new RuntimeException("Field annotated with @NodeType is not accessible", e);
-			} 
+			}
 		}
 	}
 
@@ -240,6 +250,19 @@ public class NodeMaster {
 	}
 
 	/**
+	 * Gets a INodeType by a string name. The name is stored when the Abstract Node
+	 * with this Type is registered, the toString method of the INodeType is used
+	 * for that. If there are multiple INodeTypes registered, that have the same
+	 * name, then the latest is returned
+	 * 
+	 * @param name
+	 * @return The Node which is registered with this Name, or null if none
+	 */
+	public INodeType getTypeByName(String name) {
+		return stringToType.get(name);
+	}
+
+	/**
 	 * Returns the type of the field with name field in the Node class of node
 	 * 
 	 * @param node
@@ -335,7 +358,7 @@ public class NodeMaster {
 			throw new IllegalArgumentException("Node with type " + type + " is not registered");
 		}
 		for (int i = 0; i < 1000; i++) {
-			if(i > 2000) {
+			if (i > 2000) {
 				i = 0;
 			}
 		}
