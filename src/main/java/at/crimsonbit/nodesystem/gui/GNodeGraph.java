@@ -1,6 +1,7 @@
 package at.crimsonbit.nodesystem.gui;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -25,6 +26,7 @@ import at.crimsonbit.nodesystem.node.types.Image;
 import at.crimsonbit.nodesystem.node.types.ImageFilter;
 import at.crimsonbit.nodesystem.node.types.Math;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
+import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
 import at.crimsonbit.nodesystem.util.DragContext;
 import at.crimsonbit.nodesystem.util.SystemUsage;
 import javafx.event.EventHandler;
@@ -358,16 +360,26 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 		if (id == 1001) {
 			// TODO LOADING
-			// File f = fileChooser.showOpenDialog(getParent().getScene().getWindow());
-			// fileHandler.saveNodeSystem(f, nodeMaster);
+			File f = fileChooser.showOpenDialog(getParent().getScene().getWindow());
+			try {
+				getGuiMaster().setNodeMaster(getGuiMaster().getNodeMaster().load(f.getPath()));
+			} catch (IOException | NoSuchNodeException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			update();
 
 		}
 		if (id == 1000) {
 			// TODO SAVING
-			// File f = fileChooser.showSaveDialog(getParent().getScene().getWindow());
-			// fileHandler.loadNodeSystem(f);
-			// this.nodeMaster = fileHandler.getNodeMaster();
-			// update();
+			File f = fileChooser.showSaveDialog(getParent().getScene().getWindow());
+			try {
+				getGuiMaster().getNodeMaster().save(f.getPath(), true);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 		}
 		if (id == 1002) {
 			Stage stage = (Stage) getScene().getWindow();

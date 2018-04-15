@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -32,7 +33,6 @@ import at.crimsonbit.nodesystem.nodebackend.api.dto.RegistryDTO;
 import at.crimsonbit.nodesystem.nodebackend.api.dto.Signal;
 import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
 import at.crimsonbit.nodesystem.nodebackend.util.NodeConnection;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
 /**
  * A Node Master is used to Manage registration and connection of Node, which
@@ -705,7 +705,7 @@ public class NodeMaster {
 		Object read;
 		NodeDTO[] allNodes;
 		try {
-			Set<NodeDTO> nodes = new ObjectOpenHashSet<>();
+			Set<NodeDTO> nodes = new HashSet<>();
 			while ((read = ois.readObject()) != null) {
 				if (read.getClass() != NodeDTO.class) {
 					if (Signal.EOF.equals(read)) {

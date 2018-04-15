@@ -40,6 +40,10 @@ public class GNodeMaster implements Serializable {
 	private GPort outPort;
 	private GPort inPort;
 
+	protected void setNodeMaster(NodeMaster nm) {
+		this.nodeMaster = nm;
+	}
+
 	public GNodeMaster(GNodeGraph graph) {
 		this.graph = graph;
 		this.nodeMaster = new NodeMaster();
