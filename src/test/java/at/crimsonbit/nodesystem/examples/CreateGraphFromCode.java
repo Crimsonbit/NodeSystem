@@ -56,7 +56,7 @@ public class CreateGraphFromCode extends Application {
 
 		graph.initGraph();
 
-		scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+		scene.getStylesheets().add(getClass().getResource("node-menu.css").toExternalForm());
 		primaryStage.setScene(scene);
 		primaryStage.show();
 
