@@ -44,6 +44,7 @@ import at.crimsonbit.nodesystem.nodebackend.util.NodeConnection;
  * @author Alexander Daum
  *
  */
+
 public class NodeMaster {
 	private static final String ENTRY_CONN_NAME = "connections.dat";
 	private static final String ENTRY_STATE_NAME = "state.dat";

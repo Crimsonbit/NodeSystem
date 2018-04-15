@@ -22,7 +22,7 @@ public class SimpleGraph extends Application {
 		GNodeGraph graph = view.getNodeGraph();
 		
 		Scene scene = new Scene(view, 1024, 768);
-
+		
 		graph.registerNodes("at.crimsonbit.nodesystem.examples.customnode"); // has to be called before initGraph!
 		graph.addInfo(); // Adds Debug information to the screen
 
