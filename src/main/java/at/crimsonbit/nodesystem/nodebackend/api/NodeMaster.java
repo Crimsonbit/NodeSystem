@@ -470,7 +470,6 @@ public class NodeMaster {
 	}
 
 	private void putNewNode(AbstractNode node, int id) {
-		node.id = id;
 		nodePool.put(id, node);
 	}
 
@@ -574,7 +573,7 @@ public class NodeMaster {
 				FieldDTO dto = new FieldDTO(entry.getKey(), entry.getValue().get(node));
 				dtos[i++] = dto;
 			}
-			NodeDTO nodeDTO = new NodeDTO(node.getClass(), node.id, dtos);
+			NodeDTO nodeDTO = new NodeDTO(node.getClass(), nodePool.inverse().get(node), dtos);
 			oos.writeObject(nodeDTO);
 		}
 
@@ -587,9 +586,9 @@ public class NodeMaster {
 			AbstractNode node = allNodes[id];
 			for (Map.Entry<Field, NodeConnection> entry : node.connections.entrySet()) {
 				int in, out;
-				in = node.id;
+				in = nodePool.inverse().get(node);
 				out = Arrays.binarySearch(allNodes, entry.getValue().getNodeInstance(), comp);
-				out = allNodes[out].id;
+				out = nodePool.inverse().get(allNodes[out]);
 				String sIn = entry.getKey().getName();
 				String sOut = entry.getValue().getField().getName();
 				oos.writeObject(new ConnectionDTO(out, in, sOut, sIn));
