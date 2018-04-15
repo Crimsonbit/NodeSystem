@@ -6,7 +6,6 @@ import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.GNodeSystem;
 import at.crimsonbit.nodesystem.gui.GNodeView;
 import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
-import at.crimsonbit.nodesystem.node.types.Base;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
