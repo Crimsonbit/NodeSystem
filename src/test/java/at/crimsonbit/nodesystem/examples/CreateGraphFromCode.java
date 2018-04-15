@@ -32,8 +32,8 @@ public class CreateGraphFromCode extends Application {
 		GNode multiplyNode1 = new GNode("Multiply Node 1", Math.MULTIPLY, true, graph, 300, 400);
 		GNode outputNode = new GNode("Output", Base.OUTPUT, true, graph, 700, 300);
 
-		constNode1.getNode().set("constant", 1337.12345);
-		constNode2.getNode().set("constant", 2);
+		constNode1.getAbstractNode().set("constant", 1337.12345);
+		constNode2.getAbstractNode().set("constant", 2);
 
 		graph.getGuiMaster().addNode(constNode1);
 		graph.getGuiMaster().addNode(constNode2);
@@ -54,7 +54,7 @@ public class CreateGraphFromCode extends Application {
 
 		Scene scene = new Scene(view, 1024, 768);
 
-		graph.initGraph();
+		graph.initGraph(true);
 
 		scene.getStylesheets().add(getClass().getResource("node-menu.css").toExternalForm());
 		primaryStage.setScene(scene);

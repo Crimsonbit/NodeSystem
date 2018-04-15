@@ -39,7 +39,7 @@ public class GNodeMaster implements Serializable {
 	private GNodeGraph graph;
 	private GPort outPort;
 	private GPort inPort;
-	
+
 	public GNodeMaster(GNodeGraph graph) {
 		this.graph = graph;
 		this.nodeMaster = new NodeMaster();
@@ -104,7 +104,8 @@ public class GNodeMaster implements Serializable {
 							.setInputColor(graph.getColorLookup().get(con.getTarget().getNodeType()));
 					con.getTargetPort().getPortRectangle().redraw();
 					con.getTargetPort().redraw();
-					getNodeMaster().removeConnection(con.getTarget().getNode(), con.getTargetPort().getStringID());
+					getNodeMaster().removeConnection(con.getTarget().getAbstractNode(),
+							con.getTargetPort().getStringID());
 				} catch (NoSuchNodeException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -145,7 +146,7 @@ public class GNodeMaster implements Serializable {
 		for (GNodeConnection c : getAllEdges()) {
 			if (c.getSource() == node || c.getTarget() == node) {
 				try {
-					getNodeMaster().removeConnection(c.getTarget().getNode(), c.getTargetPort().getStringID());
+					getNodeMaster().removeConnection(c.getTarget().getAbstractNode(), c.getTargetPort().getStringID());
 				} catch (NoSuchNodeException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -215,12 +216,12 @@ public class GNodeMaster implements Serializable {
 	 * 
 	 */
 
-	public boolean addConnection(GPort node1, GPort node2) {
+	public boolean addConnection(GPort port1, GPort port2) {
 
-		if (node1.getNode() == node2.getNode())
+		if (port1.getNode() == port2.getNode())
 			return false;
 
-		GNodeConnection con = new GNodeConnection(node1, node2);
+		GNodeConnection con = new GNodeConnection(port1, port2);
 		for (int i = 0; i < getAllEdges().size(); i++) {
 			GNodeConnection c = getAllEdges().get(i);
 			if (c.getSourcePort() == con.getSourcePort() && c.getTargetPort() == con.getTargetPort()) {
@@ -231,26 +232,27 @@ public class GNodeMaster implements Serializable {
 		}
 
 		try {
-			if (node1.isInput()) {
-				getNodeMaster().setConnection(node1.getNode().getNode(), node1.getStringID(), node2.getNode().getNode(),
-						node2.getStringID());
-				node1.getPortRectangle().setInputColor(graph.getColorLookup().get(node2.getNode().getNodeType()));
-				node1.getPortRectangle().redraw();
-				node1.redraw();
+			if (port1.isInput()) {
+				getNodeMaster().setConnection(port1.getNode().getAbstractNode(), port1.getStringID(),
+						port2.getNode().getAbstractNode(), port2.getStringID());
+				port1.getPortRectangle().setInputColor(graph.getColorLookup().get(port2.getNode().getNodeType()));
+				port1.getPortRectangle().redraw();
+				port1.redraw();
 
-			} else if (node2.isInput()) {
-				getNodeMaster().setConnection(node2.getNode().getNode(), node2.getStringID(), node1.getNode().getNode(),
-						node1.getStringID());
-				node2.getPortRectangle().setInputColor(graph.getColorLookup().get(node1.getNode().getNodeType()));
-				node2.getPortRectangle().redraw();
-				node2.redraw();
+			} else if (port2.isInput()) {
+				getNodeMaster().setConnection(port2.getNode().getAbstractNode(), port2.getStringID(),
+						port1.getNode().getAbstractNode(), port1.getStringID());
+				port2.getPortRectangle().setInputColor(graph.getColorLookup().get(port1.getNode().getNodeType()));
+				port2.getPortRectangle().redraw();
+				port2.redraw();
 			}
 
 		} catch (NoSuchNodeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		port1.getNode().getConnections().add(con);
+		port2.getNode().getConnections().add(con);
 		addedConnections.add(con);
 		return true;
 	}
