@@ -539,6 +539,7 @@ public class NodeMaster {
 
 	private boolean trySaveRegistry(ZipOutputStream zos) throws IOException {
 		ZipEntry e = new ZipEntry(ENTRY_REG_NAME);
+		e.setMethod(ZipEntry.DEFLATED);
 		zos.putNextEntry(e);
 		ObjectOutputStream oos = new ObjectOutputStream(zos);
 		Iterator<Map.Entry<INodeType, Class<? extends AbstractNode>>> iter = registeredNodes.entrySet().iterator();
@@ -548,11 +549,13 @@ public class NodeMaster {
 		}
 		oos.writeObject(Signal.EOF);
 		oos.flush();
+		zos.closeEntry();
 		return true;
 	}
 
 	private boolean trySaveState(ZipOutputStream zos) throws IOException, IllegalAccessException {
 		ZipEntry e = new ZipEntry(ENTRY_STATE_NAME);
+		e.setMethod(ZipEntry.DEFLATED);
 		zos.putNextEntry(e);
 		ObjectOutputStream oos = new ObjectOutputStream(zos);
 		// Convert to array, because indexes are needed afterwards
@@ -579,6 +582,8 @@ public class NodeMaster {
 
 		oos.writeObject(Signal.EOF);
 		e = new ZipEntry(ENTRY_CONN_NAME);
+		e.setMethod(ZipEntry.DEFLATED);
+		zos.closeEntry();
 		zos.putNextEntry(e);
 		oos.flush();
 		oos = new ObjectOutputStream(zos);
@@ -596,6 +601,7 @@ public class NodeMaster {
 		}
 		oos.writeObject(Signal.EOF);
 		oos.flush();
+		zos.closeEntry();
 		return true;
 	}
 
@@ -680,6 +686,7 @@ public class NodeMaster {
 				}
 				RegistryDTO dto = (RegistryDTO) read;
 				registeredNodes.put(dto.type, dto.clazz);
+				stringToType.put(dto.type.toString(), dto.type);
 				inputKeyMap.put(dto.clazz, new HashMap<>());
 				outputKeyMap.put(dto.clazz, new HashMap<>());
 				fieldKeyMap.put(dto.clazz, new HashMap<>());
