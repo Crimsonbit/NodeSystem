@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -32,8 +33,6 @@ import at.crimsonbit.nodesystem.nodebackend.api.dto.RegistryDTO;
 import at.crimsonbit.nodesystem.nodebackend.api.dto.Signal;
 import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
 import at.crimsonbit.nodesystem.nodebackend.util.NodeConnection;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-
 /**
  * A Node Master is used to Manage registration and connection of Node, which
  * are represented by Classes, that extend {@link AbstractNode} <br>
@@ -470,7 +469,6 @@ public class NodeMaster {
 	}
 
 	private void putNewNode(AbstractNode node, int id) {
-		node.id = id;
 		nodePool.put(id, node);
 	}
 
@@ -574,7 +572,7 @@ public class NodeMaster {
 				FieldDTO dto = new FieldDTO(entry.getKey(), entry.getValue().get(node));
 				dtos[i++] = dto;
 			}
-			NodeDTO nodeDTO = new NodeDTO(node.getClass(), node.id, dtos);
+			NodeDTO nodeDTO = new NodeDTO(node.getClass(), nodePool.inverse().get(node), dtos);
 			oos.writeObject(nodeDTO);
 		}
 
@@ -587,9 +585,9 @@ public class NodeMaster {
 			AbstractNode node = allNodes[id];
 			for (Map.Entry<Field, NodeConnection> entry : node.connections.entrySet()) {
 				int in, out;
-				in = node.id;
+				in = nodePool.inverse().get(node);
 				out = Arrays.binarySearch(allNodes, entry.getValue().getNodeInstance(), comp);
-				out = allNodes[out].id;
+				out = nodePool.inverse().get(allNodes[out]);
 				String sIn = entry.getKey().getName();
 				String sOut = entry.getValue().getField().getName();
 				oos.writeObject(new ConnectionDTO(out, in, sOut, sIn));
@@ -705,7 +703,7 @@ public class NodeMaster {
 		Object read;
 		NodeDTO[] allNodes;
 		try {
-			Set<NodeDTO> nodes = new ObjectOpenHashSet<>();
+			Set<NodeDTO> nodes = new HashSet<>();
 			while ((read = ois.readObject()) != null) {
 				if (read.getClass() != NodeDTO.class) {
 					if (Signal.EOF.equals(read)) {

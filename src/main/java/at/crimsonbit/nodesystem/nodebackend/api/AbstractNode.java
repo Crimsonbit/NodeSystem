@@ -20,7 +20,7 @@ public abstract class AbstractNode {
 	private static final INodeType type = NoNodeType.ABSTRACT;
 
 	Map<Field, NodeConnection> connections;
-	int id;
+	// int id;
 	@InjectNodeMaster
 	protected NodeMaster master;
 
@@ -111,20 +111,6 @@ public abstract class AbstractNode {
 
 	public NodeMaster getNodeMaster() {
 		return master;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		AbstractNode other = (AbstractNode) obj;
-		if (id != other.id)
-			return false;
-		return true;
 	}
 
 }
