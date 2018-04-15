@@ -22,6 +22,9 @@ import java.util.zip.ZipOutputStream;
 
 import org.reflections.Reflections;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+
 import at.crimsonbit.nodesystem.nodebackend.api.dto.ConnectionDTO;
 import at.crimsonbit.nodesystem.nodebackend.api.dto.FieldDTO;
 import at.crimsonbit.nodesystem.nodebackend.api.dto.NodeDTO;
@@ -29,8 +32,6 @@ import at.crimsonbit.nodesystem.nodebackend.api.dto.RegistryDTO;
 import at.crimsonbit.nodesystem.nodebackend.api.dto.Signal;
 import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
 import at.crimsonbit.nodesystem.nodebackend.util.NodeConnection;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectCollection;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
 /**
@@ -54,7 +55,7 @@ public class NodeMaster {
 	// map to enable creating Nodes by using strings
 	private final Map<String, INodeType> stringToType;
 
-	private final Int2ObjectOpenHashMap<AbstractNode> nodePool;
+	private final BiMap<Integer, AbstractNode> nodePool;
 	private int id;
 
 	public NodeMaster() {
@@ -63,7 +64,7 @@ public class NodeMaster {
 		outputKeyMap = new HashMap<>();
 		fieldKeyMap = new HashMap<>();
 		stringToType = new HashMap<>();
-		nodePool = new Int2ObjectOpenHashMap<>();
+		nodePool = HashBiMap.<Integer, AbstractNode>create();
 	}
 
 	/**
@@ -301,6 +302,10 @@ public class NodeMaster {
 		return nodePool.get(id);
 	}
 
+	public int getIdOfNode(AbstractNode node) {
+		return nodePool.inverse().get(node);
+	}
+
 	/**
 	 * Returns the type of the field with name field in the Node class of node
 	 * 
@@ -410,26 +415,13 @@ public class NodeMaster {
 	}
 
 	/**
-	 * Searches for the Node node and deletes it if present. If the id of the Node
-	 * is also known {@link NodeMaster#deleteNode(int)} should be prefered
+	 * Searches for the Node node and deletes it if present.
 	 * 
 	 * @param node
 	 * @return true if the node existed and was deleted, false if otherwise
 	 */
 	public boolean deleteNode(AbstractNode node) {
-		boolean contains = nodePool.containsValue(node);
-		if (!contains) {
-			return false;
-		}
-		Iterator<Map.Entry<Integer, AbstractNode>> iter = nodePool.entrySet().iterator();
-		while (iter.hasNext()) {
-			Map.Entry<Integer, AbstractNode> entry = iter.next();
-			if (entry.getValue().equals(node)) {
-				iter.remove();
-				return true;
-			}
-		}
-		return false;
+		return nodePool.inverse().remove(node) != null;
 	}
 
 	/**
