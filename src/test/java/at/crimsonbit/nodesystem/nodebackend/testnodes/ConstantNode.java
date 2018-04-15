@@ -1,10 +1,9 @@
-package nodebackend.test.constnode;
+package at.crimsonbit.nodesystem.nodebackend.testnodes;
 
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeField;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeOutput;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeType;
-import nodebackend.test.MyNodeTypes;
 
 public class ConstantNode extends AbstractNode {
 

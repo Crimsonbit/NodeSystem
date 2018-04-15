@@ -1,4 +1,4 @@
-package nodebackend.test;
+package at.crimsonbit.nodesystem.nodebackend.api;
 
 import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -10,13 +10,14 @@ import org.junit.jupiter.api.Test;
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeMaster;
 import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
+import at.crimsonbit.nodesystem.nodebackend.testnodes.MyNodeTypes;
 
 class TestSimpleNode {
 
 	@Test
 	void testBasicFunction() throws NoSuchNodeException {
 		NodeMaster m = new NodeMaster();
-		m.registerNodes("nodebackend.test");
+		m.registerNodes("at.crimsonbit.nodesystem.nodebackend.testnodes");
 		AbstractNode n = m.createNode(MyNodeTypes.SIMPLE);
 		AbstractNode c1 = m.createNode(MyNodeTypes.CONSTANT);
 		AbstractNode c2 = m.createNode(MyNodeTypes.CONSTANT);
@@ -39,7 +40,7 @@ class TestSimpleNode {
 	@Test
 	void testOpenInput() throws NoSuchNodeException {
 		NodeMaster m = new NodeMaster();
-		m.registerNodes("nodebackend.test");
+		m.registerNodes("at.crimsonbit.nodesystem.nodebackend.testnodes");
 		AbstractNode n = m.createNode(MyNodeTypes.SIMPLE);
 		assertEquals("null", n.get("concat"));
 
@@ -55,7 +56,7 @@ class TestSimpleNode {
 	@Test
 	void failsToModifyInput() {
 		NodeMaster m = new NodeMaster();
-		m.registerNodes("nodebackend.test");
+		m.registerNodes("at.crimsonbit.nodesystem.nodebackend.testnodes");
 		AbstractNode n = m.createNode(MyNodeTypes.SIMPLE);
 		assertFalse(n.set("s1", "foo"));
 		assertEquals("null", n.get("concat"));
@@ -64,7 +65,7 @@ class TestSimpleNode {
 	@Test
 	void removingConnectionClearsValue() throws NoSuchNodeException {
 		NodeMaster m = new NodeMaster();
-		m.registerNodes("nodebackend.test");
+		m.registerNodes("at.crimsonbit.nodesystem.nodebackend.testnodes");
 		AbstractNode n = m.createNode(MyNodeTypes.SIMPLE);
 		AbstractNode c1 = m.createNode(MyNodeTypes.CONSTANT);
 		AbstractNode c2 = m.createNode(MyNodeTypes.CONSTANT);
