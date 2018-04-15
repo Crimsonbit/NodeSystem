@@ -1,5 +1,7 @@
 package at.crimsonbit.nodesystem.nodebackend.api;
 
-public interface INodeType {
+import java.io.Serializable;
+
+public interface INodeType extends Serializable {
 
 }

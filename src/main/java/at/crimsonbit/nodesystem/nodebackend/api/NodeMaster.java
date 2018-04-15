@@ -1,17 +1,37 @@
 package at.crimsonbit.nodesystem.nodebackend.api;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import org.reflections.Reflections;
 
+import at.crimsonbit.nodesystem.nodebackend.api.dto.ConnectionDTO;
+import at.crimsonbit.nodesystem.nodebackend.api.dto.FieldDTO;
+import at.crimsonbit.nodesystem.nodebackend.api.dto.NodeDTO;
+import at.crimsonbit.nodesystem.nodebackend.api.dto.RegistryDTO;
+import at.crimsonbit.nodesystem.nodebackend.api.dto.Signal;
 import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
 import at.crimsonbit.nodesystem.nodebackend.util.NodeConnection;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectCollection;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
 /**
  * A Node Master is used to Manage registration and connection of Node, which
@@ -24,6 +44,9 @@ import at.crimsonbit.nodesystem.nodebackend.util.NodeConnection;
  *
  */
 public class NodeMaster {
+	private static final String ENTRY_CONN_NAME = "connections.dat";
+	private static final String ENTRY_STATE_NAME = "state.dat";
+	private static final String ENTRY_REG_NAME = "registry.dat";
 	private final Map<INodeType, Class<? extends AbstractNode>> registeredNodes;
 	private final Map<Class<? extends AbstractNode>, Map<String, Field>> inputKeyMap;
 	private final Map<Class<? extends AbstractNode>, Map<String, Field>> outputKeyMap;
@@ -31,12 +54,16 @@ public class NodeMaster {
 	// map to enable creating Nodes by using strings
 	private final Map<String, INodeType> stringToType;
 
+	private final Int2ObjectOpenHashMap<AbstractNode> nodePool;
+	private int id;
+
 	public NodeMaster() {
 		inputKeyMap = new HashMap<>();
 		registeredNodes = new HashMap<>();
 		outputKeyMap = new HashMap<>();
 		fieldKeyMap = new HashMap<>();
 		stringToType = new HashMap<>();
+		nodePool = new Int2ObjectOpenHashMap<>();
 	}
 
 	/**
@@ -263,6 +290,18 @@ public class NodeMaster {
 	}
 
 	/**
+	 * 
+	 * @return
+	 */
+	public Collection<AbstractNode> getAllNodes() {
+		return nodePool.values();
+	}
+
+	public AbstractNode getNodeByID(int id) {
+		return nodePool.get(id);
+	}
+
+	/**
 	 * Returns the type of the field with name field in the Node class of node
 	 * 
 	 * @param node
@@ -357,13 +396,40 @@ public class NodeMaster {
 		if (clazz == null) {
 			throw new IllegalArgumentException("Node with type " + type + " is not registered");
 		}
-		for (int i = 0; i < 1000; i++) {
-			if (i > 2000) {
-				i = 0;
+		return doCreateNode(clazz);
+	}
+
+	/**
+	 * Deletes the Node with the given id.
+	 * 
+	 * @param id
+	 * @return true if the node existed and was deleted, false if otherwise
+	 */
+	public boolean deleteNode(int id) {
+		return nodePool.remove(id) != null;
+	}
+
+	/**
+	 * Searches for the Node node and deletes it if present. If the id of the Node
+	 * is also known {@link NodeMaster#deleteNode(int)} should be prefered
+	 * 
+	 * @param node
+	 * @return true if the node existed and was deleted, false if otherwise
+	 */
+	public boolean deleteNode(AbstractNode node) {
+		boolean contains = nodePool.containsValue(node);
+		if (!contains) {
+			return false;
+		}
+		Iterator<Map.Entry<Integer, AbstractNode>> iter = nodePool.entrySet().iterator();
+		while (iter.hasNext()) {
+			Map.Entry<Integer, AbstractNode> entry = iter.next();
+			if (entry.getValue().equals(node)) {
+				iter.remove();
+				return true;
 			}
 		}
-		return doCreateNode(clazz);
-
+		return false;
 	}
 
 	/**
@@ -385,6 +451,7 @@ public class NodeMaster {
 		try {
 			AbstractNode node = clazz.newInstance();
 			node.master = this;
+			putNewNode(node, id++);
 			return node;
 		} catch (InstantiationException e) {
 			throw new IllegalStateException(
@@ -392,6 +459,27 @@ public class NodeMaster {
 		} catch (IllegalAccessException e) {
 			throw new RuntimeException("Failed to access constructor of " + clazz.getCanonicalName(), e);
 		}
+
+	}
+
+	private AbstractNode doCreateNode(Class<? extends AbstractNode> clazz, int id) {
+		try {
+			AbstractNode node = clazz.newInstance();
+			node.master = this;
+			putNewNode(node, id);
+			return node;
+		} catch (InstantiationException e) {
+			throw new IllegalStateException(
+					"Class " + clazz.getCanonicalName() + " does not have no-arg constructor, but must to", e);
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException("Failed to access constructor of " + clazz.getCanonicalName(), e);
+		}
+
+	}
+
+	private void putNewNode(AbstractNode node, int id) {
+		node.id = id;
+		nodePool.put(id, node);
 	}
 
 	public boolean setConnection(AbstractNode inNode, String input, AbstractNode outNode, String out)
@@ -456,6 +544,230 @@ public class NodeMaster {
 
 		return inNode.connections.remove(inField) != null;
 
+	}
+
+	private boolean trySaveRegistry(ZipOutputStream zos) throws IOException {
+		ZipEntry e = new ZipEntry(ENTRY_REG_NAME);
+		zos.putNextEntry(e);
+		ObjectOutputStream oos = new ObjectOutputStream(zos);
+		Iterator<Map.Entry<INodeType, Class<? extends AbstractNode>>> iter = registeredNodes.entrySet().iterator();
+		while (iter.hasNext()) {
+			Map.Entry<INodeType, Class<? extends AbstractNode>> entry = iter.next();
+			oos.writeObject(new RegistryDTO(entry.getKey(), entry.getValue()));
+		}
+		oos.writeObject(Signal.EOF);
+		oos.flush();
+		return true;
+	}
+
+	private boolean trySaveState(ZipOutputStream zos) throws IOException, IllegalAccessException {
+		ZipEntry e = new ZipEntry(ENTRY_STATE_NAME);
+		zos.putNextEntry(e);
+		ObjectOutputStream oos = new ObjectOutputStream(zos);
+		// Convert to array, because indexes are needed afterwards
+		AbstractNode[] allNodes = new AbstractNode[nodePool.size()];
+		int j = 0;
+		for (Map.Entry<Integer, AbstractNode> node : nodePool.entrySet()) {
+			allNodes[j++] = node.getValue();
+		}
+		Comparator<? super AbstractNode> comp = (a, b) -> Integer.compareUnsigned(a.hashCode(), b.hashCode());
+		Arrays.sort(allNodes, comp);
+		for (int k = 0; k < allNodes.length; k++) {
+			AbstractNode node = allNodes[k];
+			Map<String, Field> fields = fieldKeyMap.get(node.getClass());
+			assert fields != null;
+			FieldDTO[] dtos = new FieldDTO[fields.size()];
+			int i = 0;
+			for (Map.Entry<String, Field> entry : fields.entrySet()) {
+				FieldDTO dto = new FieldDTO(entry.getKey(), entry.getValue().get(node));
+				dtos[i++] = dto;
+			}
+			NodeDTO nodeDTO = new NodeDTO(node.getClass(), node.id, dtos);
+			oos.writeObject(nodeDTO);
+		}
+
+		oos.writeObject(Signal.EOF);
+		e = new ZipEntry(ENTRY_CONN_NAME);
+		zos.putNextEntry(e);
+		oos.flush();
+		oos = new ObjectOutputStream(zos);
+		for (int id = 0; id < allNodes.length; id++) {
+			AbstractNode node = allNodes[id];
+			for (Map.Entry<Field, NodeConnection> entry : node.connections.entrySet()) {
+				int in, out;
+				in = node.id;
+				out = Arrays.binarySearch(allNodes, entry.getValue().getNodeInstance(), comp);
+				out = allNodes[out].id;
+				String sIn = entry.getKey().getName();
+				String sOut = entry.getValue().getField().getName();
+				oos.writeObject(new ConnectionDTO(out, in, sOut, sIn));
+			}
+		}
+		oos.writeObject(Signal.EOF);
+		oos.flush();
+		return true;
+	}
+
+	/**
+	 * Save the current NodeMaster Instance to the File specified by savefile. If
+	 * this file already exists and override is false, this methods returns false
+	 * and does nothing, else all important Information is saved to the specified
+	 * savefile. It can later be loaded again using {@link NodeMaster#load(String)}
+	 * 
+	 * @param savefile
+	 * @param override
+	 * @return
+	 */
+	public boolean save(String savefile, boolean override) throws IOException {
+		Path p = Paths.get(savefile);
+		if (Files.exists(p) && !override) {
+			return false;
+		}
+		try (ZipOutputStream zos = new ZipOutputStream(Files.newOutputStream(p))) {
+			if (!trySaveRegistry(zos)) {
+				return false;
+			}
+			if (!trySaveState(zos)) {
+				return false;
+			}
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Loads a saved NodeMaster from a savefile created by
+	 * {@link NodeMaster#save(String, boolean)}
+	 * 
+	 * @param savefile
+	 * @return
+	 * @throws IOException
+	 * @throws NoSuchNodeException
+	 */
+	public static NodeMaster load(String savefile) throws IOException, NoSuchNodeException {
+		NodeMaster m = new NodeMaster();
+		if (!m.tryLoad(savefile))
+			return null;
+		return m;
+	}
+
+	private boolean tryLoad(String savefile) throws IOException, NoSuchNodeException {
+		Path p = Paths.get(savefile);
+		if (!Files.exists(p)) {
+			return false;
+		}
+		try (ZipInputStream zin = new ZipInputStream(Files.newInputStream(p))) {
+			if (!tryLoadRegistry(zin)) {
+				return false;
+			}
+			if (!tryLoadState(zin)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private boolean tryLoadRegistry(ZipInputStream zin) throws IOException {
+		ZipEntry entry = zin.getNextEntry();
+		if (!entry.getName().equals(ENTRY_REG_NAME)) {
+			throw new IllegalStateException("Expected registry to be available in save file, but " + entry.getName()
+					+ " was the next entry! Maybe the savefile is corrupt");
+		}
+		ObjectInputStream ois = new ObjectInputStream(zin);
+		Object read;
+		try {
+			while ((read = ois.readObject()) != null) {
+				if (read.getClass() != RegistryDTO.class) {
+					if (Signal.EOF.equals(read)) {
+						break;
+					}
+					throw new IllegalStateException("Expected RegistryDTO, but got " + read.getClass().getName()
+							+ " Maybe the savefile is corrupt");
+				}
+				RegistryDTO dto = (RegistryDTO) read;
+				registeredNodes.put(dto.type, dto.clazz);
+				inputKeyMap.put(dto.clazz, new HashMap<>());
+				outputKeyMap.put(dto.clazz, new HashMap<>());
+				fieldKeyMap.put(dto.clazz, new HashMap<>());
+				populateKeys(dto.clazz, inputKeyMap.get(dto.clazz), NodeInput.class);
+				populateKeys(dto.clazz, outputKeyMap.get(dto.clazz), NodeOutput.class);
+				populateKeys(dto.clazz, fieldKeyMap.get(dto.clazz), NodeField.class);
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
+	private boolean tryLoadState(ZipInputStream zin) throws IOException, NoSuchNodeException {
+		ZipEntry entry = zin.getNextEntry();
+		if (!entry.getName().equals(ENTRY_STATE_NAME)) {
+			throw new IllegalStateException("Expected states to be available in save file, but " + entry.getName()
+					+ " was the next entry! Maybe the savefile is corrupt");
+		}
+		ObjectInputStream ois = new ObjectInputStream(zin);
+		Object read;
+		NodeDTO[] allNodes;
+		try {
+			Set<NodeDTO> nodes = new ObjectOpenHashSet<>();
+			while ((read = ois.readObject()) != null) {
+				if (read.getClass() != NodeDTO.class) {
+					if (Signal.EOF.equals(read)) {
+						break;
+					}
+					throw new IllegalStateException("Expected NodeDTO, but got " + read.getClass().getName()
+							+ " Maybe the savefile is corrupt");
+				}
+				NodeDTO dto = (NodeDTO) read;
+				nodes.add(dto);
+			}
+			allNodes = nodes.toArray(new NodeDTO[nodes.size()]);
+			Arrays.sort(allNodes, (a, b) -> Integer.compare(a.id, b.id));
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			return false;
+		}
+		AbstractNode[] realNodes = new AbstractNode[allNodes.length];
+		for (int i = 0; i < allNodes.length; i++) {
+			Class<? extends AbstractNode> clazz = allNodes[i].clazz;
+			AbstractNode node = doCreateNode(clazz, allNodes[i].id);
+			for (FieldDTO f : allNodes[i].fields) {
+				node.set(f.name, f.value);
+			}
+			realNodes[i] = node;
+
+		}
+		entry = zin.getNextEntry();
+		if (!entry.getName().equals(ENTRY_CONN_NAME)) {
+			throw new IllegalStateException("Expected connections to be available in save file, but " + entry.getName()
+					+ " was the next entry! Maybe the savefile is corrupt");
+		}
+		ois = new ObjectInputStream(zin);
+		try {
+
+			while ((read = ois.readObject()) != null) {
+				if (read.getClass() != ConnectionDTO.class) {
+					if (Signal.EOF.equals(read)) {
+						break;
+					}
+					throw new IllegalStateException("Expected ConnectionDTO, but got " + read.getClass().getName()
+							+ " Maybe the savefile is corrupt");
+				}
+				ConnectionDTO dto = (ConnectionDTO) read;
+				AbstractNode nodeOut = realNodes[dto.idOut];
+				AbstractNode nodeIn = realNodes[dto.idIn];
+				setConnection(nodeIn, dto.fieldIn, nodeOut, dto.fieldOut);
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			return false;
+		}
+
+		return true;
 	}
 
 }
