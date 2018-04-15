@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
+import at.crimsonbit.nodesystem.gui.animation.Animator;
 import at.crimsonbit.nodesystem.gui.dialog.GPopUp;
 import at.crimsonbit.nodesystem.gui.node.port.GPort;
 import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
@@ -409,7 +410,7 @@ public class GNode extends Pane implements IGNode {
 		for (MenuItem item : this.popUpDialog.getItems()) {
 			int id = Integer.valueOf(item.getId());
 			item.setOnAction(event -> {
-				if (id <= 7)
+				if (id <= ppc)
 					consumeMessage(id);
 				else
 					consumeCustomMessage(id);

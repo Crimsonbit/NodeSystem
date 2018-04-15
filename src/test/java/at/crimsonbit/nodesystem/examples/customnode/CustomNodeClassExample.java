@@ -7,18 +7,28 @@ import at.crimsonbit.nodesystem.gui.toast.Toast;
 import at.crimsonbit.nodesystem.gui.toast.ToastTime;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 
+/**
+ * 
+ * Example of how to use your custom node together with a custom node class.
+ * Please note, that if you don't want to react to custom messages your don't
+ * need to use a custom class. By Default every node uses the standard GNode
+ * class.
+ * 
+ * @author NeonArtworks
+ * 
+ */
 public class CustomNodeClassExample extends GNode {
 
 	public CustomNodeClassExample() {
 		super();
 	}
-	
+
 	public CustomNodeClassExample(String name, INodeType type, boolean draw, GNodeGraph graph, double x, double y) {
 		super(name, type, draw, graph, x, y);
-		// int ppc = getInternalIDCounter(); //Tells you the latest popup-menu id used
+		// int ppc = getInternalIDCounter(); // Tells you the latest popup-menu id used
 		// internally
-		addPopUpItem(8, "Make Toast"); // Adds a custom pop-up menu item.
-		addPopUpItem(9, "Animate");
+		addPopUpItem(5, "Make Toast"); // Adds a custom pop-up menu item.
+		addPopUpItem(6, "Animate"); // Adds a custom pop-up menu item.
 	}
 
 	/**
@@ -27,11 +37,12 @@ public class CustomNodeClassExample extends GNode {
 	 */
 	@Override
 	public void consumeCustomMessage(int id) {
-		if (id == 8) {
-			Toast.makeToast("Sample Text!", ToastTime.TIME_SHORT);
+		if (id == 5) {
+			Toast.makeToast("Sample Text!\nSample Text!\nSample Text!\nSample Text!\nSample Text!\nSample Text!",
+					ToastTime.TIME_SHORT);
 		}
-		if (id == 9) {
-			Animator.animateProperty(opacityProperty(), 200, 400, 200, 0, 1);
+		if (id == 6) {
+			Animator.animateProperty(rotateProperty(), 500, 200, 200, 180, 360);
 		}
 	}
 

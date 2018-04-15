@@ -8,6 +8,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 /**
+ * Helper class to animate properties.
  * 
  * @author NeonArtworks
  *
@@ -49,7 +50,23 @@ public class Animator {
 
 	}
 
-	public static void animateProperty(DoubleProperty prop, int duartion, int startDuration, int endDuration,
+	/**
+	 * Animates any double property.
+	 * 
+	 * @param prop
+	 *            the property you want to animate
+	 * @param holdTime
+	 *            the duration after startDuration before stopDuration.
+	 * @param startDuration
+	 *            the duration to reach the first value
+	 * @param endDuration
+	 *            the duration after the holdTime.
+	 * @param firstVal
+	 *            the first keyframe value
+	 * @param secondVal
+	 *            the second keyframe value
+	 */
+	public static void animateProperty(DoubleProperty prop, int holdTime, int startDuration, int endDuration,
 			double firstVal, double secondVal) {
 		resetTimeline();
 		KeyFrame inKey = new KeyFrame(Duration.millis(startDuration), new KeyValue(prop, firstVal));
@@ -58,7 +75,7 @@ public class Animator {
 		intTimeline.setOnFinished((actionEvent) -> {
 			new Thread(() -> {
 				try {
-					Thread.sleep(duartion);
+					Thread.sleep(holdTime);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
