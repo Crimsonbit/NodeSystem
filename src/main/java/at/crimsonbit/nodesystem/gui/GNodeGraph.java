@@ -12,13 +12,14 @@ import at.crimsonbit.nodesystem.gui.dialog.GEntry;
 import at.crimsonbit.nodesystem.gui.dialog.GPopUp;
 import at.crimsonbit.nodesystem.gui.dialog.GSubMenu;
 import at.crimsonbit.nodesystem.gui.handlers.GNodeMouseHandler;
-import at.crimsonbit.nodesystem.gui.handlers.GNodeSystemFileHandler;
 import at.crimsonbit.nodesystem.gui.layer.GLineLayer;
 import at.crimsonbit.nodesystem.gui.layer.GNodeLayer;
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.gui.node.IGConsumable;
 import at.crimsonbit.nodesystem.gui.settings.GSettingsPane;
 import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
+import at.crimsonbit.nodesystem.gui.toast.Toast;
+import at.crimsonbit.nodesystem.gui.toast.ToastTime;
 import at.crimsonbit.nodesystem.node.types.Base;
 import at.crimsonbit.nodesystem.node.types.Calculate;
 import at.crimsonbit.nodesystem.node.types.Constant;
@@ -74,7 +75,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 	private final DragContext dragContext = new DragContext();
 	private FileChooser fileChooser = new FileChooser();
-	private GNodeSystemFileHandler fileHandler = new GNodeSystemFileHandler();
+	FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("NodeSystem files (*.nsys)", "*.nsys");
 	private Rectangle selection;
 	private Text nodeInfo = new Text();
 	private GState state = GState.DEFAULT;
@@ -339,6 +340,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		});
 	}
 
+	@SuppressWarnings("static-access")
 	@Override
 	public void consumeMessage(int id, GEntry source) {
 		if (id < 1000) {
@@ -360,25 +362,34 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 		if (id == 1001) {
 			// TODO LOADING
+			fileChooser.getExtensionFilters().add(extFilter);
 			File f = fileChooser.showOpenDialog(getParent().getScene().getWindow());
-			try {
-				getGuiMaster().setNodeMaster(getGuiMaster().getNodeMaster().load(f.getPath()));
-			} catch (IOException | NoSuchNodeException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			if (f != null)
+				try {
+					getGuiMaster().setNodeMaster(getGuiMaster().getNodeMaster().load(f.getPath()));
+					Toast.makeToast("NodeSystem loaded successfully!", ToastTime.TIME_SHORT);
+				} catch (IOException | NoSuchNodeException e) {
+					Toast.makeToast("Error while saving!", ToastTime.TIME_SHORT);
+					e.printStackTrace();
+				}
+			else
+				Toast.makeToast("Error file is null!", ToastTime.TIME_SHORT);
 			update();
 
 		}
 		if (id == 1000) {
 			// TODO SAVING
+			fileChooser.getExtensionFilters().add(extFilter);
 			File f = fileChooser.showSaveDialog(getParent().getScene().getWindow());
-			try {
-				getGuiMaster().getNodeMaster().save(f.getPath(), true);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			if (f != null)
+				try {
+					getGuiMaster().getNodeMaster().save(f.getPath(), true);
+					Toast.makeToast("NodeSystem saved successfully!", ToastTime.TIME_SHORT);
+				} catch (IOException e) {
+					Toast.makeToast("Error while saving!", ToastTime.TIME_SHORT);
+				}
+			else
+				Toast.makeToast("Error file is null!", ToastTime.TIME_SHORT);
 
 		}
 		if (id == 1002) {
