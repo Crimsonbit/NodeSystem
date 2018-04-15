@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Optional;
 
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
-import at.crimsonbit.nodesystem.gui.animation.Animator;
 import at.crimsonbit.nodesystem.gui.dialog.GPopUp;
 import at.crimsonbit.nodesystem.gui.node.port.GPort;
 import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
@@ -46,6 +45,7 @@ public class GNode extends Pane implements IGNode {
 	private List<GNode> parents = new ArrayList<GNode>();
 	private List<GPort> inputPorts = new ArrayList<GPort>();
 	private List<GPort> outputPorts = new ArrayList<GPort>();
+	private List<GNodeConnection> connections = new ArrayList<GNodeConnection>();
 
 	private GPopUp popUpDialog;
 
@@ -69,7 +69,6 @@ public class GNode extends Pane implements IGNode {
 	private final FileChooser fileChooser = new FileChooser();
 	private int ppc = 0; // popup entry counter
 	private AbstractNode calcNode;
-
 	private Rectangle outline;
 	private Rectangle base;
 	private Rectangle top;
@@ -139,6 +138,10 @@ public class GNode extends Pane implements IGNode {
 		draw();
 	}
 
+	public List<GNodeConnection> getConnections() {
+		return this.connections;
+	}
+
 	private void addToolTip() {
 		tooltip.setText("Name: " + this.name + "\n" + "type: " + this.type.toString() + "\n");
 		Tooltip.install(this, tooltip);
@@ -178,7 +181,7 @@ public class GNode extends Pane implements IGNode {
 		return this.type;
 	}
 
-	public AbstractNode getNode() {
+	public AbstractNode getAbstractNode() {
 		return calcNode;
 	}
 

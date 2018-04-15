@@ -24,15 +24,14 @@ public class SimpleGraph extends Application {
 
 		Scene scene = new Scene(view, 1024, 768);
 
-		graph.registerNodes("at.crimsonbit.nodesystem.node"); // registering default nodes
-		graph.registerNodes("at.crimsonbit.nodesystem.examples.customnode");
+		graph.registerNodes("at.crimsonbit.nodesystem.examples.customnode"); // has to be called before initGraph!
 		graph.addInfo(); // Adds Debug information to the screen
 
 		/**
 		 * initGraph() has to be called AFTER the graph was added to the scene!
 		 **/
 
-		graph.initGraph();
+		graph.initGraph(true);
 
 		/**
 		 * Example of how to add custom node-classes to specific node types

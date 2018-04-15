@@ -72,7 +72,7 @@ public class GPort extends Group implements IGConsumable {
 		});
 
 		tooltip.setText(
-				"GPort: " + this.id + "\n" + "Input: " + this.input + "\n" + "Type: " + node.getNode().get(labels));
+				"GPort: " + this.id + "\n" + "Input: " + this.input + "\n" + "Type: " + node.getAbstractNode().get(labels));
 		Tooltip.install(this, tooltip);
 
 		// getChildren().add(line);

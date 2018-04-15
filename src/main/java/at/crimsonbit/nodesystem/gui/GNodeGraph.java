@@ -1,7 +1,6 @@
 package at.crimsonbit.nodesystem.gui;
 
 import java.io.File;
-import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -11,8 +10,8 @@ import java.util.Set;
 import at.crimsonbit.nodesystem.gui.dialog.GEntry;
 import at.crimsonbit.nodesystem.gui.dialog.GPopUp;
 import at.crimsonbit.nodesystem.gui.dialog.GSubMenu;
-import at.crimsonbit.nodesystem.gui.handlers.GNodeSystemFileHandler;
 import at.crimsonbit.nodesystem.gui.handlers.GNodeMouseHandler;
+import at.crimsonbit.nodesystem.gui.handlers.GNodeSystemFileHandler;
 import at.crimsonbit.nodesystem.gui.layer.GLineLayer;
 import at.crimsonbit.nodesystem.gui.layer.GNodeLayer;
 import at.crimsonbit.nodesystem.gui.node.GNode;
@@ -49,12 +48,9 @@ import javafx.stage.Stage;
  *
  */
 
-public class GNodeGraph extends GGraphScene implements IGConsumable, Serializable {
+public class GNodeGraph extends GGraphScene implements IGConsumable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7370937910226960291L;
+	private static final String INTERNAL_NODES = "at.crimsonbit.nodesystem.node";
 	private GNodeMaster nodeMaster;
 	private Group canvas;
 	private GNode activeCell;
@@ -115,10 +111,14 @@ public class GNodeGraph extends GGraphScene implements IGConsumable, Serializabl
 		setDefaulSettings();
 	}
 
-	public void initGraph() {
+	public void initGraph(boolean defaultNodes) {
+		if (defaultNodes)
+			getGuiMaster().registerNodes(INTERNAL_NODES);
+
 		fillNodeList();
 		loadMenus();
 		addKeySupport();
+
 	}
 
 	public void addCustomNode(INodeType type, Class<? extends GNode> node) {
@@ -267,7 +267,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable, Serializabl
 		getGuiMaster().registerNodes(path);
 	}
 
-	public void loadMenus() {
+	private void loadMenus() {
 
 		Set<INodeType> map = getGuiMaster().getNodeMaster().getAllNodeClasses();
 
@@ -357,16 +357,17 @@ public class GNodeGraph extends GGraphScene implements IGConsumable, Serializabl
 		}
 
 		if (id == 1001) {
-			// TODO
-			File f = fileChooser.showOpenDialog(getParent().getScene().getWindow());
-			this.nodeMaster = fileHandler.getNodeMaster();
-			update();
+			// TODO LOADING
+			// File f = fileChooser.showOpenDialog(getParent().getScene().getWindow());
+			// fileHandler.saveNodeSystem(f, nodeMaster);
+
 		}
 		if (id == 1000) {
-			// TODO
-			File f = fileChooser.showSaveDialog(getParent().getScene().getWindow());
-			fileHandler.loadNodeSystem(f);
-			fileHandler.saveNodeSystem(f, nodeMaster);
+			// TODO SAVING
+			// File f = fileChooser.showSaveDialog(getParent().getScene().getWindow());
+			// fileHandler.loadNodeSystem(f);
+			// this.nodeMaster = fileHandler.getNodeMaster();
+			// update();
 		}
 		if (id == 1002) {
 			Stage stage = (Stage) getScene().getWindow();
@@ -421,7 +422,9 @@ public class GNodeGraph extends GGraphScene implements IGConsumable, Serializabl
 		getGuiMaster().disconnectFromGraphParent(nodeMaster.getRemovedCells());
 		getGuiMaster().merge();
 		if (getActive() != null)
-			nodeInfo.setText(SystemUsage.getRamInfo() + ", active node: " + getActive().getName());
+			nodeInfo.setText(SystemUsage.getRamInfo() + "\nactive node: " + getActive().getName() + ", input ports: "
+					+ getActive().getInputPorts().size() + ", output ports: " + getActive().getOutputPorts().size()
+					+ ", connections: " + getActive().getConnections().size());
 		else
 			nodeInfo.setText(SystemUsage.getRamInfo());
 
