@@ -29,8 +29,6 @@ public class GGraphScene extends AnchorPane {
 	private Scale scaleTransform;
 	private double scaleValue = 1.0;
 	private double strokeValue = 0.2;
-	private double delta = 0.1;
-
 	private double lineSpacing = 25;
 
 	private Color lineColor;

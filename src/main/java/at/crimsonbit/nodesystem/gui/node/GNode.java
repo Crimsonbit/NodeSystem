@@ -46,7 +46,7 @@ public class GNode extends Pane implements IGNode {
 	private List<GPort> inputPorts = new ArrayList<GPort>();
 	private List<GPort> outputPorts = new ArrayList<GPort>();
 	private List<GNodeConnection> connections = new ArrayList<GNodeConnection>();
-
+	
 	private GPopUp popUpDialog;
 
 	private Color topColor;

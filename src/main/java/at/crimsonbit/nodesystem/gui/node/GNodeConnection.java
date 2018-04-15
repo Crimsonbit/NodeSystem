@@ -55,8 +55,7 @@ public class GNodeConnection extends Group {
 		line.setStrokeWidth((double) source.getNodeGraph().getSettings().get(GraphSettings.SETTING_CURVE_WIDTH));
 		line.setStrokeLineCap(StrokeLineCap.ROUND);
 		line.setFill(Color.TRANSPARENT);
-		// line.setStrokeWidth(2);
-
+		
 		DropShadow e = new DropShadow();
 		e.setBlurType(BlurType.GAUSSIAN);
 		e.setBlurType(BlurType.GAUSSIAN);
