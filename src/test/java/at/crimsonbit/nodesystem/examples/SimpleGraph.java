@@ -1,13 +1,15 @@
-package at.crimsonbit.nodesystem.test;
+package at.crimsonbit.nodesystem.examples;
 
+import at.crimsonbit.nodesystem.examples.customnode.CustomNodeClassExample;
+import at.crimsonbit.nodesystem.examples.customnode.CustomNodes;
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.GNodeSystem;
 import at.crimsonbit.nodesystem.gui.GNodeView;
-import at.crimsonbit.nodesystem.gui.node.GGroupNode;
 import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
 import at.crimsonbit.nodesystem.node.types.Base;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class SimpleGraph extends Application {
@@ -22,21 +24,30 @@ public class SimpleGraph extends Application {
 
 		Scene scene = new Scene(view, 1024, 768);
 
-		graph.registerNodes("at.crimsonbit.nodesystem.node");
-		graph.addInfo();
+		graph.registerNodes("at.crimsonbit.nodesystem.node"); // registering default nodes
+		graph.registerNodes("at.crimsonbit.nodesystem.examples.customnode");
+		graph.addInfo(); // Adds Debug information to the screen
 
 		/**
-		 * These two lines have to be called AFTER the GNodeGraph was added to the
-		 * scene!
+		 * initGraph() has to be called AFTER the graph was added to the scene!
 		 **/
 
 		graph.initGraph();
-		graph.addCustomNode(Base.GROUP, new GGroupNode().getClass());
 
+		/**
+		 * Example of how to add custom node-classes to specific node types
+		 */
+		graph.addCustomNode(CustomNodes.EXAMPLE, new CustomNodeClassExample().getClass());
+		graph.addColorLookup(CustomNodes.EXAMPLE, Color.SANDYBROWN); // Sets the color of our custom node.
+
+		/**
+		 * Example of how to change settings used in the node-system
+		 * 
+		 */
 		graph.addSetting(GraphSettings.SETTING_CURVE_WIDTH, 6d);
 		graph.addSetting(GraphSettings.SETTING_CURVE_CURVE, 100d);
 
-		scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+		scene.getStylesheets().add(getClass().getResource("node-menu.css").toExternalForm());
 		primaryStage.setScene(scene);
 		primaryStage.show();
 

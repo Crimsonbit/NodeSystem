@@ -9,7 +9,7 @@ import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
  */
 public enum Base implements INodeType {
 
-	OUTPUT("Output Node"), PATH("Path Node"), GROUP("Group Node");
+	OUTPUT("Output Node"), PATH("Path Node");
 
 	private String name;
 

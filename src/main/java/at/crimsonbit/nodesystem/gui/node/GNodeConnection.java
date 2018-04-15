@@ -1,7 +1,5 @@
 package at.crimsonbit.nodesystem.gui.node;
 
-import java.io.Serializable;
-
 import at.crimsonbit.nodesystem.gui.node.port.GPort;
 import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
 import javafx.scene.Group;
@@ -16,12 +14,8 @@ import javafx.scene.shape.StrokeLineCap;
  * @author NeonArtworks
  *
  */
-public class GNodeConnection extends Group implements Serializable {
+public class GNodeConnection extends Group {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7749681570722040474L;
 	protected GPort sourcePort;
 	protected GPort targetPort;
 	protected GNode source;

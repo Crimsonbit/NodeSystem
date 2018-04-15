@@ -1,7 +1,6 @@
 package at.crimsonbit.nodesystem.gui.node;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -38,12 +37,8 @@ import javafx.stage.FileChooser;
  * @author NeonArtworks
  *
  */
-public class GNode extends Pane implements IGNode, Serializable {
+public class GNode extends Pane implements IGNode {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 6096581498007101350L;
 	private GNodeGraph nodeGraph;
 	private List<Shape> shapes = new ArrayList<Shape>();
 	private List<GNode> children = new ArrayList<GNode>();

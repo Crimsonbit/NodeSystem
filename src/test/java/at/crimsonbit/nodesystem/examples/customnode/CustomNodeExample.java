@@ -1,21 +1,21 @@
-package at.crimsonbit.nodesystem.node.base;
+package at.crimsonbit.nodesystem.examples.customnode;
 
-import at.crimsonbit.nodesystem.node.types.Base;
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeField;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeOutput;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeType;
 
-public class GroupNode extends AbstractNode {
+public class CustomNodeExample extends AbstractNode {
 
 	@NodeType
-	private static final Base type = Base.GROUP;
+	private static final CustomNodes type = CustomNodes.EXAMPLE;
 
 	@NodeField
 	@NodeOutput("compute")
-	Object path;
+	Object customOutput;
 
 	public void compute() {
+		
 	}
 
 }

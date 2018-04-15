@@ -12,7 +12,7 @@ import javafx.scene.input.KeyCodeCombination;
 public class GPopUp extends ContextMenu {
 
 	public GPopUp() {
-
+		super();
 	}
 
 	public void addItem(GSubMenu menu) {

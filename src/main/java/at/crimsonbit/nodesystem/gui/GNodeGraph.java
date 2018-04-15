@@ -444,7 +444,6 @@ public class GNodeGraph extends GGraphScene implements IGConsumable, Serializabl
 	private void setDefaultColorLookup() {
 		getColorLookup().put(Base.OUTPUT, Color.LIGHTBLUE);
 		getColorLookup().put(Base.PATH, Color.DARKSEAGREEN);
-		getColorLookup().put(Base.GROUP, Color.GRAY);
 		for (INodeType t : Constant.values())
 			getColorLookup().put(t, Color.INDIANRED);
 

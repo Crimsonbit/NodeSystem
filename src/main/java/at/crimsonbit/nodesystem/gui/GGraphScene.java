@@ -238,8 +238,9 @@ public class GGraphScene extends AnchorPane {
 		private static final double MAX_SCALE = 10.0d;
 		private static final double MIN_SCALE = 0.4d;
 		private static final double DELTA = 0.7d;
-		private static final double MIN_SPACING = 24;
-		private static final double MAX_SPACING = 30;
+		private static final double DELTA_SPACING = 7d;
+		private static final double MIN_SPACING = 5;
+		private static final double MAX_SPACING = 40;
 
 		public double clamp(double value, double min, double max) {
 
@@ -258,17 +259,18 @@ public class GGraphScene extends AnchorPane {
 
 				if (scrollEvent.getDeltaY() < 0) {
 					scaleValue -= DELTA;
-					// lineSpacing -= DELTA;
+					lineSpacing -= DELTA_SPACING;
 				} else {
 					scaleValue += DELTA;
-					// lineSpacing += DELTA;
+					lineSpacing += DELTA_SPACING;
 
 				}
 				// System.out.println(scaleValue);
 				// System.out.println(lineSpacing);
 				scaleValue = clamp(scaleValue, MIN_SCALE, MAX_SCALE);
-				// lineSpacing = clamp(lineSpacing, MIN_SPACING, MAX_SPACING);
-				zoomTo(scaleValue);
+				lineSpacing = clamp(lineSpacing, MIN_SPACING, MAX_SPACING);
+				if (scaleValue != MIN_SCALE)
+					zoomTo(scaleValue);
 
 				scrollEvent.consume();
 			} else {
