@@ -42,7 +42,7 @@ public class CustomNodeClassExample extends GNode {
 					ToastTime.TIME_SHORT);
 		}
 		if (id == 6) {
-			Animator.animateProperty(rotateProperty(), 500, 200, 200, 180, 360);
+			Animator.animateProperty(opacityProperty(), 500, 200, 200, 0, 1);
 		}
 	}
 

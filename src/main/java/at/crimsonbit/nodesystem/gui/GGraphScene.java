@@ -235,8 +235,8 @@ public class GGraphScene extends AnchorPane {
 	protected class ZoomHandler implements EventHandler<ScrollEvent> {
 		private static final double MAX_SCALE = 10.0d;
 		private static final double MIN_SCALE = 0.4d;
-		private static final double DELTA = 0.7d;
-		private static final double DELTA_SPACING = 7d;
+		private static final double DELTA_PLUS = 1.1d;
+		private static final double DELTA_MINUS = 0.9d;
 		private static final double MIN_SPACING = 5;
 		private static final double MAX_SPACING = 40;
 
@@ -253,35 +253,33 @@ public class GGraphScene extends AnchorPane {
 
 		public void handle(ScrollEvent scrollEvent) {
 
-			if (!scrollEvent.isControlDown()) {
-
+			if (scrollEvent.isControlDown()) {
 				if (scrollEvent.getDeltaY() < 0) {
-					scaleValue -= DELTA;
-					lineSpacing -= DELTA_SPACING;
-				} else {
-					scaleValue += DELTA;
-					lineSpacing += DELTA_SPACING;
-
-				}
-				// System.out.println(scaleValue);
-				// System.out.println(lineSpacing);
-				scaleValue = clamp(scaleValue, MIN_SCALE, MAX_SCALE);
-				lineSpacing = clamp(lineSpacing, MIN_SPACING, MAX_SPACING);
-				if (scaleValue != MIN_SCALE)
-					zoomTo(scaleValue);
-
-				scrollEvent.consume();
-			} else {
-				if (scrollEvent.getDeltaY() < 0) {
-					strokeValue -= DELTA;
+					strokeValue *= DELTA_MINUS;
 
 				} else {
-					strokeValue += DELTA;
+					strokeValue *= DELTA_PLUS;
 				}
 
 				strokeWidth(strokeValue);
 				scrollEvent.consume();
+			} else {
+				if (scrollEvent.getDeltaY() < 0) {
+					scaleValue *= DELTA_MINUS;
+					lineSpacing *= DELTA_MINUS;
+				} else {
+					scaleValue *= DELTA_PLUS;
+					lineSpacing *= DELTA_PLUS;
+				}
 			}
+			// System.out.println(scaleValue);
+			// System.out.println(lineSpacing);
+			scaleValue = clamp(scaleValue, MIN_SCALE, MAX_SCALE);
+			lineSpacing = clamp(lineSpacing, MIN_SPACING, MAX_SPACING);
+			if (scaleValue != MIN_SCALE)
+				zoomTo(scaleValue);
+
+			scrollEvent.consume();
 
 		}
 

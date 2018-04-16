@@ -114,6 +114,14 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		setDefaulSettings();
 	}
 
+	/**
+	 * Initializes the graph. It loads the right-click menu and adds, if
+	 * defaultNodes is true, all default nodes.
+	 * 
+	 * @param defaultNodes
+	 *            tells the graph whether it should load in the default nodes or not
+	 */
+
 	public void initGraph(boolean defaultNodes) {
 		if (defaultNodes)
 			getGuiMaster().registerNodes(INTERNAL_NODES);
@@ -362,34 +370,12 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 		if (id == 1001) {
 			// TODO LOADING
-			fileChooser.getExtensionFilters().add(extFilter);
-			File f = fileChooser.showOpenDialog(getParent().getScene().getWindow());
-			if (f != null)
-				try {
-					getGuiMaster().setNodeMaster(getGuiMaster().getNodeMaster().load(f.getPath()));
-					Toast.makeToast("NodeSystem loaded successfully!", ToastTime.TIME_SHORT);
-				} catch (IOException | NoSuchNodeException e) {
-					Toast.makeToast("Error while saving!", ToastTime.TIME_SHORT);
-					e.printStackTrace();
-				}
-			else
-				Toast.makeToast("Error file is null!", ToastTime.TIME_SHORT);
-			update();
+			onLoad();
 
 		}
 		if (id == 1000) {
 			// TODO SAVING
-			fileChooser.getExtensionFilters().add(extFilter);
-			File f = fileChooser.showSaveDialog(getParent().getScene().getWindow());
-			if (f != null)
-				try {
-					getGuiMaster().getNodeMaster().save(f.getPath(), true);
-					Toast.makeToast("NodeSystem saved successfully!", ToastTime.TIME_SHORT);
-				} catch (IOException e) {
-					Toast.makeToast("Error while saving!", ToastTime.TIME_SHORT);
-				}
-			else
-				Toast.makeToast("Error file is null!", ToastTime.TIME_SHORT);
+			onSave();
 
 		}
 		if (id == 1002) {
@@ -398,6 +384,39 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		}
 
 		update();
+	}
+
+	private void onSave() {
+		fileChooser.getExtensionFilters().add(extFilter);
+		File f = fileChooser.showSaveDialog(getParent().getScene().getWindow());
+		if (f != null)
+			try {
+				getGuiMaster().getNodeMaster().save(f.getPath(), true);
+				Toast.makeToast("NodeSystem saved successfully!", ToastTime.TIME_SHORT);
+			} catch (IOException e) {
+				Toast.makeToast("Error while saving!", ToastTime.TIME_SHORT);
+			}
+		else
+			Toast.makeToast("Error file is null!", ToastTime.TIME_SHORT);
+	}
+
+	@SuppressWarnings("static-access")
+	private void onLoad() {
+		fileChooser.getExtensionFilters().add(extFilter);
+		File f = fileChooser.showOpenDialog(getParent().getScene().getWindow());
+		if (f != null)
+			try {
+				getGuiMaster().setNodeMaster(getGuiMaster().getNodeMaster().load(f.getPath()));
+				Toast.makeToast("NodeSystem loaded successfully!", ToastTime.TIME_SHORT);
+			} catch (IOException | NoSuchNodeException e) {
+				Toast.makeToast("Error while saving!", ToastTime.TIME_SHORT);
+				e.printStackTrace();
+			}
+		else
+			Toast.makeToast("Error file is null!", ToastTime.TIME_SHORT);
+
+		GLoader.loadGUI(nodeMaster, nodeMaster.getNodeMaster(), this);
+
 	}
 
 	public GGraphScene getGrid() {
@@ -518,4 +537,10 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	public GSettingsPane getSettingsPane() {
 		return this.settingsPane;
 	}
+
+	public void clearGraph() {
+		nodeMaster.clear();
+		update();
+	}
+
 }
