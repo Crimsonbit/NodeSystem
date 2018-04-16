@@ -19,7 +19,7 @@ import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
  *
  */
 public class GNodeMaster {
-	
+
 	private GNode graphParent;
 	private NodeMaster nodeMaster;
 	private List<GNode> allNodes;

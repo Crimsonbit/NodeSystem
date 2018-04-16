@@ -20,9 +20,9 @@ public class SimpleGraph extends Application {
 		GNodeSystem nodeSystem = new GNodeSystem(false);
 		GNodeView view = nodeSystem.getGUI();
 		GNodeGraph graph = view.getNodeGraph();
-		
+
 		Scene scene = new Scene(view, 1024, 768);
-		
+
 		graph.registerNodes("at.crimsonbit.nodesystem.examples.customnode"); // has to be called before initGraph!
 		graph.addInfo(); // Adds Debug information to the screen
 
@@ -30,7 +30,7 @@ public class SimpleGraph extends Application {
 		 * initGraph() has to be called AFTER the graph was added to the scene!
 		 **/
 
-		graph.initGraph(true);
+		graph.initGraph(false);
 
 		/**
 		 * Example of how to add custom node-classes to specific node types
