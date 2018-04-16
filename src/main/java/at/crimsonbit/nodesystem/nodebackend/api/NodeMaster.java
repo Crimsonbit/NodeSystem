@@ -25,6 +25,7 @@ import org.reflections.Reflections;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableMap;
 
 import at.crimsonbit.nodesystem.nodebackend.api.dto.ConnectionDTO;
 import at.crimsonbit.nodesystem.nodebackend.api.dto.FieldDTO;
@@ -69,11 +70,12 @@ public class NodeMaster {
 	}
 
 	/**
-	 * Registers all Nodes in the package and all subpackages specified by path. A
-	 * Node is any class, that extends AbstractNode. <br>
+	 * Registers all Nodes in the package and all subpackages specified by path.
+	 * A Node is any class, that extends AbstractNode. <br>
 	 * To be valid it must also have a static final Field annotated with
-	 * {@link NodeType}. The Type of this Field has to implement {@link INodeType}
-	 * and can be any object, either an instance of a class or an enum.
+	 * {@link NodeType}. The Type of this Field has to implement
+	 * {@link INodeType} and can be any object, either an instance of a class or
+	 * an enum.
 	 * 
 	 * @param path
 	 */
@@ -153,8 +155,8 @@ public class NodeMaster {
 	}
 
 	/**
-	 * Returns a Collection of all Input Fields in a NodeClass, intended for use in
-	 * AbstractNode (No checks for validity are perfomed)
+	 * Returns a Collection of all Input Fields in a NodeClass, intended for use
+	 * in AbstractNode (No checks for validity are perfomed)
 	 * 
 	 * @param clazz
 	 * @return
@@ -175,8 +177,8 @@ public class NodeMaster {
 	}
 
 	/**
-	 * Returnes the Output with the name key in the NodeClass clazz, or null if it
-	 * has none. No check are performed if the NodeClass really is registered
+	 * Returnes the Output with the name key in the NodeClass clazz, or null if
+	 * it has none. No check are performed if the NodeClass really is registered
 	 * 
 	 * @param clazz
 	 * @param key
@@ -187,8 +189,8 @@ public class NodeMaster {
 	}
 
 	/**
-	 * Returnes the Field with the name key in the NodeClass clazz, or null if it
-	 * has none. No check are performed if the NodeClass really is registered
+	 * Returnes the Field with the name key in the NodeClass clazz, or null if
+	 * it has none. No check are performed if the NodeClass really is registered
 	 * 
 	 * @param clazz
 	 * @param key
@@ -279,10 +281,10 @@ public class NodeMaster {
 	}
 
 	/**
-	 * Gets a INodeType by a string name. The name is stored when the Abstract Node
-	 * with this Type is registered, the toString method of the INodeType is used
-	 * for that. If there are multiple INodeTypes registered, that have the same
-	 * name, then the latest is returned
+	 * Gets a INodeType by a string name. The name is stored when the Abstract
+	 * Node with this Type is registered, the toString method of the INodeType
+	 * is used for that. If there are multiple INodeTypes registered, that have
+	 * the same name, then the latest is returned
 	 * 
 	 * @param name
 	 * @return The Node which is registered with this Name, or null if none
@@ -306,6 +308,14 @@ public class NodeMaster {
 	public int getIdOfNode(AbstractNode node) {
 		return nodePool.inverse().get(node);
 	}
+	/**
+	 * Returns the connections of a Node as Immutable Map
+	 * @param node
+	 * @return
+	 */
+	public ImmutableMap<Field, NodeConnection> getConnections(AbstractNode node) {
+		return ImmutableMap.<Field, NodeConnection>builder().putAll(node.connections).build();
+	}
 
 	/**
 	 * Returns the type of the field with name field in the Node class of node
@@ -313,12 +323,12 @@ public class NodeMaster {
 	 * @param node
 	 *            An instance of any NodeClass
 	 * @param field
-	 *            The name of the field within the Node class, has to be annotated
-	 *            with {@link NodeField}
+	 *            The name of the field within the Node class, has to be
+	 *            annotated with {@link NodeField}
 	 * @return
 	 * @throws NoSuchNodeException
-	 *             If the Class of node is no known NodeType or the Class of node
-	 *             has no field with name field
+	 *             If the Class of node is no known NodeType or the Class of
+	 *             node has no field with name field
 	 */
 	public Class<?> getFieldType(AbstractNode node, String field) throws NoSuchNodeException {
 		Map<String, Field> fieldMap = fieldKeyMap.get(node.getClass());
@@ -340,12 +350,12 @@ public class NodeMaster {
 	 * @param node
 	 *            An instance of any NodeClass
 	 * @param field
-	 *            The name of the field within the Node class, has to be annotated
-	 *            with {@link NodeInput}
+	 *            The name of the field within the Node class, has to be
+	 *            annotated with {@link NodeInput}
 	 * @return
 	 * @throws NoSuchNodeException
-	 *             If the Class of node is no known NodeType or the Class of node
-	 *             has no input with name field
+	 *             If the Class of node is no known NodeType or the Class of
+	 *             node has no input with name field
 	 */
 	public Class<?> getInputType(AbstractNode node, String field) throws NoSuchNodeException {
 		Map<String, Field> fieldMap = inputKeyMap.get(node.getClass());
@@ -367,12 +377,12 @@ public class NodeMaster {
 	 * @param node
 	 *            An instance of any NodeClass
 	 * @param field
-	 *            The name of the field within the Node class, has to be annotated
-	 *            with {@link NodeOutput}
+	 *            The name of the field within the Node class, has to be
+	 *            annotated with {@link NodeOutput}
 	 * @return
 	 * @throws NoSuchNodeException
-	 *             If the Class of node is no known NodeType or the Class of node
-	 *             has no output with name field
+	 *             If the Class of node is no known NodeType or the Class of
+	 *             node has no output with name field
 	 */
 	public Class<?> getOutputType(AbstractNode node, String field) throws NoSuchNodeException {
 		Map<String, Field> fieldMap = outputKeyMap.get(node.getClass());
@@ -513,8 +523,8 @@ public class NodeMaster {
 	 *            The name of the input
 	 * @return If there was a Connection on this input
 	 * @throws NoSuchNodeException
-	 *             If the Node is not registered or the registered Node has no input
-	 *             Field named input
+	 *             If the Node is not registered or the registered Node has no
+	 *             input Field named input
 	 */
 	public boolean removeConnection(AbstractNode inNode, String input) throws NoSuchNodeException {
 		Map<String, Field> regIns = inputKeyMap.get(inNode.getClass());
@@ -607,10 +617,11 @@ public class NodeMaster {
 	}
 
 	/**
-	 * Save the current NodeMaster Instance to the File specified by savefile. If
-	 * this file already exists and override is false, this methods returns false
-	 * and does nothing, else all important Information is saved to the specified
-	 * savefile. It can later be loaded again using {@link NodeMaster#load(String)}
+	 * Save the current NodeMaster Instance to the File specified by savefile.
+	 * If this file already exists and override is false, this methods returns
+	 * false and does nothing, else all important Information is saved to the
+	 * specified savefile. It can later be loaded again using
+	 * {@link NodeMaster#load(String)}
 	 * 
 	 * @param savefile
 	 * @param override
