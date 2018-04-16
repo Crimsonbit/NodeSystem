@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -26,6 +27,7 @@ import org.reflections.Reflections;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 import at.crimsonbit.nodesystem.nodebackend.api.dto.ConnectionDTO;
 import at.crimsonbit.nodesystem.nodebackend.api.dto.FieldDTO;
@@ -50,7 +52,7 @@ public class NodeMaster {
 	private static final String ENTRY_CONN_NAME = "connections.dat";
 	private static final String ENTRY_STATE_NAME = "state.dat";
 	private static final String ENTRY_REG_NAME = "registry.dat";
-	private final Map<INodeType, Class<? extends AbstractNode>> registeredNodes;
+	private final BiMap<INodeType, Class<? extends AbstractNode>> registeredNodes;
 	private final Map<Class<? extends AbstractNode>, Map<String, Field>> inputKeyMap;
 	private final Map<Class<? extends AbstractNode>, Map<String, Field>> outputKeyMap;
 	private final Map<Class<? extends AbstractNode>, Map<String, Field>> fieldKeyMap;
@@ -62,11 +64,12 @@ public class NodeMaster {
 
 	public NodeMaster() {
 		inputKeyMap = new HashMap<>();
-		registeredNodes = new HashMap<>();
+		registeredNodes = HashBiMap.<INodeType, Class<? extends AbstractNode>>create();
 		outputKeyMap = new HashMap<>();
 		fieldKeyMap = new HashMap<>();
 		stringToType = new HashMap<>();
 		nodePool = HashBiMap.<Integer, AbstractNode>create();
+
 	}
 
 	/**
@@ -211,6 +214,16 @@ public class NodeMaster {
 	}
 
 	/**
+	 * Returns a Set of all input names of a NodeClass
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	public Set<String> getAllInputNames(int id) {
+		return inputKeyMap.get(getNodeByID(id).getClass()).keySet();
+	}
+
+	/**
 	 * Returns a Set of all input names of a Node
 	 * 
 	 * @param clazz
@@ -238,6 +251,16 @@ public class NodeMaster {
 	 */
 	public Set<String> getAllOutputNames(AbstractNode node) {
 		return getAllOutputNames(node.getClass());
+	}
+
+	/**
+	 * Returns a Set of all ouput names of a Node
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	public Set<String> getAllOutputNames(int node) {
+		return getAllOutputNames(getNodeByID(node));
 	}
 
 	/**
@@ -294,6 +317,26 @@ public class NodeMaster {
 	}
 
 	/**
+	 * Returns the type of the AbstractNode node
+	 * 
+	 * @param node
+	 * @return
+	 */
+	public INodeType getTypeOfNode(AbstractNode node) {
+		return registeredNodes.inverse().get(node.getClass());
+	}
+
+	/**
+	 * Returns the type of the AbstractNode node
+	 * 
+	 * @param node
+	 * @return
+	 */
+	public INodeType getTypeOfNode(int node) {
+		return getTypeOfNode(getNodeByID(node));
+	}
+
+	/**
 	 * 
 	 * @return
 	 */
@@ -308,8 +351,10 @@ public class NodeMaster {
 	public int getIdOfNode(AbstractNode node) {
 		return nodePool.inverse().get(node);
 	}
+
 	/**
 	 * Returns the connections of a Node as Immutable Map
+	 * 
 	 * @param node
 	 * @return
 	 */
@@ -435,6 +480,49 @@ public class NodeMaster {
 		return nodePool.inverse().remove(node) != null;
 	}
 
+	public AbstractNode copyOfNode(AbstractNode other) {
+		AbstractNode node = createNode(other.getClass());
+		for (Field f : getAllFields(other)) {
+			try {
+				f.set(node, f.get(other));
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
+		return node;
+
+	}
+
+	public int copyOfNode(int other) {
+		return getIdOfNode(copyOfNode(getNodeByID(other)));
+	}
+
+	/**
+	 * Creates a new Node with the specified type type. If there is no such
+	 * NodeClass registered, an exception is thrown
+	 * 
+	 * @param type
+	 * @return
+	 * @throws IllegalArgumentException
+	 *             if there is no Node with this type registered
+	 */
+	public int createNodeId(Class<? extends AbstractNode> clazz) {
+		return getIdOfNode(createNode(clazz));
+	}
+
+	/**
+	 * Creates a new Node with the specified type type. If there is no such
+	 * NodeClass registered, an exception is thrown
+	 * 
+	 * @param type
+	 * @return
+	 * @throws IllegalArgumentException
+	 *             if there is no Node with this type registered
+	 */
+	public int createNodeId(INodeType type) {
+		return getIdOfNode(createNode(type));
+	}
+
 	/**
 	 * Creates a new Node with the specified type type. If there is no such
 	 * NodeClass registered, an exception is thrown
@@ -484,6 +572,27 @@ public class NodeMaster {
 		nodePool.put(id, node);
 	}
 
+	/**
+	 * Connect an output of a Node with an input of another Node. This
+	 * connection can later be removed by using
+	 * {@link NodeMaster#removeConnection(AbstractNode, String)} The Connection
+	 * is stored in the Node which contains the input, so that it can load its
+	 * input values when an output is requested see
+	 * {@link AbstractNode#get(String)} for more info on how the getting works
+	 * 
+	 * @param inNode
+	 *            The Node which contains the input
+	 * @param input
+	 *            the name of the input
+	 * @param outNode
+	 *            The Node which contains the output
+	 * @param out
+	 *            the name of the output
+	 * @return true if the connection was created, false if not
+	 * @throws NoSuchNodeException
+	 *             If one of the Node Classes is not registered or the in/output
+	 *             field could not be found in the class
+	 */
 	public boolean setConnection(AbstractNode inNode, String input, AbstractNode outNode, String out)
 			throws NoSuchNodeException {
 
@@ -669,22 +778,31 @@ public class NodeMaster {
 			return false;
 		}
 		try (ZipInputStream zin = new ZipInputStream(Files.newInputStream(p))) {
-			if (!tryLoadRegistry(zin)) {
-				return false;
-			}
-			if (!tryLoadState(zin)) {
-				return false;
+			ZipEntry e = null;
+			while ((e = zin.getNextEntry()) != null) {
+				switch (e.getName()) {
+				case ENTRY_REG_NAME:
+					if (!tryLoadRegistry(zin)) {
+						return false;
+					}
+					break;
+				case ENTRY_STATE_NAME:
+					if (!tryLoadState(zin)) {
+						return false;
+					}
+					break;
+				case ENTRY_CONN_NAME:
+					if (!tryLoadConnections(zin)) {
+						return false;
+					}
+				}
+
 			}
 		}
 		return true;
 	}
 
 	private boolean tryLoadRegistry(ZipInputStream zin) throws IOException {
-		ZipEntry entry = zin.getNextEntry();
-		if (!entry.getName().equals(ENTRY_REG_NAME)) {
-			throw new IllegalStateException("Expected registry to be available in save file, but " + entry.getName()
-					+ " was the next entry! Maybe the savefile is corrupt");
-		}
 		ObjectInputStream ois = new ObjectInputStream(zin);
 		Object read;
 		try {
@@ -714,11 +832,7 @@ public class NodeMaster {
 	}
 
 	private boolean tryLoadState(ZipInputStream zin) throws IOException, NoSuchNodeException {
-		ZipEntry entry = zin.getNextEntry();
-		if (!entry.getName().equals(ENTRY_STATE_NAME)) {
-			throw new IllegalStateException("Expected states to be available in save file, but " + entry.getName()
-					+ " was the next entry! Maybe the savefile is corrupt");
-		}
+
 		ObjectInputStream ois = new ObjectInputStream(zin);
 		Object read;
 		NodeDTO[] allNodes;
@@ -751,12 +865,13 @@ public class NodeMaster {
 			realNodes[i] = node;
 
 		}
-		entry = zin.getNextEntry();
-		if (!entry.getName().equals(ENTRY_CONN_NAME)) {
-			throw new IllegalStateException("Expected connections to be available in save file, but " + entry.getName()
-					+ " was the next entry! Maybe the savefile is corrupt");
-		}
-		ois = new ObjectInputStream(zin);
+
+		return true;
+	}
+
+	private boolean tryLoadConnections(ZipInputStream zin) throws NoSuchNodeException, IOException {
+		Object read = null;
+		ObjectInputStream ois = new ObjectInputStream(zin);
 		try {
 
 			while ((read = ois.readObject()) != null) {
@@ -768,15 +883,14 @@ public class NodeMaster {
 							+ " Maybe the savefile is corrupt");
 				}
 				ConnectionDTO dto = (ConnectionDTO) read;
-				AbstractNode nodeOut = realNodes[dto.idOut];
-				AbstractNode nodeIn = realNodes[dto.idIn];
+				AbstractNode nodeOut = nodePool.get(dto.idOut);
+				AbstractNode nodeIn = nodePool.get(dto.idIn);
 				setConnection(nodeIn, dto.fieldIn, nodeOut, dto.fieldOut);
 			}
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 			return false;
 		}
-
 		return true;
 	}
 

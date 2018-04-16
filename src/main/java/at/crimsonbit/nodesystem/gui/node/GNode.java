@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.dialog.GPopUp;
@@ -15,6 +16,7 @@ import at.crimsonbit.nodesystem.node.types.Base;
 import at.crimsonbit.nodesystem.node.types.Constant;
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
+import at.crimsonbit.nodesystem.nodebackend.api.NodeMaster;
 import at.crimsonbit.nodesystem.util.RangeMapper;
 import javafx.scene.Node;
 import javafx.scene.control.MenuItem;
@@ -68,7 +70,8 @@ public class GNode extends Pane implements IGNode {
 	private double height = 52;
 	private final FileChooser fileChooser = new FileChooser();
 	private int ppc = 0; // popup entry counter
-	private AbstractNode calcNode;
+	// private AbstractNode calcNode;
+	private int nodeID;
 	private Rectangle outline;
 	private Rectangle base;
 	private Rectangle top;
@@ -76,66 +79,52 @@ public class GNode extends Pane implements IGNode {
 	private DropShadow e;
 	private final Tooltip tooltip = new Tooltip();
 
+	private NodeMaster getNodeMaster() {
+		return nodeGraph.getGuiMaster().getNodeMaster();
+	}
+
 	public GNode() {
-		this.doDraw = false;
-		this.name = "";
-		defaultTopColor();
-		defaultBackColor();
-		defaultPopUpDialog();
-		draw();
+		this("", false);
 	}
 
 	public GNode(String name, boolean draw) {
-		this.doDraw = draw;
+		this.nodeID = -1;
 		this.name = name;
+		this.doDraw = draw;
 		defaultTopColor();
 		defaultBackColor();
 		defaultPopUpDialog();
-		draw();
 	}
 
 	public GNode(String name, INodeType type, boolean draw, GNodeGraph graph) {
-		this.nodeGraph = graph;
-		this.doDraw = draw;
-		this.name = name;
-		this.type = type;
-		this.calcNode = this.nodeGraph.getGuiMaster().getNodeMaster().createNode(type);
-		defaultTopColor();
-		defaultBackColor();
-		defaultPopUpDialog();
-		addAllNodes();
-		addToolTip();
-		draw();
+		this(name, graph.getGuiMaster().getNodeMaster().createNodeId(type), draw, graph);
 	}
 
 	public GNode(String name, INodeType type, boolean draw, GNodeGraph graph, double x, double y) {
-		this.nodeGraph = graph;
-		this.doDraw = draw;
+		this(name, graph.getGuiMaster().getNodeMaster().createNodeId(type), draw, graph, x, y);
+	}
+
+	public GNode(String name, int id, boolean draw, GNodeGraph graph) {
+		this.nodeID = id;
 		this.name = name;
-		this.type = type;
-		this.calcNode = this.nodeGraph.getGuiMaster().getNodeMaster().createNode(type);
+		this.nodeGraph = graph;
+		this.type = graph.getGuiMaster().getNodeMaster().getTypeOfNode(id);
+		this.doDraw = draw;
 		defaultTopColor();
 		defaultBackColor();
 		defaultPopUpDialog();
-		addAllNodes();
-		relocate(x, y);
+		addAllPorts();
 		addToolTip();
 		draw();
 	}
 
-	public GNode(GNode gNode) {
-		this.nodeGraph = gNode.getNodeGraph();
-		this.doDraw = gNode.doDraw();
-		this.name = gNode.getName();
-		this.type = gNode.getNodeType();
-		this.calcNode = this.nodeGraph.getGuiMaster().getNodeMaster().createNode(type);
-		defaultTopColor();
-		defaultBackColor();
-		defaultPopUpDialog();
+	public GNode(String name, int id, boolean draw, GNodeGraph graph, double x, double y) {
+		this(name, id, draw, graph);
+		relocate(x, y);
+	}
 
-		addAllNodes();
-		addToolTip();
-		draw();
+	public GNode(GNode gNode) {
+		this(gNode.name, gNode.getNodeMaster().copyOfNode(gNode.nodeID), gNode.doDraw, gNode.nodeGraph);
 	}
 
 	public List<GNodeConnection> getConnections() {
@@ -147,15 +136,15 @@ public class GNode extends Pane implements IGNode {
 		Tooltip.install(this, tooltip);
 	}
 
-	private void addAllNodes() {
+	private void addAllPorts() {
 
 		getInputPorts().clear();
 		getOutputPorts().clear();
-		for (String n : calcNode.getNodeMaster().getAllInputNames(calcNode)) {
+		for (String n : getNodeMaster().getAllInputNames(nodeID)) {
 			addInputPort(inPortCount, n, PORT_INPUT_START_X, PORT_INPUT_START_Y + (inPortCount * PORT_OFFSET));
 			inPortCount++;
 		}
-		for (String n : calcNode.getNodeMaster().getAllOutputNames(calcNode)) {
+		for (String n : getNodeMaster().getAllOutputNames(nodeID)) {
 			addOutputPort(inPortCount, n, PORT_OUTPUT_START_X, PORT_OUTPUT_START_Y + (outPortcount * PORT_OFFSET));
 			outPortcount++;
 		}
@@ -182,7 +171,7 @@ public class GNode extends Pane implements IGNode {
 	}
 
 	public AbstractNode getAbstractNode() {
-		return calcNode;
+		return getNodeMaster().getNodeByID(nodeID);
 	}
 
 	public void setBackColor(Color c) {
@@ -493,7 +482,7 @@ public class GNode extends Pane implements IGNode {
 
 	public String getPath() {
 		if (getNodeType().equals(Base.PATH)) {
-			return (String) this.calcNode.get("path");
+			return (String) this.getAbstractNode().get("path");
 		}
 
 		return null;
@@ -503,21 +492,21 @@ public class GNode extends Pane implements IGNode {
 		if (getNodeType().equals(Base.PATH)) {
 			File f = fileChooser.showOpenDialog(getParent().getScene().getWindow());
 			if (f != null)
-				this.calcNode.set("path", f.getPath());
+				this.getAbstractNode().set("path", f.getPath());
 		}
 		System.out.println(getPath());
 	}
 
 	public Object getOutput() {
 		if (getNodeType().equals(Base.OUTPUT)) {
-			return this.calcNode.get("output");
+			return this.getAbstractNode().get("output");
 		}
 		return null;
 	}
 
 	public void setOutput() {
 		if (getNodeType().equals(Base.OUTPUT)) {
-			setName("Output - " + String.valueOf(this.calcNode.get("output")));
+			setName("Output - " + String.valueOf(this.getAbstractNode().get("output")));
 			redraw();
 		}
 	}
@@ -535,12 +524,12 @@ public class GNode extends Pane implements IGNode {
 			// this.nameAddition = result.get();
 			// setName(this.nameAddition);
 			if (this.type == Constant.STRING) {
-				this.calcNode.set("constant", result.get());
+				this.getAbstractNode().set("constant", result.get());
 
 			} else if (this.type == Constant.BOOLEAN) {
 				try {
 					boolean b = Boolean.valueOf(result.get());
-					this.calcNode.set("constant", b);
+					this.getAbstractNode().set("constant", b);
 
 				} catch (Exception e) {
 					Toast.makeToast("Invalid input!\nPlease type in a boolean type!", ToastTime.TIME_SHORT);
@@ -548,7 +537,7 @@ public class GNode extends Pane implements IGNode {
 			} else if (this.type == Constant.DOUBLE) {
 				try {
 					double b = Double.valueOf(result.get());
-					this.calcNode.set("constant", b);
+					this.getAbstractNode().set("constant", b);
 
 				} catch (Exception e) {
 					Toast.makeToast("Invalid input!\nPlease type in a double type!", ToastTime.TIME_SHORT);
@@ -556,7 +545,7 @@ public class GNode extends Pane implements IGNode {
 			} else if (this.type == Constant.FLOAT) {
 				try {
 					float b = Float.valueOf(result.get());
-					this.calcNode.set("constant", b);
+					this.getAbstractNode().set("constant", b);
 
 				} catch (Exception e) {
 					Toast.makeToast("Invalid input!\nPlease type in a float type!", ToastTime.TIME_SHORT);
@@ -564,7 +553,7 @@ public class GNode extends Pane implements IGNode {
 			} else if (this.type == Constant.INTEGER) {
 				try {
 					int b = Integer.valueOf(result.get());
-					this.calcNode.set("constant", b);
+					this.getAbstractNode().set("constant", b);
 
 				} catch (Exception e) {
 					Toast.makeToast("Invalid input!\nPlease type in a integer type!", ToastTime.TIME_SHORT);
@@ -572,7 +561,7 @@ public class GNode extends Pane implements IGNode {
 			} else if (this.type == Constant.BYTE) {
 				try {
 					byte b = Byte.valueOf(result.get());
-					this.calcNode.set("constant", b);
+					this.getAbstractNode().set("constant", b);
 
 				} catch (Exception e) {
 					Toast.makeToast("Invalid input!\nPlease type in a byte type!", ToastTime.TIME_SHORT);
@@ -581,7 +570,7 @@ public class GNode extends Pane implements IGNode {
 			} else if (this.type == Constant.LONG) {
 				try {
 					long b = Long.valueOf(result.get());
-					this.calcNode.set("constant", b);
+					this.getAbstractNode().set("constant", b);
 
 				} catch (Exception e) {
 					Toast.makeToast("Invalid input!\nPlease type in a long type!", ToastTime.TIME_SHORT);
@@ -589,7 +578,7 @@ public class GNode extends Pane implements IGNode {
 			} else if (this.type == Constant.SHORT) {
 				try {
 					short b = Short.valueOf(result.get());
-					this.calcNode.set("constant", b);
+					this.getAbstractNode().set("constant", b);
 
 				} catch (Exception e) {
 					Toast.makeToast("Invalid input!\nPlease type in a short type!", ToastTime.TIME_SHORT);

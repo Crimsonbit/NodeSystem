@@ -5,7 +5,6 @@ import at.crimsonbit.nodesystem.gui.dialog.GEntry;
 import at.crimsonbit.nodesystem.gui.dialog.GPopUp;
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.gui.node.IGConsumable;
-import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
@@ -28,7 +27,6 @@ public class GPort extends Group implements IGConsumable {
 
 	private GPopUp dialog;
 	private String stringID;
-	private GPort thisPort;
 	private GPortLabel label;
 	private GPortRect rect;
 
@@ -52,7 +50,6 @@ public class GPort extends Group implements IGConsumable {
 
 		// mouseHandler();
 		draw();
-		this.thisPort = this;
 
 		for (MenuItem item : this.dialog.getItems()) {
 			int idd = Integer.valueOf(item.getId());
@@ -71,100 +68,77 @@ public class GPort extends Group implements IGConsumable {
 			dialog.hide();
 		});
 
-		tooltip.setText(
-				"GPort: " + this.id + "\n" + "Input: " + this.input + "\n" + "Type: " + node.getAbstractNode().get(labels));
+		tooltip.setText("GPort: " + this.id + "\n" + "Input: " + this.input + "\n" + "Type: "
+				+ node.getAbstractNode().get(labels));
 		Tooltip.install(this, tooltip);
 
 		// getChildren().add(line);
 		/*
 		 * setOnMouseEntered(new EventHandler<MouseEvent>() {
 		 * 
-		 * @Override public void handle(MouseEvent event) { node.setPortPressed(true);
+		 * @Override public void handle(MouseEvent event) {
+		 * node.setPortPressed(true);
 		 * 
 		 * } });
 		 * 
 		 * setOnMouseReleased(new EventHandler<MouseEvent>() {
 		 * 
-		 * @Override public void handle(MouseEvent event) { node.setPortPressed(false);
+		 * @Override public void handle(MouseEvent event) {
+		 * node.setPortPressed(false);
 		 * 
 		 * } });
 		 * 
 		 * setOnMouseDragExited(new EventHandler<MouseEvent>() {
 		 * 
-		 * @Override public void handle(MouseEvent event) { node.setPortPressed(false);
+		 * @Override public void handle(MouseEvent event) {
+		 * node.setPortPressed(false);
 		 * 
 		 * } });
 		 * 
 		 * setOnMouseExited(new EventHandler<MouseEvent>() {
 		 * 
-		 * @Override public void handle(MouseEvent event) { node.setPortPressed(false);
+		 * @Override public void handle(MouseEvent event) {
+		 * node.setPortPressed(false);
 		 * 
 		 * } }); ;
 		 * 
 		 * setOnMouseDragged(new EventHandler<MouseEvent>() {
 		 * 
-		 * @Override public void handle(MouseEvent event) { // System.out.println("hi");
-		 * node.setPortPressed(true); line.setStartX(x); line.setStartY(y);
+		 * @Override public void handle(MouseEvent event) { //
+		 * System.out.println("hi"); node.setPortPressed(true);
+		 * line.setStartX(x); line.setStartY(y);
 		 * 
 		 * if (event.isPrimaryButtonDown()) {
-		 * line.endXProperty().bind(node.layoutXProperty().add(event.getSceneX()));
-		 * line.endYProperty().bind(node.layoutYProperty().add(event.getSceneY())); }
+		 * line.endXProperty().bind(node.layoutXProperty().add(event.getSceneX()
+		 * ));
+		 * line.endYProperty().bind(node.layoutYProperty().add(event.getSceneY()
+		 * )); }
 		 * 
 		 * } });
 		 */
 
 	}
 
+	void mouseHandle(MouseEvent event, boolean press) {
+
+		GNodeGraph graph = node.getNodeGraph();
+		if (isInput()) {
+			graph.getGuiMaster().setSecondPort(GPort.this);
+		} else {
+			graph.getGuiMaster().setFirstPort(GPort.this);
+		}
+		if (graph.getGuiMaster().connectPorts()) {
+			graph.update();
+			graph.getGuiMaster().removecurConnectPorts();
+		}
+		node.setPortPressed(press);
+
+	}
+
 	@SuppressWarnings("unused")
 	private void mouseHandler() {
-
-		addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
-
-			@Override
-			public void handle(MouseEvent event) {
-				// System.out.println("entered");
-				// if (event.isPrimaryButtonDown()) {
-				GNodeGraph graph = node.getNodeGraph();
-
-				if (isInput()) {
-					graph.getGuiMaster().setSecondPort(thisPort);
-				} else {
-					graph.getGuiMaster().setFirstPort(thisPort);
-				}
-				if (graph.getGuiMaster().connectPorts()) {
-					graph.update();
-					graph.getGuiMaster().removecurConnectPorts();
-				}
-
-				graph = node.getNodeGraph();
-				if (graph.getGuiMaster().connectPorts()) {
-					graph.update();
-					graph.getGuiMaster().removecurConnectPorts();
-				}
-				node.setPortPressed(false);
-			}
-			// }
-		});
-
-		this.addEventHandler(MouseEvent.MOUSE_CLICKED, event ->
-
-		{
-			node.setPortPressed(true);
-			GNodeGraph graph = node.getNodeGraph();
-			// graph.getGuiMaster().addConnection(node1, node2);
-			if (isInput()) {
-				graph.getGuiMaster().setSecondPort(thisPort);
-
-			} else {
-				graph.getGuiMaster().setFirstPort(thisPort);
-			}
-
-			if (graph.getGuiMaster().connectPorts()) {
-				graph.update();
-				graph.getGuiMaster().removecurConnectPorts();
-			}
-
-		});
+		this.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> mouseHandle(event, false));
+		this.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> mouseHandle(event, false));
 	}
 
 	public void draw() {

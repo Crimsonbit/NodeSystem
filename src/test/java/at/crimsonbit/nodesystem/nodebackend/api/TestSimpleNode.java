@@ -1,14 +1,15 @@
 package at.crimsonbit.nodesystem.nodebackend.api;
 
 import static org.junit.Assert.assertNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.jupiter.api.Test;
 
-import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
-import at.crimsonbit.nodesystem.nodebackend.api.NodeMaster;
 import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
 import at.crimsonbit.nodesystem.nodebackend.testnodes.MyNodeTypes;
 
@@ -79,13 +80,13 @@ class TestSimpleNode {
 		assertEquals(42, c2.get("constant"));
 
 		assertEquals("val42", n.get("concat"));
-		
+
 		m.removeConnection(n, "val1");
 		assertEquals("val0", n.get("concat"));
-		
+
 		m.removeConnection(n, "s1");
 		assertEquals("null", n.get("concat"));
-		
+
 	}
 
 }

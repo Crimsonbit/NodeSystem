@@ -19,7 +19,7 @@ import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
  *
  */
 public class GNodeMaster {
-	
+
 	private GNode graphParent;
 	private NodeMaster nodeMaster;
 	private List<GNode> allNodes;
@@ -80,16 +80,15 @@ public class GNodeMaster {
 				this.outPort = null;
 				return false;
 			}
-			if (this.outPort != null && this.inPort != null) {
 
-				if (addConnection(this.outPort, this.inPort)) {
-					// System.out.println("INFO!");
+			if (addConnection(this.outPort, this.inPort)) {
+				// System.out.println("INFO!");
 
-					this.outPort = null;
-					this.inPort = null;
-					getNodeGraph().update();
-					return true;
-				}
+				this.outPort = null;
+				this.inPort = null;
+				getNodeGraph().update();
+				return true;
+
 			}
 		}
 		return false;
