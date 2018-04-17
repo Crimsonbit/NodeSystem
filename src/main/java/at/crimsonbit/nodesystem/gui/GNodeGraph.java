@@ -33,7 +33,6 @@ import at.crimsonbit.nodesystem.util.SystemUsage;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -46,6 +45,12 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 /**
+ * <h1>GNodeGraph extends {@link GGraphScene} implements
+ * {@link IGConsumable}</h1>
+ * <p>
+ * The GnodeGraph class represents the graphical layer of the node-system. A lot
+ * of internal stuff is handled in this class.
+ * </p>
  * 
  * @author Florian Wagner
  *
@@ -163,15 +168,43 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		}
 	}
 
+	/**
+	 * <h1>public {@link GState} getState()</h1>
+	 * <p>
+	 * Returns the current state of the graph. Currently only DEFUALT and PORTCON
+	 * are available although only DEFAULT is being used!
+	 * </p>
+	 * 
+	 * @return the current state of the graph.
+	 */
 	public GState getState() {
 		return state;
 	}
 
+	/**
+	 * <h1>public void setState({@link GState}).</h1>
+	 * <p>
+	 * 
+	 * Sets the current {@link GState} of the graph. Currently only DEFUALT and
+	 * PORTCON are available although only DEFAULT is being used!
+	 * </p>
+	 * 
+	 * @param state
+	 *            the state you want to set the graph to
+	 */
 	public void setState(GState state) {
 		this.state = state;
 	}
 
-	public Text getNodeInfo() {
+	/**
+	 * <h1>public {@link Text} getNodeInfoObject()</h1>
+	 * <p>
+	 * Returns the {@link Text} object which holds additional information
+	 * </p>
+	 * 
+	 * @return a text containing additional information
+	 */
+	public Text getNodeInfoObject() {
 		return this.nodeInfo;
 	}
 
@@ -209,14 +242,28 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		this.settings.put(s, r);
 	}
 
+	/**
+	 * <h1>public {@link HashMap}<{@link GraphSettings}, {@link Object}>
+	 * getSettings()</h1>
+	 * <p>
+	 * Returns the HashMap containing all the settings for the graph and their
+	 * corresponding values.
+	 * </p>
+	 * 
+	 * @return the settings of the graph
+	 */
 	public HashMap<GraphSettings, Object> getSettings() {
 		return this.settings;
 	}
 
 	/**
-	 * Adds support to select multiple nodes at once. TODO!
+	 * <h1>CURRENTLY NOT WORKING - DO NOT USE</h1>
+	 * <h1>public void addSelectGroupSupport()</h1>
+	 * <p>
+	 * Adds support to select multiple nodes at once. This is a TODO!
+	 * </p>
 	 */
-	public void addSelectGroupSupport() {
+	protected void addSelectGroupSupport() {
 		setOnMousePressed(new EventHandler<MouseEvent>() {
 
 			@Override
@@ -308,6 +355,17 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		}
 	};
 
+	/**
+	 * <h1>public void setPopUpDialog({@link GPopUp})</h1>
+	 * <p>
+	 * Sets the rightclick-dialog of the graph. It is advised to not override the
+	 * current dialog! Currently it is not possible to add custom rightclick
+	 * behavior to the node-graph.
+	 * </p>
+	 * 
+	 * @param dialog
+	 *            the {@link GPopUp} dialog
+	 */
 	public void setPopUpDialog(GPopUp dialog) {
 		this.popUpDialog = dialog;
 		addPopUpHandler(this.popUpDialog);
@@ -471,11 +529,32 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 	}
 
-	public GGraphScene getGrid() {
+	/**
+	 * <h1>public {@link GGraphScene} getGrid()</h1>
+	 * <p>
+	 * Returns the {@link GGraphScene} of the dialog. Remember, the
+	 * {@link GNodeGraph} extends the {@link GGraphScene}. It will only return a
+	 * casted version of the current {@link GNodeGraph}!
+	 * </p>
+	 * 
+	 * @return the {@link GGraphScene} of this graph
+	 */
+	public GGraphScene getGraphScene() {
 		return this;
 	}
 
-	public void setActive(Node n) {
+	/**
+	 * <h1>Internal function, strongly advised to not use it!</h1>
+	 * 
+	 * <h1>public void setActive({@linkplain GNode})</h1>
+	 * <p>
+	 * Sets the current active node. This is needed for a lot of things internally
+	 * </p>
+	 * 
+	 * @param n
+	 *            the node that should be set to active.
+	 */
+	public void setActive(GNode n) {
 		if (!(n == null))
 			activeCell = (GNode) n;
 		else
@@ -485,24 +564,73 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		// getSettingsPane().redraw();
 	}
 
+	/**
+	 * <h1>public {@link GNode} getActive()</h1>
+	 * 
+	 * <p>
+	 * Gets the currently active {@link GNode}.
+	 * </p>
+	 * 
+	 * @return the currently active node.
+	 */
 	public GNode getActive() {
 
 		return this.activeCell;
 
 	}
 
+	/**
+	 * <h1>public {@link Pane} getLineLayer()</h1>
+	 * <p>
+	 * Returns the layer on which the connections between the nodes are drawn
+	 * </p>
+	 * 
+	 * @return the connection layer
+	 */
 	public Pane getLineLayer() {
 		return this.lineLayer;
 	}
 
+	/**
+	 * <h1>public {@link Pane} getNodeLayer()</h1>
+	 * <p>
+	 * Returns the layer on which the Nodes are drawn
+	 * </p>
+	 * 
+	 * @return the node layer
+	 */
 	public Pane getNodeLayer() {
 		return this.nodeLayer;
 	}
 
+	/**
+	 * <h1>public {@link GNodeMaster} getGuiMaster()</h1>
+	 * <p>
+	 * Returns the {@link GNodeMaster} of the nodesystem. It is needed for a lot of
+	 * things, for more information see {@link GNodeMaster}
+	 * </p>
+	 * 
+	 * @return the gui-nodemaster of the nodesystem.
+	 */
 	public GNodeMaster getGuiMaster() {
 		return nodeMaster;
 	}
 
+	/**
+	 * <h1>public void update()</h1>
+	 * <p>
+	 * Has to be called when a node has been:
+	 * <ul>
+	 * <li>Removed</li>
+	 * <li>Added</li>
+	 * <li>Changed</li>
+	 * <li>Moved</li>
+	 * <li>You get the idea....</li>
+	 * </ul>
+	 * 
+	 * Just update whenever you change something.
+	 * </p>
+	 */
 	public void update() {
 		getNodeLayer().getChildren().addAll(nodeMaster.getAddedCells());
 		getLineLayer().getChildren().addAll(nodeMaster.getAddedEdges());
@@ -524,6 +652,15 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 	}
 
+	/**
+	 * <h1>public {@link Double} getScale()</h1>
+	 * <p>
+	 * This method returns the scale-value of the {@link ZoomHandler}, which can be
+	 * found in the {@link GGraphScene} object.
+	 * </p>
+	 * 
+	 * @return the scale value of the nodes.
+	 */
 	public double getScale() {
 		return this.getScaleValue();
 	}
@@ -565,6 +702,11 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		getGeneralColorLookup().put(GraphSettings.COLOR_BACKGROUND_LINES, new Color(0.098, 0.098, 0.098, 1));
 	}
 
+	/**
+	 * 
+	 * @param string
+	 * @param c
+	 */
 	public void addNodeColorLookup(GraphSettings string, Color c) {
 		this.nodeLookup.put(string, c);
 	}
@@ -593,15 +735,23 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		return colorLookup;
 	}
 
-	public void setSettingsPane(GSettingsPane settingsPane2) {
+	@SuppressWarnings("unused")
+	private void setSettingsPane(GSettingsPane settingsPane2) {
 		this.settingsPane = settingsPane2;
 
 	}
 
-	public GSettingsPane getSettingsPane() {
+	@SuppressWarnings("unused")
+	private GSettingsPane getSettingsPane() {
 		return this.settingsPane;
 	}
 
+	/**
+	 * <h1>public void clearGraph()</h1>
+	 * <p>
+	 * Clears everything that is currently drawn in the graph.
+	 * </p>
+	 */
 	public void clearGraph() {
 		nodeMaster.clear();
 		update();

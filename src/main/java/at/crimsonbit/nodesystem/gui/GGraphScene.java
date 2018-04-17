@@ -15,6 +15,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.transform.Scale;
 
 /**
+ * <h1>GraphScene</h1>
+ * <p>
+ * The GraphScene is the background of the whole graph. It contains the
+ * {@link ZoomHandler} aswell as the current x and y positions of the mouse.
+ * </p>
  * 
  * @author Florian Wagner
  *
@@ -228,6 +233,10 @@ public class GGraphScene extends AnchorPane {
 	}
 
 	/**
+	 * <h1>ZoomHandler</h1>
+	 * <p>
+	 * This handler is responsible for the zooming of the whole node-system.
+	 * </p>
 	 * 
 	 * @author Florian Wagner
 	 *
