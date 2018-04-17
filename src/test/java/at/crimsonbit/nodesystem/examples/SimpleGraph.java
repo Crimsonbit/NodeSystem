@@ -11,6 +11,15 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+/**
+ * This example shows how to create a new nodegraph, add a custom node and a
+ * custom node class to the nodesystem.
+ * 
+ * 
+ * 
+ * @author NeonArtworks
+ *
+ */
 public class SimpleGraph extends Application {
 
 	@Override
@@ -24,7 +33,7 @@ public class SimpleGraph extends Application {
 		Scene scene = new Scene(view, 1024, 768);
 
 		graph.registerNodes("at.crimsonbit.nodesystem.examples.customnode"); // has to be called before initGraph!
-		graph.addInfo(); // Adds Debug information to the screen
+		graph.addInfo(); // Adds information to the top of the screen
 
 		/**
 		 * initGraph() has to be called AFTER the graph was added to the scene!

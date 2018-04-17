@@ -115,8 +115,13 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	}
 
 	/**
-	 * Initializes the graph. It loads the right-click menu and adds, if
-	 * defaultNodes is true, all default nodes.
+	 * <h1>public void initGraph({@link Boolean}).</h1>
+	 * <hr>
+	 * <p>
+	 * Initializes the graph. This method must be called after the graph was added
+	 * to a scene. Otherwise the NodeSystem will throw an error when starting.
+	 *
+	 * </p>
 	 * 
 	 * @param defaultNodes
 	 *            tells the graph whether it should load in the default nodes or not
@@ -132,8 +137,22 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 	}
 
-	public void addCustomNode(INodeType type, Class<? extends GNode> node) {
-		nodeMap.put(type, node);
+	/**
+	 * <h1>public void addCustomNode({@link INodeType}, {@link Class}).</h1>
+	 * <hr>
+	 * <p>
+	 * With this method it is possible to add custom node-classes to specific
+	 * node-types. For more information on how to add a custom node-type and class,
+	 * please see the example.
+	 * </p>
+	 * 
+	 * @param type
+	 *            the node you want to add your custom class.
+	 * @param clazz
+	 *            the {@link Class} of your custom node-class you want to use.
+	 */
+	public void addCustomNode(INodeType type, Class<? extends GNode> clazz) {
+		nodeMap.put(type, clazz);
 	}
 
 	private void fillNodeList() {
@@ -157,7 +176,12 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	}
 
 	/**
-	 * DEBUG ONLY!
+	 * <h1>public void addInfo().</h1>
+	 * <hr>
+	 * <p>
+	 * This method adds optional information to the screen. The {@link Text} object
+	 * used for the information can be retrieved by using the method getNodeInfo().
+	 * </p>
 	 */
 	public void addInfo() {
 		nodeInfo.setFill(Color.WHITE);
@@ -166,6 +190,21 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		update();
 	}
 
+	/**
+	 * <h1>public void addSetting({@link GraphSettings}, {@link Object})</h1>
+	 * <hr>
+	 * <p>
+	 * Using this method you can change a almost every setting, which is not
+	 * hardcoded into the nodesystem. To see all settings please have a look at
+	 * {@link GraphSettings}.
+	 * </p>
+	 * 
+	 * @param s
+	 *            the setting you want to change
+	 * @param r
+	 *            the value, please keep in mind, that setting settings to random
+	 *            stuff can break the nodesystem and it can throw unexpected errors.
+	 */
 	public void addSetting(GraphSettings s, Object r) {
 		this.settings.put(s, r);
 	}
@@ -274,8 +313,21 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		addPopUpHandler(this.popUpDialog);
 	}
 
-	public void registerNodes(String path) {
-		getGuiMaster().registerNodes(path);
+	/**
+	 * <h1>public void registerNodes({@link String}).</h1>
+	 * <hr>
+	 * <p>
+	 * This method registers all nodes within the package given by path. The path is
+	 * a {@link String} that has to be the full package. The method does search all
+	 * sub-packages automatically! So it is advised to specify one package where you
+	 * have all your nodes and separate them by using sub-packages.
+	 * </p>
+	 * 
+	 * @param pckg
+	 *            the packaged represented by a {@link String}.
+	 */
+	public void registerNodes(String pckg) {
+		getGuiMaster().registerNodes(pckg);
 	}
 
 	private void loadMenus() {
@@ -521,6 +573,18 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		return this.nodeLookup;
 	}
 
+	/**
+	 * <h1>public void addColorLookup({@link INodeType}, {@link Color})</h1>
+	 * <hr>
+	 * <p>
+	 * This method allows the user to add custom colors to nodes.
+	 * </p>
+	 * 
+	 * @param type
+	 *            the type you want to define or change the color
+	 * @param c
+	 *            the color
+	 */
 	public void addColorLookup(INodeType type, Color c) {
 		this.colorLookup.put(type, c);
 	}
