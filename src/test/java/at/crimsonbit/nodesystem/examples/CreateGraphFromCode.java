@@ -11,6 +11,13 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+/**
+ * This example shows how to create nodes and connections aswell as setting node
+ * values completely trhough code.
+ * 
+ * @author Florian Wagner
+ *
+ */
 public class CreateGraphFromCode extends Application {
 
 	@Override
@@ -18,13 +25,12 @@ public class CreateGraphFromCode extends Application {
 		primaryStage.setTitle("Node Editor");
 
 		GNodeSystem nodeSystem = new GNodeSystem(false);
-		// nodeSystem.getNodeGraph().getGuiMaster().getNodeMaster().registerNodes("at.crimson
-		// bit.nodesystem.node.nodes");
 		GNodeView view = nodeSystem.getGUI();
 		GNodeGraph graph = view.getNodeGraph();
+		Scene scene = new Scene(view, 1024, 768);
 
-		graph.registerNodes("at.crimsonbit.nodesystem.node");
-
+		graph.initGraph(true);
+		
 		GNode constNode1 = new GNode("Constant Node", Constant.DOUBLE, true, graph, 70, 250);
 		GNode constNode2 = new GNode("Constant Node 2", Constant.INTEGER, true, graph, 70, 350);
 		GNode additionNode1 = new GNode("Addition Node", Math.ADD, true, graph, 300, 200);
@@ -51,10 +57,6 @@ public class CreateGraphFromCode extends Application {
 
 		graph.getGuiMaster().addConnection(additionNode2.getOutputPorts().get(0), outputNode.getInputPortById(0));
 		graph.update();
-
-		Scene scene = new Scene(view, 1024, 768);
-
-		graph.initGraph(true);
 
 		scene.getStylesheets().add(getClass().getResource("node-menu.css").toExternalForm());
 		primaryStage.setScene(scene);

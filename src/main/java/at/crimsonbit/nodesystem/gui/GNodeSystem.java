@@ -4,7 +4,7 @@ package at.crimsonbit.nodesystem.gui;
  * 
  * The NodeSystem main class.
  * 
- * @author NeonArtworks
+ * @author Florian Wagner
  *
  */
 

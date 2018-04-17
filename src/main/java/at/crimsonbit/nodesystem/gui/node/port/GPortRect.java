@@ -7,7 +7,7 @@ import javafx.scene.shape.Rectangle;
 
 /**
  * 
- * @author NeonArtworks
+ * @author Florian Wagner
  *
  */
 

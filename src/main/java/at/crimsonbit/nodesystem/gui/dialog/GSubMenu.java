@@ -4,7 +4,7 @@ import javafx.scene.control.Menu;
 
 /**
  * 
- * @author NeonArtworks
+ * @author Florian Wagner
  *
  */
 

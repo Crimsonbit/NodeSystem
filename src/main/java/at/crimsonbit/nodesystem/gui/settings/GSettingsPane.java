@@ -7,7 +7,7 @@ import javafx.scene.layout.Pane;
  * 
  * This pane holds the NodeField values (settings) of the node.
  * 
- * @author NeonArtworks
+ * @author Florian Wagner
  *
  */
 public class GSettingsPane extends Pane {

@@ -5,7 +5,7 @@ import javafx.scene.input.KeyCodeCombination;
 
 /**
  * 
- * @author NeonArtworks
+ * @author Florian Wagner
  *
  */
 public class GEntry extends MenuItem {

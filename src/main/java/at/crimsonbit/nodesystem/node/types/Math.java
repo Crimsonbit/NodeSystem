@@ -3,7 +3,7 @@ package at.crimsonbit.nodesystem.node.types;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 /**
  * 
- * @author NeonArtworks
+ * @author Florian Wagner
  *
  */
 public enum Math implements INodeType {

@@ -4,7 +4,7 @@ import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 
 /**
  * 
- * @author NeonArtworks
+ * @author Florian Wagner
  *
  */
 public enum Calculate implements INodeType {

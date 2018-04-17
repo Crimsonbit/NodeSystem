@@ -2,7 +2,7 @@ package at.crimsonbit.nodesystem.gui.node;
 
 /**
  * 
- * @author NeonArtworks
+ * @author Florian Wagner
  *
  */
 

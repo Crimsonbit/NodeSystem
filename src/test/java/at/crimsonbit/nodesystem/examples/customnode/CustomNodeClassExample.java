@@ -14,7 +14,7 @@ import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
  * need to use a custom class. By Default every node uses the standard GNode
  * class.
  * 
- * @author NeonArtworks
+ * @author Florian Wagner
  * 
  */
 public class CustomNodeClassExample extends GNode {

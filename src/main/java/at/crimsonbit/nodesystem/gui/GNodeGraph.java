@@ -47,7 +47,7 @@ import javafx.stage.Stage;
 
 /**
  * 
- * @author NeonArtworks
+ * @author Florian Wagner
  *
  */
 

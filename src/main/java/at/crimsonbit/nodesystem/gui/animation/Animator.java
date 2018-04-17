@@ -10,7 +10,7 @@ import javafx.util.Duration;
 /**
  * Helper class to animate properties.
  * 
- * @author NeonArtworks
+ * @author Florian Wagner
  *
  */
 public class Animator {

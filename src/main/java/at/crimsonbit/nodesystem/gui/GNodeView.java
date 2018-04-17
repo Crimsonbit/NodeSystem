@@ -7,7 +7,7 @@ import javafx.scene.layout.AnchorPane;
  * GNodeView class. This class represents the whole nodegraph. It holds the
  * GNodeGraph.
  * 
- * @author NeonArtworks
+ * @author Florian Wagner
  *
  */
 public class GNodeView extends AnchorPane {

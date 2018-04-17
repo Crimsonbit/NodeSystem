@@ -16,7 +16,7 @@ import javafx.scene.transform.Scale;
 
 /**
  * 
- * @author NeonArtworks
+ * @author Florian Wagner
  *
  */
 public class GGraphScene extends AnchorPane {
@@ -229,7 +229,7 @@ public class GGraphScene extends AnchorPane {
 
 	/**
 	 * 
-	 * @author NeonArtworks
+	 * @author Florian Wagner
 	 *
 	 */
 	protected class ZoomHandler implements EventHandler<ScrollEvent> {

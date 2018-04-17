@@ -11,7 +11,7 @@ import javafx.scene.shape.StrokeLineCap;
 
 /**
  * 
- * @author NeonArtworks
+ * @author Florian Wagner
  *
  */
 public class GNodeConnection extends Group {

@@ -3,7 +3,7 @@ package at.crimsonbit.nodesystem.gui.layer;
 import javafx.scene.layout.Pane;
 /**
  * 
- * @author NeonArtworks
+ * @author Florian Wagner
  *
  */
 

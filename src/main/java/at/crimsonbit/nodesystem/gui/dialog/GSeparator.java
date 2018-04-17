@@ -4,7 +4,7 @@ import javafx.scene.control.SeparatorMenuItem;
 
 /**
  * 
- * @author NeonArtworks
+ * @author Florian Wagner
  *
  */
 

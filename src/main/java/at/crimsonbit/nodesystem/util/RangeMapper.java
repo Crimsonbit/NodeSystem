@@ -1,7 +1,7 @@
 package at.crimsonbit.nodesystem.util;
 /**
  * 
- * @author NeonArtworks
+ * @author Florian Wagner
  *
  */
 public class RangeMapper {

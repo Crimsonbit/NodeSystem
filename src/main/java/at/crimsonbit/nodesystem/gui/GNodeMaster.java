@@ -15,7 +15,7 @@ import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
 
 /**
  * 
- * @author NeonArtworks
+ * @author Florian Wagner
  *
  */
 public class GNodeMaster {

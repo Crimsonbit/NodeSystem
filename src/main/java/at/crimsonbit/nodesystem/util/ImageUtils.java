@@ -26,7 +26,7 @@ import javax.swing.GrayFilter;
  * 
  * This is a rather old image-util class that I have made about a year ago.
  * 
- * @author NeonArtworks
+ * @author Florian Wagner
  *
  */
 public class ImageUtils {

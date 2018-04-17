@@ -5,7 +5,7 @@ import javafx.scene.text.Text;
 
 /**
  * 
- * @author NeonArtworks
+ * @author Florian Wagner
  *
  */
 

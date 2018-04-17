@@ -11,7 +11,7 @@ import javafx.scene.input.MouseEvent;
 
 /**
  * 
- * @author NeonArtworks
+ * @author Florian Wagner
  *
  */
 public class GNodeMouseHandler {

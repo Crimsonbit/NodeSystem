@@ -36,7 +36,7 @@ import javafx.stage.FileChooser;
 
 /**
  * 
- * @author NeonArtworks
+ * @author Florian Wagner
  *
  */
 public class GNode extends Pane implements IGNode {
@@ -173,7 +173,7 @@ public class GNode extends Pane implements IGNode {
 	public AbstractNode getAbstractNode() {
 		return getNodeMaster().getNodeByID(nodeID);
 	}
-
+	
 	public void setBackColor(Color c) {
 		this.backColor = c;
 		redraw();

@@ -3,7 +3,7 @@ package at.crimsonbit.nodesystem.gui.node;
 import at.crimsonbit.nodesystem.gui.dialog.GEntry;
 /**
  * 
- * @author NeonArtworks
+ * @author Florian Wagner
  *
  */
 public interface IGConsumable {
