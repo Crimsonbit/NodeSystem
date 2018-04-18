@@ -10,8 +10,9 @@ import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.dialog.GPopUp;
 import at.crimsonbit.nodesystem.gui.node.port.GPort;
 import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
-import at.crimsonbit.nodesystem.gui.toast.Toast;
-import at.crimsonbit.nodesystem.gui.toast.ToastTime;
+import at.crimsonbit.nodesystem.gui.widget.toast.Toast;
+import at.crimsonbit.nodesystem.gui.widget.toast.ToastPosition;
+import at.crimsonbit.nodesystem.gui.widget.toast.ToastTime;
 import at.crimsonbit.nodesystem.node.types.Base;
 import at.crimsonbit.nodesystem.node.types.Constant;
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
@@ -541,7 +542,7 @@ public class GNode extends Pane implements IGNode {
 
 				} catch (Exception e) {
 					Toast.makeToast((Stage) getScene().getWindow(), "Invalid input!\nPlease type in a boolean type!",
-							ToastTime.TIME_SHORT);
+							ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
 				}
 			} else if (this.type == Constant.DOUBLE) {
 				try {
@@ -550,7 +551,7 @@ public class GNode extends Pane implements IGNode {
 
 				} catch (Exception e) {
 					Toast.makeToast((Stage) getScene().getWindow(), "Invalid input!\nPlease type in a double type!",
-							ToastTime.TIME_SHORT);
+							ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
 				}
 			} else if (this.type == Constant.FLOAT) {
 				try {
@@ -559,7 +560,7 @@ public class GNode extends Pane implements IGNode {
 
 				} catch (Exception e) {
 					Toast.makeToast((Stage) getScene().getWindow(), "Invalid input!\nPlease type in a float type!",
-							ToastTime.TIME_SHORT);
+							ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
 				}
 			} else if (this.type == Constant.INTEGER) {
 				try {
@@ -568,7 +569,7 @@ public class GNode extends Pane implements IGNode {
 
 				} catch (Exception e) {
 					Toast.makeToast((Stage) getScene().getWindow(), "Invalid input!\nPlease type in a integer type!",
-							ToastTime.TIME_SHORT);
+							ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
 				}
 			} else if (this.type == Constant.BYTE) {
 				try {
@@ -577,7 +578,7 @@ public class GNode extends Pane implements IGNode {
 
 				} catch (Exception e) {
 					Toast.makeToast((Stage) getScene().getWindow(), "Invalid input!\nPlease type in a byte type!",
-							ToastTime.TIME_SHORT);
+							ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
 				}
 
 			} else if (this.type == Constant.LONG) {
@@ -587,7 +588,7 @@ public class GNode extends Pane implements IGNode {
 
 				} catch (Exception e) {
 					Toast.makeToast((Stage) getScene().getWindow(), "Invalid input!\nPlease type in a long type!",
-							ToastTime.TIME_SHORT);
+							ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
 				}
 			} else if (this.type == Constant.SHORT) {
 				try {
@@ -596,7 +597,7 @@ public class GNode extends Pane implements IGNode {
 
 				} catch (Exception e) {
 					Toast.makeToast((Stage) getScene().getWindow(), "Invalid input!\nPlease type in a short type!",
-							ToastTime.TIME_SHORT);
+							ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
 				}
 			}
 			redraw();

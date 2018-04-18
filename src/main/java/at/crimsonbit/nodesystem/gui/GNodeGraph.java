@@ -18,8 +18,9 @@ import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.gui.node.IGConsumable;
 import at.crimsonbit.nodesystem.gui.settings.GSettingsPane;
 import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
-import at.crimsonbit.nodesystem.gui.toast.Toast;
-import at.crimsonbit.nodesystem.gui.toast.ToastTime;
+import at.crimsonbit.nodesystem.gui.widget.toast.Toast;
+import at.crimsonbit.nodesystem.gui.widget.toast.ToastPosition;
+import at.crimsonbit.nodesystem.gui.widget.toast.ToastTime;
 import at.crimsonbit.nodesystem.node.types.Base;
 import at.crimsonbit.nodesystem.node.types.Calculate;
 import at.crimsonbit.nodesystem.node.types.Constant;
@@ -503,13 +504,17 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		if (f != null)
 			try {
 				getGuiMaster().getNodeMaster().save(f.getPath(), true);
-				Toast.makeToast((Stage) getScene().getWindow(), "NodeSystem saved successfully!", ToastTime.TIME_SHORT);
+				Toast.makeToast((Stage) getScene().getWindow(), "NodeSystem saved successfully!", ToastTime.TIME_SHORT,
+						ToastPosition.BOTTOM);
 			} catch (IOException e) {
-				Toast.makeToast((Stage) getScene().getWindow(), "Error while saving!", ToastTime.TIME_SHORT);
+				Toast.makeToast((Stage) getScene().getWindow(), "Error while saving!", ToastTime.TIME_SHORT,
+						ToastPosition.BOTTOM);
 				e.printStackTrace();
+
 			}
 		else
-			Toast.makeToast((Stage) getScene().getWindow(), "Error file is null!", ToastTime.TIME_SHORT);
+			Toast.makeToast((Stage) getScene().getWindow(), "Error file is null!", ToastTime.TIME_SHORT,
+					ToastPosition.BOTTOM);
 	}
 
 	private void onLoad() {
@@ -519,14 +524,16 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 			try {
 				getGuiMaster().setNodeMaster(NodeMaster.load(f.getPath()));
 				getGuiMaster().rebuild(getGuiMaster().getNodeMaster());
-				Toast.makeToast((Stage) getScene().getWindow(), "NodeSystem loaded successfully!",
-						ToastTime.TIME_SHORT);
+				Toast.makeToast((Stage) getScene().getWindow(), "NodeSystem loaded successfully!", ToastTime.TIME_SHORT,
+						ToastPosition.BOTTOM);
 			} catch (IOException | NoSuchNodeException e) {
-				Toast.makeToast((Stage) getScene().getWindow(), "Error while saving!", ToastTime.TIME_SHORT);
+				Toast.makeToast((Stage) getScene().getWindow(), "Error while saving!", ToastTime.TIME_SHORT,
+						ToastPosition.BOTTOM);
 				e.printStackTrace();
 			}
 		else
-			Toast.makeToast((Stage) getScene().getWindow(), "Error file is null!", ToastTime.TIME_SHORT);
+			Toast.makeToast((Stage) getScene().getWindow(), "Error file is null!", ToastTime.TIME_SHORT,
+					ToastPosition.BOTTOM);
 
 		GLoader.loadGUI(nodeMaster, nodeMaster.getNodeMaster(), this);
 
