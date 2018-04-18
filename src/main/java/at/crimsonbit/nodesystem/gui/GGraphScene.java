@@ -248,6 +248,8 @@ public class GGraphScene extends AnchorPane {
 		private static final double DELTA_MINUS = 0.9d;
 		private static final double MIN_SPACING = 5;
 		private static final double MAX_SPACING = 40;
+		private static final double MIN_STROKE = 0.1d;
+		private static final double MAX_STROKE = 4d;
 
 		public double clamp(double value, double min, double max) {
 
@@ -270,7 +272,9 @@ public class GGraphScene extends AnchorPane {
 					strokeValue *= DELTA_PLUS;
 				}
 
-				strokeWidth(strokeValue);
+				strokeValue = clamp(strokeValue, MIN_STROKE, MAX_STROKE);
+				if (strokeValue != MIN_STROKE)
+					strokeWidth(strokeValue);
 				scrollEvent.consume();
 			} else {
 				if (scrollEvent.getDeltaY() < 0) {
