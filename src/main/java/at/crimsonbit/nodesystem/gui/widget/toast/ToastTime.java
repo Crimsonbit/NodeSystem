@@ -1,4 +1,4 @@
-package at.crimsonbit.nodesystem.gui.toast;
+package at.crimsonbit.nodesystem.gui.widget.toast;
 
 public enum ToastTime {
 
