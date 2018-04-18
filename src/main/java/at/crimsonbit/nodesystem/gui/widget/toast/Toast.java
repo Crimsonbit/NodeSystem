@@ -89,7 +89,6 @@ public class Toast {
 			stage.setX((sc.getX() + sc.getWidth() / 10) - stage.getWidth() / 2);
 			stage.setY((sc.getY() + sc.getHeight() / 2) - stage.getHeight() / 2);
 		} else {
-
 			stage.setX((sc.getX() + sc.getWidth() / 1.1) - stage.getWidth() / 2);
 			stage.setY((sc.getY() + sc.getHeight() / 2) - stage.getHeight() / 2);
 		}
