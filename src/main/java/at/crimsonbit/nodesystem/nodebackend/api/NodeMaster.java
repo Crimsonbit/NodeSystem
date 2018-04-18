@@ -962,4 +962,15 @@ public class NodeMaster {
 		return true;
 	}
 
+	public void clear() {
+		registeredNodes.clear();
+		fieldKeyMap.clear();
+		inputKeyMap.clear();
+		outputKeyMap.clear();
+		if (extraInfo != null)
+			extraInfo.clear();
+		nodePool.clear();
+		stringToType.clear();
+	}
+
 }

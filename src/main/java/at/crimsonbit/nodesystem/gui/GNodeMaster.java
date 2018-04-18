@@ -41,6 +41,8 @@ public class GNodeMaster {
 	private GPort outPort;
 	private GPort inPort;
 
+	private boolean dirty = false;
+
 	protected void setNodeMaster(NodeMaster nm) {
 		this.nodeMaster = nm;
 	}
@@ -64,6 +66,7 @@ public class GNodeMaster {
 		for (GNode gn : allNodes) {
 			if (gn.getAbstractNode().equals(node)) {
 				gn.relocate(coords.a, coords.b);
+				dirty = true;
 			}
 		}
 	}
@@ -159,6 +162,8 @@ public class GNodeMaster {
 
 		nodeMap = new HashMap<String, GNode>(); // <id,cell>
 
+		dirty = true;
+
 	}
 
 	public NodeMaster getNodeMaster() {
@@ -181,6 +186,7 @@ public class GNodeMaster {
 				removedConnections.add(c);
 			}
 		}
+		getNodeMaster().deleteNode(node.getAbstractNode());
 		removedNodes.add(node);
 		nodeMap.remove(node.getName());
 		getNodeGraph().update();
@@ -229,7 +235,7 @@ public class GNodeMaster {
 	public void addNode(GNode cell) {
 		addedNodes.add(cell);
 		nodeMap.put(cell.getName(), cell);
-
+		dirty = true;
 	}
 
 	/*
@@ -254,7 +260,7 @@ public class GNodeMaster {
 		if (port1.getNode() == port2.getNode())
 			return false;
 
-		GNodeConnection con = new GNodeConnection(port1, port2);
+		GNodeConnection con = new GNodeConnection(port2, port1);
 
 		if (getAllEdges().contains(con)) {
 			this.outPort = null;
@@ -276,6 +282,8 @@ public class GNodeMaster {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+		dirty = true;
 
 		return true;
 	}
@@ -308,7 +316,9 @@ public class GNodeMaster {
 	}
 
 	public void merge() {
-
+		if (!dirty) {
+			return;
+		}
 		allNodes.addAll(addedNodes);
 		allNodes.removeAll(removedNodes);
 
@@ -319,6 +329,7 @@ public class GNodeMaster {
 		removedConnections.clear();
 		addedNodes.clear();
 		removedNodes.clear();
+		dirty = false;
 
 	}
 
@@ -366,9 +377,14 @@ public class GNodeMaster {
 				this.addConnection(inPort, outPort);
 			}
 		}
+		dirty = true;
 		graph.update();
 		master.getExtraInfo(this::loadCoordinates);
 		graph.update();
+	}
+
+	boolean isDirty() {
+		return dirty;
 	}
 
 }

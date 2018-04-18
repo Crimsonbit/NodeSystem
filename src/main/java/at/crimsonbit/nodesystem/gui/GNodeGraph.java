@@ -522,6 +522,8 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		File f = fileChooser.showOpenDialog(getParent().getScene().getWindow());
 		if (f != null)
 			try {
+				getGuiMaster().getNodeMaster().clear();
+				getGuiMaster().clear();
 				getGuiMaster().setNodeMaster(NodeMaster.load(f.getPath()));
 				getGuiMaster().rebuild(getGuiMaster().getNodeMaster());
 				Toast.makeToast((Stage) getScene().getWindow(), "NodeSystem loaded successfully!", ToastTime.TIME_SHORT,
@@ -535,7 +537,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 			Toast.makeToast((Stage) getScene().getWindow(), "Error file is null!", ToastTime.TIME_SHORT,
 					ToastPosition.BOTTOM);
 
-		GLoader.loadGUI(nodeMaster, nodeMaster.getNodeMaster(), this);
+		// GLoader.loadGUI(nodeMaster, nodeMaster.getNodeMaster(), this);
 
 	}
 
