@@ -366,7 +366,8 @@ public class GNodeMaster {
 				this.addConnection(inPort, outPort);
 			}
 		}
-
+		graph.update();
+		master.getExtraInfo(this::loadCoordinates);
 		graph.update();
 	}
 
