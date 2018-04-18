@@ -173,7 +173,7 @@ public class GNodeMaster {
 
 	public void removeNode(GNode node) {
 		Iterator<GNodeConnection> iter = getAllEdges().iterator();
-		while(iter.hasNext()) {
+		while (iter.hasNext()) {
 			GNodeConnection c = iter.next();
 			if (c.getSource() == node || c.getTarget() == node) {
 				try {
@@ -356,5 +356,15 @@ public class GNodeMaster {
 
 	public Set<GNodeConnection> getRemovedEdges() {
 		return removedConnections;
+	}
+
+	public void removeAll() {
+		removedConnections.addAll(allConnections);
+		allConnections.clear();
+		addedConnections.clear();
+
+		removedNodes.addAll(allNodes);
+		allNodes.clear();
+		addedNodes.clear();
 	}
 }

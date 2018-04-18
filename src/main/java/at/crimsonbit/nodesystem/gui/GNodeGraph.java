@@ -522,6 +522,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		File f = fileChooser.showOpenDialog(getParent().getScene().getWindow());
 		if (f != null)
 			try {
+				clearGraph();
 				getGuiMaster().getNodeMaster().clear();
 				getGuiMaster().clear();
 				getGuiMaster().setNodeMaster(NodeMaster.load(f.getPath()));
@@ -769,7 +770,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	 * </p>
 	 */
 	public void clearGraph() {
-		nodeMaster.clear();
+		nodeMaster.removeAll();
 		update();
 	}
 
