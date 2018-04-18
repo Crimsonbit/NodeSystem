@@ -2,8 +2,10 @@ package at.crimsonbit.nodesystem.gui;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,6 +20,7 @@ import at.crimsonbit.nodesystem.nodebackend.api.NodeMaster;
 import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
 import at.crimsonbit.nodesystem.nodebackend.util.NodeConnection;
 import at.crimsonbit.nodesystem.nodebackend.util.Tuple;
+import javafx.scene.Node;
 
 /**
  * 
@@ -28,20 +31,18 @@ public class GNodeMaster {
 
 	private GNode graphParent;
 	private NodeMaster nodeMaster;
-	private List<GNode> allNodes;
-	private List<GNode> addedNodes;
-	private List<GNode> removedNodes;
+	private Set<GNode> allNodes;
+
+	private Set<GNode> addedNodes, removedNodes;
 
 	private Set<GNodeConnection> allConnections;
-	private Set<GNodeConnection> addedConnections;
-	private Set<GNodeConnection> removedConnections;
+
+	private Set<GNodeConnection> addedConnections, removedConnections;
 
 	private Map<String, GNode> nodeMap; // <id, node>
 	private GNodeGraph graph;
 	private GPort outPort;
 	private GPort inPort;
-
-	private boolean dirty = false;
 
 	protected void setNodeMaster(NodeMaster nm) {
 		this.nodeMaster = nm;
@@ -66,7 +67,6 @@ public class GNodeMaster {
 		for (GNode gn : allNodes) {
 			if (gn.getAbstractNode().equals(node)) {
 				gn.relocate(coords.a, coords.b);
-				dirty = true;
 			}
 		}
 	}
@@ -141,7 +141,8 @@ public class GNodeMaster {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				getRemovedEdges().add(con);
+				allConnections.remove(con);
+				removedConnections.add(con);
 			}
 		}
 	}
@@ -152,17 +153,17 @@ public class GNodeMaster {
 
 	public void clear() {
 
-		allNodes = new ArrayList<GNode>();
-		addedNodes = new ArrayList<GNode>();
-		removedNodes = new ArrayList<GNode>();
+		allNodes = new HashSet<GNode>();
+
+		addedNodes = new HashSet<GNode>();
+		removedNodes = new HashSet<>();
 
 		allConnections = new HashSet<GNodeConnection>();
-		addedConnections = new HashSet<GNodeConnection>();
-		removedConnections = new HashSet<GNodeConnection>();
+
+		addedConnections = new HashSet<>();
+		removedConnections = new HashSet<>();
 
 		nodeMap = new HashMap<String, GNode>(); // <id,cell>
-
-		dirty = true;
 
 	}
 
@@ -170,47 +171,29 @@ public class GNodeMaster {
 		return nodeMaster;
 	}
 
-	public void clearAddedLists() {
-		addedNodes.clear();
-		addedConnections.clear();
-	}
-
 	public void removeNode(GNode node) {
-		for (GNodeConnection c : getAllEdges()) {
+		Iterator<GNodeConnection> iter = getAllEdges().iterator();
+		while(iter.hasNext()) {
+			GNodeConnection c = iter.next();
 			if (c.getSource() == node || c.getTarget() == node) {
 				try {
 					getNodeMaster().removeConnection(c.getTarget().getAbstractNode(), c.getTargetPort().getStringID());
 				} catch (NoSuchNodeException e) {
 					e.printStackTrace();
 				}
+				iter.remove();
 				removedConnections.add(c);
-				dirty = true;
 			}
 		}
 		getNodeMaster().deleteNode(node.getAbstractNode());
-		removedNodes.add(node);
+		allNodes.remove(node);
 		nodeMap.remove(node.getName());
+		removedNodes.add(node);
 		getNodeGraph().update();
 	}
 
-	public List<GNode> getAddedCells() {
-		return addedNodes;
-	}
-
-	public List<GNode> getRemovedCells() {
-		return removedNodes;
-	}
-
-	public List<GNode> getAllCells() {
+	public Set<GNode> getAllCells() {
 		return allNodes;
-	}
-
-	public Set<GNodeConnection> getAddedEdges() {
-		return addedConnections;
-	}
-
-	public Set<GNodeConnection> getRemovedEdges() {
-		return removedConnections;
 	}
 
 	public Set<GNodeConnection> getAllEdges() {
@@ -234,9 +217,9 @@ public class GNodeMaster {
 	}
 
 	public void addNode(GNode cell) {
+		allNodes.add(cell);
 		addedNodes.add(cell);
 		nodeMap.put(cell.getName(), cell);
-		dirty = true;
 	}
 
 	/*
@@ -277,14 +260,13 @@ public class GNodeMaster {
 			port1.redraw();
 			port1.getNode().getConnections().add(con);
 			port2.getNode().getConnections().add(con);
+			allConnections.add(con);
 			addedConnections.add(con);
 
 		} catch (NoSuchNodeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		dirty = true;
 
 		return true;
 	}
@@ -294,7 +276,7 @@ public class GNodeMaster {
 	 * 
 	 * @param cellList
 	 */
-	public void attachOrphansToGraphParent(List<GNode> cellList) {
+	public void attachOrphansToGraphParent(Collection<GNode> cellList) {
 
 		for (GNode cell : cellList) {
 			if (cell.getCellParents().size() == 0) {
@@ -309,38 +291,14 @@ public class GNodeMaster {
 	 * 
 	 * @param cellList
 	 */
-	public void disconnectFromGraphParent(List<GNode> cellList) {
+	public void disconnectFromGraphParent(Collection<GNode> cellList) {
 
 		for (GNode cell : cellList) {
 			graphParent.removeCellChild(cell);
 		}
 	}
 
-	public void merge() {
-		if (!dirty) {
-			return;
-		}
-		allNodes.addAll(addedNodes);
-		allNodes.removeAll(removedNodes);
-
-		allConnections.addAll(addedConnections);
-		allConnections.removeAll(removedConnections);
-
-		addedConnections.clear();
-		removedConnections.clear();
-		addedNodes.clear();
-		removedNodes.clear();
-		dirty = false;
-
-	}
-
 	protected void rebuild(NodeMaster master) {
-		addedNodes.clear();
-		removedNodes.clear();
-
-		addedConnections.clear();
-		removedConnections.clear();
-
 		allNodes.clear();
 		allConnections.clear();
 		nodeMap.clear();
@@ -349,6 +307,7 @@ public class GNodeMaster {
 
 		for (AbstractNode node : master.getAllNodes()) {
 			GNode gn = new GNode(master.getTypeOfNode(node).toString(), master.getIdOfNode(node), true, graph);
+			allNodes.add(gn);
 			addedNodes.add(gn);
 			cache.put(node, gn);
 		}
@@ -378,14 +337,24 @@ public class GNodeMaster {
 				this.addConnection(inPort, outPort);
 			}
 		}
-		dirty = true;
 		graph.update();
 		master.getExtraInfo(this::loadCoordinates);
 		graph.update();
 	}
 
-	boolean isDirty() {
-		return dirty;
+	public Set<GNode> getAddedCells() {
+		return addedNodes;
 	}
 
+	public Set<GNodeConnection> getAddedEdges() {
+		return addedConnections;
+	}
+
+	public Set<GNode> getRemovedCells() {
+		return removedNodes;
+	}
+
+	public Set<GNodeConnection> getRemovedEdges() {
+		return removedConnections;
+	}
 }

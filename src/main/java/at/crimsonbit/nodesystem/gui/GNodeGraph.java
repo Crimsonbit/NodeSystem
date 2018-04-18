@@ -654,13 +654,17 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		}
 		getGuiMaster().attachOrphansToGraphParent(nodeMaster.getAddedCells());
 		getGuiMaster().disconnectFromGraphParent(nodeMaster.getRemovedCells());
-		getGuiMaster().merge();
 		if (getActive() != null)
 			nodeInfo.setText(SystemUsage.getRamInfo() + "\nactive node: " + getActive().getName() + ", input ports: "
 					+ getActive().getInputPorts().size() + ", output ports: " + getActive().getOutputPorts().size()
 					+ ", connections: " + getActive().getConnections().size());
 		else
 			nodeInfo.setText(SystemUsage.getRamInfo());
+
+		nodeMaster.getAddedCells().clear();
+		nodeMaster.getAddedEdges().clear();
+		nodeMaster.getRemovedCells().clear();
+		nodeMaster.getRemovedEdges().clear();
 
 	}
 
