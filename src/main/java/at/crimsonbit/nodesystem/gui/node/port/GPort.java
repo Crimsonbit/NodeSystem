@@ -16,7 +16,7 @@ import javafx.scene.input.MouseEvent;
  * @author Florian Wagner
  *
  */
-
+@SuppressWarnings("restriction")
 public class GPort extends Group implements IGConsumable {
 
 	private double x;
@@ -76,43 +76,36 @@ public class GPort extends Group implements IGConsumable {
 		/*
 		 * setOnMouseEntered(new EventHandler<MouseEvent>() {
 		 * 
-		 * @Override public void handle(MouseEvent event) {
-		 * node.setPortPressed(true);
+		 * @Override public void handle(MouseEvent event) { node.setPortPressed(true);
 		 * 
 		 * } });
 		 * 
 		 * setOnMouseReleased(new EventHandler<MouseEvent>() {
 		 * 
-		 * @Override public void handle(MouseEvent event) {
-		 * node.setPortPressed(false);
+		 * @Override public void handle(MouseEvent event) { node.setPortPressed(false);
 		 * 
 		 * } });
 		 * 
 		 * setOnMouseDragExited(new EventHandler<MouseEvent>() {
 		 * 
-		 * @Override public void handle(MouseEvent event) {
-		 * node.setPortPressed(false);
+		 * @Override public void handle(MouseEvent event) { node.setPortPressed(false);
 		 * 
 		 * } });
 		 * 
 		 * setOnMouseExited(new EventHandler<MouseEvent>() {
 		 * 
-		 * @Override public void handle(MouseEvent event) {
-		 * node.setPortPressed(false);
+		 * @Override public void handle(MouseEvent event) { node.setPortPressed(false);
 		 * 
 		 * } }); ;
 		 * 
 		 * setOnMouseDragged(new EventHandler<MouseEvent>() {
 		 * 
-		 * @Override public void handle(MouseEvent event) { //
-		 * System.out.println("hi"); node.setPortPressed(true);
-		 * line.setStartX(x); line.setStartY(y);
+		 * @Override public void handle(MouseEvent event) { // System.out.println("hi");
+		 * node.setPortPressed(true); line.setStartX(x); line.setStartY(y);
 		 * 
 		 * if (event.isPrimaryButtonDown()) {
-		 * line.endXProperty().bind(node.layoutXProperty().add(event.getSceneX()
-		 * ));
-		 * line.endYProperty().bind(node.layoutYProperty().add(event.getSceneY()
-		 * )); }
+		 * line.endXProperty().bind(node.layoutXProperty().add(event.getSceneX() ));
+		 * line.endYProperty().bind(node.layoutYProperty().add(event.getSceneY() )); }
 		 * 
 		 * } });
 		 */
@@ -152,7 +145,7 @@ public class GPort extends Group implements IGConsumable {
 		getChildren().add(label);
 		getChildren().add(rect);
 	}
-	
+
 	public void redrawAndRelocate(double x) {
 		getChildren().clear();
 		label.setIx(x);
@@ -160,7 +153,7 @@ public class GPort extends Group implements IGConsumable {
 		getChildren().add(label);
 		getChildren().add(rect);
 	}
-	
+
 	public GPortRect getPortRectangle() {
 		return this.rect;
 	}
@@ -225,6 +218,40 @@ public class GPort extends Group implements IGConsumable {
 			graph.getGuiMaster().removeConnection(this);
 			graph.update();
 		}
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + id;
+		result = prime * result + ((node == null) ? 0 : node.hashCode());
+		result = prime * result + ((stringID == null) ? 0 : stringID.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GPort other = (GPort) obj;
+		if (id != other.id)
+			return false;
+		if (node == null) {
+			if (other.node != null)
+				return false;
+		} else if (!node.equals(other.node))
+			return false;
+		if (stringID == null) {
+			if (other.stringID != null)
+				return false;
+		} else if (!stringID.equals(other.stringID))
+			return false;
+		return true;
 	}
 
 }

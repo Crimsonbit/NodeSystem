@@ -42,16 +42,15 @@ public abstract class AbstractNode {
 	}
 
 	/**
-	 * Calculates an output of this node and returns it. The Output is specified
-	 * by the Name of the Field. <br>
-	 * Internally, this method first checks if the string output actually names
-	 * a Field annotated with {@link NodeOutput} in the class. Then it queries
-	 * the NodeMaster for all inputs and checks the connections to them. If an
-	 * input is connected, then the get Function is called on the connected
-	 * Node, in order to get the input value. If there is no Connection at this
-	 * input, then {@link AbstractNode#setFieldToDefault(Field)} is called to
-	 * set the default value. This method can be overridden to have different
-	 * default values. 
+	 * Calculates an output of this node and returns it. The Output is specified by
+	 * the Name of the Field. <br>
+	 * Internally, this method first checks if the string output actually names a
+	 * Field annotated with {@link NodeOutput} in the class. Then it queries the
+	 * NodeMaster for all inputs and checks the connections to them. If an input is
+	 * connected, then the get Function is called on the connected Node, in order to
+	 * get the input value. If there is no Connection at this input, then
+	 * {@link AbstractNode#setFieldToDefault(Field)} is called to set the default
+	 * value. This method can be overridden to have different default values.
 	 * 
 	 * @param key
 	 * @return The object which was calculated or null if not possible
@@ -101,8 +100,8 @@ public abstract class AbstractNode {
 	 * @param f
 	 *            The Field
 	 * @throws IllegalAccessException
-	 *             If there is a Security Manager and it doesn't permit changing
-	 *             the field
+	 *             If there is a Security Manager and it doesn't permit changing the
+	 *             field
 	 */
 	protected void setFieldToDefault(Field f) throws IllegalAccessException {
 		Class<?> type = f.getType();
@@ -135,6 +134,18 @@ public abstract class AbstractNode {
 
 	public NodeMaster getNodeMaster() {
 		return master;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null)
+			return false;
+		if (obj.getClass() != this.getClass())
+			return false;
+		AbstractNode other = (AbstractNode) obj;
+		if (this.master != other.master)
+			return false;
+		return this.master.getIdOfNode(this) == this.master.getIdOfNode(other);
 	}
 
 }

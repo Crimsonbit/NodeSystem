@@ -1,17 +1,23 @@
 package at.crimsonbit.nodesystem.gui;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.gui.node.GNodeConnection;
 import at.crimsonbit.nodesystem.gui.node.port.GPort;
 import at.crimsonbit.nodesystem.node.types.Base;
+import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeMaster;
 import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
+import at.crimsonbit.nodesystem.nodebackend.util.NodeConnection;
+import at.crimsonbit.nodesystem.nodebackend.util.Tuple;
 
 /**
  * 
@@ -26,9 +32,9 @@ public class GNodeMaster {
 	private List<GNode> addedNodes;
 	private List<GNode> removedNodes;
 
-	private List<GNodeConnection> allConnections;
-	private List<GNodeConnection> addedConnections;
-	private List<GNodeConnection> removedConnections;
+	private Set<GNodeConnection> allConnections;
+	private Set<GNodeConnection> addedConnections;
+	private Set<GNodeConnection> removedConnections;
 
 	private Map<String, GNode> nodeMap; // <id, node>
 	private GNodeGraph graph;
@@ -42,12 +48,36 @@ public class GNodeMaster {
 	public GNodeMaster(GNodeGraph graph) {
 		this.graph = graph;
 		this.nodeMaster = new NodeMaster();
+
+		this.nodeMaster.setExtraInfoSavingFunction(this::saveCoordinates);
+
 		// this.nodeMaster.registerNodes("at.crimsonbit.nodesystem.node.nodes");
 		this.graphParent = new GNode("_ROOT_", false);
 
 		// clear model, create lists
 
 		clear();
+	}
+
+	@SuppressWarnings("restriction")
+	private void loadCoordinates(AbstractNode node, Tuple<Double, Double> coords) {
+		for (GNode gn : allNodes) {
+			if (gn.getAbstractNode().equals(node)) {
+				gn.relocate(coords.a, coords.b);
+			}
+		}
+	}
+
+	@SuppressWarnings("restriction")
+	private Tuple<Double, Double> saveCoordinates(AbstractNode node) {
+		for (GNode gn : allNodes) {
+			if (gn.getAbstractNode().equals(node)) {
+				double x = gn.getLayoutX();
+				double y = gn.getLayoutY();
+				return new Tuple<Double, Double>(x, y);
+			}
+		}
+		return null;
 	}
 
 	public void setFirstPort(GPort port) {
@@ -123,9 +153,9 @@ public class GNodeMaster {
 		addedNodes = new ArrayList<GNode>();
 		removedNodes = new ArrayList<GNode>();
 
-		allConnections = new ArrayList<GNodeConnection>();
-		addedConnections = new ArrayList<GNodeConnection>();
-		removedConnections = new ArrayList<GNodeConnection>();
+		allConnections = new HashSet<GNodeConnection>();
+		addedConnections = new HashSet<GNodeConnection>();
+		removedConnections = new HashSet<GNodeConnection>();
 
 		nodeMap = new HashMap<String, GNode>(); // <id,cell>
 
@@ -146,7 +176,6 @@ public class GNodeMaster {
 				try {
 					getNodeMaster().removeConnection(c.getTarget().getAbstractNode(), c.getTargetPort().getStringID());
 				} catch (NoSuchNodeException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				removedConnections.add(c);
@@ -169,15 +198,15 @@ public class GNodeMaster {
 		return allNodes;
 	}
 
-	public List<GNodeConnection> getAddedEdges() {
+	public Set<GNodeConnection> getAddedEdges() {
 		return addedConnections;
 	}
 
-	public List<GNodeConnection> getRemovedEdges() {
+	public Set<GNodeConnection> getRemovedEdges() {
 		return removedConnections;
 	}
 
-	public List<GNodeConnection> getAllEdges() {
+	public Set<GNodeConnection> getAllEdges() {
 		return allConnections;
 	}
 
@@ -216,42 +245,38 @@ public class GNodeMaster {
 
 	public boolean addConnection(GPort port1, GPort port2) {
 
+		if (!port1.isInput() || port2.isInput()) {
+			if (port2.isInput() && !port1.isInput())
+				return addConnection(port2, port1);
+			return false;
+		}
+
 		if (port1.getNode() == port2.getNode())
 			return false;
 
 		GNodeConnection con = new GNodeConnection(port1, port2);
-		for (int i = 0; i < getAllEdges().size(); i++) {
-			GNodeConnection c = getAllEdges().get(i);
-			if (c.getSourcePort() == con.getSourcePort() && c.getTargetPort() == con.getTargetPort()) {
-				this.outPort = null;
-				this.inPort = null;
-				return false;
-			}
+
+		if (getAllEdges().contains(con)) {
+			this.outPort = null;
+			this.inPort = null;
+			return false;
 		}
 
 		try {
-			if (port1.isInput()) {
-				getNodeMaster().setConnection(port1.getNode().getAbstractNode(), port1.getStringID(),
-						port2.getNode().getAbstractNode(), port2.getStringID());
-				port1.getPortRectangle().setInputColor(graph.getColorLookup().get(port2.getNode().getNodeType()));
-				port1.getPortRectangle().redraw();
-				port1.redraw();
-
-			} else if (port2.isInput()) {
-				getNodeMaster().setConnection(port2.getNode().getAbstractNode(), port2.getStringID(),
-						port1.getNode().getAbstractNode(), port1.getStringID());
-				port2.getPortRectangle().setInputColor(graph.getColorLookup().get(port1.getNode().getNodeType()));
-				port2.getPortRectangle().redraw();
-				port2.redraw();
-			}
+			getNodeMaster().setConnection(port1.getNode().getAbstractNode(), port1.getStringID(),
+					port2.getNode().getAbstractNode(), port2.getStringID());
+			port1.getPortRectangle().setInputColor(graph.getColorLookup().get(port2.getNode().getNodeType()));
+			port1.getPortRectangle().redraw();
+			port1.redraw();
+			port1.getNode().getConnections().add(con);
+			port2.getNode().getConnections().add(con);
+			addedConnections.add(con);
 
 		} catch (NoSuchNodeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		port1.getNode().getConnections().add(con);
-		port2.getNode().getConnections().add(con);
-		addedConnections.add(con);
+
 		return true;
 	}
 
@@ -295,6 +320,54 @@ public class GNodeMaster {
 		addedNodes.clear();
 		removedNodes.clear();
 
+	}
+
+	protected void rebuild(NodeMaster master) {
+		addedNodes.clear();
+		removedNodes.clear();
+
+		addedConnections.clear();
+		removedConnections.clear();
+
+		allNodes.clear();
+		allConnections.clear();
+		nodeMap.clear();
+
+		Map<AbstractNode, GNode> cache = new HashMap<>();
+
+		for (AbstractNode node : master.getAllNodes()) {
+			GNode gn = new GNode(master.getTypeOfNode(node).toString(), master.getIdOfNode(node), true, graph);
+			addedNodes.add(gn);
+			cache.put(node, gn);
+		}
+		/*
+		 * Add Connections
+		 */
+		for (AbstractNode node : master.getAllNodes()) {
+			Map<Field, NodeConnection> connections = master.getConnections(node);
+			GNode gn = cache.get(node);
+			for (Map.Entry<Field, NodeConnection> con : connections.entrySet()) {
+				GNode from = cache.get(con.getValue().getNodeInstance());
+				List<GPort> inPorts = gn.getInputPorts();
+				List<GPort> outPorts = from.getOutputPorts();
+				GPort inPort = null, outPort = null;
+				for (GPort p : inPorts) {
+					if (p.getStringID().equals(con.getKey().getName())) {
+						inPort = p;
+						break;
+					}
+				}
+				for (GPort p : outPorts) {
+					if (p.getStringID().equals(con.getValue().getField().getName())) {
+						outPort = p;
+						break;
+					}
+				}
+				this.addConnection(inPort, outPort);
+			}
+		}
+
+		graph.update();
 	}
 
 }

@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -24,6 +25,8 @@ import java.util.zip.ZipOutputStream;
 
 import org.reflections.Reflections;
 
+import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableMap;
@@ -36,6 +39,7 @@ import at.crimsonbit.nodesystem.nodebackend.api.dto.RegistryDTO;
 import at.crimsonbit.nodesystem.nodebackend.api.dto.Signal;
 import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
 import at.crimsonbit.nodesystem.nodebackend.util.NodeConnection;
+import at.crimsonbit.nodesystem.nodebackend.util.Tuple;
 
 /**
  * A Node Master is used to Manage registration and connection of Node, which
@@ -49,6 +53,7 @@ import at.crimsonbit.nodesystem.nodebackend.util.NodeConnection;
  */
 
 public class NodeMaster {
+	private static final String ENTRY_EXTRA_NAME = "extra.dat";
 	private static final String ENTRY_CONN_NAME = "connections.dat";
 	private static final String ENTRY_STATE_NAME = "state.dat";
 	private static final String ENTRY_REG_NAME = "registry.dat";
@@ -58,9 +63,13 @@ public class NodeMaster {
 	private final Map<Class<? extends AbstractNode>, Map<String, Field>> fieldKeyMap;
 	// map to enable creating Nodes by using strings
 	private final Map<String, INodeType> stringToType;
-
 	private final BiMap<Integer, AbstractNode> nodePool;
+
+	private Function<AbstractNode, Object> getExtraInfo;
+
 	private int id;
+
+	private transient Map<AbstractNode, Object> extraInfo;
 
 	public NodeMaster() {
 		inputKeyMap = new HashMap<>();
@@ -73,12 +82,11 @@ public class NodeMaster {
 	}
 
 	/**
-	 * Registers all Nodes in the package and all subpackages specified by path.
-	 * A Node is any class, that extends AbstractNode. <br>
+	 * Registers all Nodes in the package and all subpackages specified by path. A
+	 * Node is any class, that extends AbstractNode. <br>
 	 * To be valid it must also have a static final Field annotated with
-	 * {@link NodeType}. The Type of this Field has to implement
-	 * {@link INodeType} and can be any object, either an instance of a class or
-	 * an enum.
+	 * {@link NodeType}. The Type of this Field has to implement {@link INodeType}
+	 * and can be any object, either an instance of a class or an enum.
 	 * 
 	 * @param path
 	 */
@@ -158,8 +166,8 @@ public class NodeMaster {
 	}
 
 	/**
-	 * Returns a Collection of all Input Fields in a NodeClass, intended for use
-	 * in AbstractNode (No checks for validity are perfomed)
+	 * Returns a Collection of all Input Fields in a NodeClass, intended for use in
+	 * AbstractNode (No checks for validity are perfomed)
 	 * 
 	 * @param clazz
 	 * @return
@@ -180,8 +188,8 @@ public class NodeMaster {
 	}
 
 	/**
-	 * Returnes the Output with the name key in the NodeClass clazz, or null if
-	 * it has none. No check are performed if the NodeClass really is registered
+	 * Returnes the Output with the name key in the NodeClass clazz, or null if it
+	 * has none. No check are performed if the NodeClass really is registered
 	 * 
 	 * @param clazz
 	 * @param key
@@ -192,8 +200,8 @@ public class NodeMaster {
 	}
 
 	/**
-	 * Returnes the Field with the name key in the NodeClass clazz, or null if
-	 * it has none. No check are performed if the NodeClass really is registered
+	 * Returnes the Field with the name key in the NodeClass clazz, or null if it
+	 * has none. No check are performed if the NodeClass really is registered
 	 * 
 	 * @param clazz
 	 * @param key
@@ -304,10 +312,10 @@ public class NodeMaster {
 	}
 
 	/**
-	 * Gets a INodeType by a string name. The name is stored when the Abstract
-	 * Node with this Type is registered, the toString method of the INodeType
-	 * is used for that. If there are multiple INodeTypes registered, that have
-	 * the same name, then the latest is returned
+	 * Gets a INodeType by a string name. The name is stored when the Abstract Node
+	 * with this Type is registered, the toString method of the INodeType is used
+	 * for that. If there are multiple INodeTypes registered, that have the same
+	 * name, then the latest is returned
 	 * 
 	 * @param name
 	 * @return The Node which is registered with this Name, or null if none
@@ -368,12 +376,12 @@ public class NodeMaster {
 	 * @param node
 	 *            An instance of any NodeClass
 	 * @param field
-	 *            The name of the field within the Node class, has to be
-	 *            annotated with {@link NodeField}
+	 *            The name of the field within the Node class, has to be annotated
+	 *            with {@link NodeField}
 	 * @return
 	 * @throws NoSuchNodeException
-	 *             If the Class of node is no known NodeType or the Class of
-	 *             node has no field with name field
+	 *             If the Class of node is no known NodeType or the Class of node
+	 *             has no field with name field
 	 */
 	public Class<?> getFieldType(AbstractNode node, String field) throws NoSuchNodeException {
 		Map<String, Field> fieldMap = fieldKeyMap.get(node.getClass());
@@ -395,12 +403,12 @@ public class NodeMaster {
 	 * @param node
 	 *            An instance of any NodeClass
 	 * @param field
-	 *            The name of the field within the Node class, has to be
-	 *            annotated with {@link NodeInput}
+	 *            The name of the field within the Node class, has to be annotated
+	 *            with {@link NodeInput}
 	 * @return
 	 * @throws NoSuchNodeException
-	 *             If the Class of node is no known NodeType or the Class of
-	 *             node has no input with name field
+	 *             If the Class of node is no known NodeType or the Class of node
+	 *             has no input with name field
 	 */
 	public Class<?> getInputType(AbstractNode node, String field) throws NoSuchNodeException {
 		Map<String, Field> fieldMap = inputKeyMap.get(node.getClass());
@@ -422,12 +430,12 @@ public class NodeMaster {
 	 * @param node
 	 *            An instance of any NodeClass
 	 * @param field
-	 *            The name of the field within the Node class, has to be
-	 *            annotated with {@link NodeOutput}
+	 *            The name of the field within the Node class, has to be annotated
+	 *            with {@link NodeOutput}
 	 * @return
 	 * @throws NoSuchNodeException
-	 *             If the Class of node is no known NodeType or the Class of
-	 *             node has no output with name field
+	 *             If the Class of node is no known NodeType or the Class of node
+	 *             has no output with name field
 	 */
 	public Class<?> getOutputType(AbstractNode node, String field) throws NoSuchNodeException {
 		Map<String, Field> fieldMap = outputKeyMap.get(node.getClass());
@@ -573,12 +581,12 @@ public class NodeMaster {
 	}
 
 	/**
-	 * Connect an output of a Node with an input of another Node. This
-	 * connection can later be removed by using
-	 * {@link NodeMaster#removeConnection(AbstractNode, String)} The Connection
-	 * is stored in the Node which contains the input, so that it can load its
-	 * input values when an output is requested see
-	 * {@link AbstractNode#get(String)} for more info on how the getting works
+	 * Connect an output of a Node with an input of another Node. This connection
+	 * can later be removed by using
+	 * {@link NodeMaster#removeConnection(AbstractNode, String)} The Connection is
+	 * stored in the Node which contains the input, so that it can load its input
+	 * values when an output is requested see {@link AbstractNode#get(String)} for
+	 * more info on how the getting works
 	 * 
 	 * @param inNode
 	 *            The Node which contains the input
@@ -632,8 +640,8 @@ public class NodeMaster {
 	 *            The name of the input
 	 * @return If there was a Connection on this input
 	 * @throws NoSuchNodeException
-	 *             If the Node is not registered or the registered Node has no
-	 *             input Field named input
+	 *             If the Node is not registered or the registered Node has no input
+	 *             Field named input
 	 */
 	public boolean removeConnection(AbstractNode inNode, String input) throws NoSuchNodeException {
 		Map<String, Field> regIns = inputKeyMap.get(inNode.getClass());
@@ -655,6 +663,20 @@ public class NodeMaster {
 
 		return inNode.connections.remove(inField) != null;
 
+	}
+
+	private boolean trySaveExtraInfo(ZipOutputStream zos) throws IOException {
+		ZipEntry e = new ZipEntry(ENTRY_EXTRA_NAME);
+		e.setMethod(ZipEntry.DEFLATED);
+		zos.putNextEntry(e);
+		ObjectOutputStream oos = new ObjectOutputStream(zos);
+		for (AbstractNode node : nodePool.values()) {
+			oos.writeObject(new Tuple<Integer, Object>(getIdOfNode(node), getExtraInfo.apply(node)));
+		}
+		oos.writeObject(null);
+		oos.flush();
+		zos.closeEntry();
+		return true;
 	}
 
 	private boolean trySaveRegistry(ZipOutputStream zos) throws IOException {
@@ -726,11 +748,10 @@ public class NodeMaster {
 	}
 
 	/**
-	 * Save the current NodeMaster Instance to the File specified by savefile.
-	 * If this file already exists and override is false, this methods returns
-	 * false and does nothing, else all important Information is saved to the
-	 * specified savefile. It can later be loaded again using
-	 * {@link NodeMaster#load(String)}
+	 * Save the current NodeMaster Instance to the File specified by savefile. If
+	 * this file already exists and override is false, this methods returns false
+	 * and does nothing, else all important Information is saved to the specified
+	 * savefile. It can later be loaded again using {@link NodeMaster#load(String)}
 	 * 
 	 * @param savefile
 	 * @param override
@@ -746,6 +767,9 @@ public class NodeMaster {
 				return false;
 			}
 			if (!trySaveState(zos)) {
+				return false;
+			}
+			if (!trySaveExtraInfo(zos)) {
 				return false;
 			}
 		} catch (IllegalAccessException e) {
@@ -772,6 +796,21 @@ public class NodeMaster {
 		return m;
 	}
 
+	@SuppressWarnings("unchecked")
+	public <T> void setExtraInfoSavingFunction(Function<AbstractNode, T> f) {
+		this.getExtraInfo = (Function<AbstractNode, Object>) f;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> void getExtraInfo(BiConsumer<AbstractNode, T> f) {
+		if (extraInfo != null) {
+			for (Map.Entry<AbstractNode, Object> entry : extraInfo.entrySet()) {
+				f.accept(entry.getKey(), (T) entry.getValue());
+			}
+		}
+		extraInfo = null;
+	}
+
 	private boolean tryLoad(String savefile) throws IOException, NoSuchNodeException {
 		Path p = Paths.get(savefile);
 		if (!Files.exists(p)) {
@@ -795,6 +834,12 @@ public class NodeMaster {
 					if (!tryLoadConnections(zin)) {
 						return false;
 					}
+					break;
+				case ENTRY_EXTRA_NAME:
+					if (!tryLoadExtraInfo(zin)) {
+						return false;
+					}
+					break;
 				}
 
 			}
@@ -823,6 +868,29 @@ public class NodeMaster {
 				populateKeys(dto.clazz, inputKeyMap.get(dto.clazz), NodeInput.class);
 				populateKeys(dto.clazz, outputKeyMap.get(dto.clazz), NodeOutput.class);
 				populateKeys(dto.clazz, fieldKeyMap.get(dto.clazz), NodeField.class);
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
+	private boolean tryLoadExtraInfo(ZipInputStream zin) throws IOException {
+
+		ObjectInputStream ois = new ObjectInputStream(zin);
+		Object read;
+		try {
+			while ((read = ois.readObject()) != null) {
+				if (extraInfo == null)
+					extraInfo = new HashMap<>();
+				if (read.getClass() != Tuple.class) {
+					throw new IllegalStateException(
+							"Expected Tuple but got " + read.getClass().getName() + " Maybe the savefile is corrupt");
+				}
+				@SuppressWarnings("unchecked")
+				Tuple<Integer, Object> tuple = (Tuple<Integer, Object>) read;
+				extraInfo.put(getNodeByID(tuple.a), tuple.b);
 			}
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();

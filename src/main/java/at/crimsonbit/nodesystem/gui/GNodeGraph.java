@@ -27,6 +27,7 @@ import at.crimsonbit.nodesystem.node.types.Image;
 import at.crimsonbit.nodesystem.node.types.ImageFilter;
 import at.crimsonbit.nodesystem.node.types.Math;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
+import at.crimsonbit.nodesystem.nodebackend.api.NodeMaster;
 import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
 import at.crimsonbit.nodesystem.util.DragContext;
 import at.crimsonbit.nodesystem.util.SystemUsage;
@@ -55,7 +56,7 @@ import javafx.stage.Stage;
  * @author Florian Wagner
  *
  */
-
+@SuppressWarnings("restriction")
 public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 	private static final String INTERNAL_NODES = "at.crimsonbit.nodesystem.node";
@@ -505,18 +506,19 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 				Toast.makeToast((Stage) getScene().getWindow(), "NodeSystem saved successfully!", ToastTime.TIME_SHORT);
 			} catch (IOException e) {
 				Toast.makeToast((Stage) getScene().getWindow(), "Error while saving!", ToastTime.TIME_SHORT);
+				e.printStackTrace();
 			}
 		else
 			Toast.makeToast((Stage) getScene().getWindow(), "Error file is null!", ToastTime.TIME_SHORT);
 	}
 
-	@SuppressWarnings("static-access")
 	private void onLoad() {
 		fileChooser.getExtensionFilters().add(extFilter);
 		File f = fileChooser.showOpenDialog(getParent().getScene().getWindow());
 		if (f != null)
 			try {
-				getGuiMaster().setNodeMaster(getGuiMaster().getNodeMaster().load(f.getPath()));
+				getGuiMaster().setNodeMaster(NodeMaster.load(f.getPath()));
+				getGuiMaster().rebuild(getGuiMaster().getNodeMaster());
 				Toast.makeToast((Stage) getScene().getWindow(), "NodeSystem loaded successfully!",
 						ToastTime.TIME_SHORT);
 			} catch (IOException | NoSuchNodeException e) {

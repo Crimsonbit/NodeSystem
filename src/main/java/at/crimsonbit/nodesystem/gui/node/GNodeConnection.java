@@ -96,4 +96,47 @@ public class GNodeConnection extends Group {
 		return targetPort;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((source == null) ? 0 : source.hashCode());
+		result = prime * result + ((sourcePort == null) ? 0 : sourcePort.hashCode());
+		result = prime * result + ((target == null) ? 0 : target.hashCode());
+		result = prime * result + ((targetPort == null) ? 0 : targetPort.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GNodeConnection other = (GNodeConnection) obj;
+		if (source == null) {
+			if (other.source != null)
+				return false;
+		} else if (!source.equals(other.source))
+			return false;
+		if (sourcePort == null) {
+			if (other.sourcePort != null)
+				return false;
+		} else if (!sourcePort.equals(other.sourcePort))
+			return false;
+		if (target == null) {
+			if (other.target != null)
+				return false;
+		} else if (!target.equals(other.target))
+			return false;
+		if (targetPort == null) {
+			if (other.targetPort != null)
+				return false;
+		} else if (!targetPort.equals(other.targetPort))
+			return false;
+		return true;
+	}
+
 }
