@@ -8,12 +8,17 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+/**
+ * 
+ * @author Florian Wagner
+ *
+ */
 public class Toast {
-	
+
 	private static Text tx_msg;
 	private static Scene scene;
 
-	public static void makeToast(String msg, ToastTime time) {
+	public static void makeToast(Stage sc, String msg, ToastTime time) {
 		int delay = 0, inDelay = 0, outDelay = 0;
 
 		if (time.equals(ToastTime.TIME_LONG)) {
@@ -42,8 +47,10 @@ public class Toast {
 		root.setOpacity(0);
 
 		stage.setScene(scene);
+		stage.setX((sc.getX() + sc.getWidth() / 2));
+		stage.setY((sc.getY() + sc.getHeight() / 2));
 		stage.show();
-		
+
 		Animator.animateToast(stage, delay, inDelay, outDelay);
 	}
 

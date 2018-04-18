@@ -6,6 +6,7 @@ import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.gui.toast.Toast;
 import at.crimsonbit.nodesystem.gui.toast.ToastTime;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
+import javafx.stage.Stage;
 
 /**
  * 
@@ -38,7 +39,8 @@ public class CustomNodeClassExample extends GNode {
 	@Override
 	public void consumeCustomMessage(int id) {
 		if (id == 5) {
-			Toast.makeToast("Sample Text!\nSample Text!\nSample Text!\nSample Text!\nSample Text!\nSample Text!",
+			Toast.makeToast((Stage) getScene().getWindow(),
+					"Sample Text!\nSample Text!\nSample Text!\nSample Text!\nSample Text!\nSample Text!",
 					ToastTime.TIME_SHORT);
 		}
 		if (id == 6) {

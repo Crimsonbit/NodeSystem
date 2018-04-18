@@ -148,10 +148,19 @@ public class GPort extends Group implements IGConsumable {
 
 	public void redraw() {
 		getChildren().clear();
+
 		getChildren().add(label);
 		getChildren().add(rect);
 	}
-
+	
+	public void redrawAndRelocate(double x) {
+		getChildren().clear();
+		label.setIx(x);
+		rect.setRX(x);
+		getChildren().add(label);
+		getChildren().add(rect);
+	}
+	
 	public GPortRect getPortRectangle() {
 		return this.rect;
 	}

@@ -10,18 +10,45 @@ import javafx.scene.text.Text;
  */
 
 public class GPortLabel extends Text {
+	private boolean input;
+	private String label;
+	private double ix;
+	private double iy;
 
 	public GPortLabel(double x, double y, String label, boolean input) {
 		setText(label);
 		setFill(Color.WHITE);
+		this.label = label;
+		this.input = input;
+		this.ix = x;
+		this.iy = y;
+		draw();
+	}
+
+	public void draw() {
 		int off = getText().length();
 
 		if (!input)
-			setX(x - (off * 7));
+			setX(ix - (off * 7));
 		else
-			setX(x + (off + 6));
-		setY(y + 6);
+			setX(ix + (off + 6));
+		setY(iy + 6);
+	}
 
+	public double getIx() {
+		return ix;
+	}
+
+	public void setIx(double ix) {
+		this.ix = ix;
+	}
+
+	public double getIy() {
+		return iy;
+	}
+
+	public void setIy(double iy) {
+		this.iy = iy;
 	}
 
 }

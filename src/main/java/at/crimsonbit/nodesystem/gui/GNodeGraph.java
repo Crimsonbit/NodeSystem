@@ -502,12 +502,12 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		if (f != null)
 			try {
 				getGuiMaster().getNodeMaster().save(f.getPath(), true);
-				Toast.makeToast("NodeSystem saved successfully!", ToastTime.TIME_SHORT);
+				Toast.makeToast((Stage) getScene().getWindow(), "NodeSystem saved successfully!", ToastTime.TIME_SHORT);
 			} catch (IOException e) {
-				Toast.makeToast("Error while saving!", ToastTime.TIME_SHORT);
+				Toast.makeToast((Stage) getScene().getWindow(), "Error while saving!", ToastTime.TIME_SHORT);
 			}
 		else
-			Toast.makeToast("Error file is null!", ToastTime.TIME_SHORT);
+			Toast.makeToast((Stage) getScene().getWindow(), "Error file is null!", ToastTime.TIME_SHORT);
 	}
 
 	@SuppressWarnings("static-access")
@@ -517,13 +517,14 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		if (f != null)
 			try {
 				getGuiMaster().setNodeMaster(getGuiMaster().getNodeMaster().load(f.getPath()));
-				Toast.makeToast("NodeSystem loaded successfully!", ToastTime.TIME_SHORT);
+				Toast.makeToast((Stage) getScene().getWindow(), "NodeSystem loaded successfully!",
+						ToastTime.TIME_SHORT);
 			} catch (IOException | NoSuchNodeException e) {
-				Toast.makeToast("Error while saving!", ToastTime.TIME_SHORT);
+				Toast.makeToast((Stage) getScene().getWindow(), "Error while saving!", ToastTime.TIME_SHORT);
 				e.printStackTrace();
 			}
 		else
-			Toast.makeToast("Error file is null!", ToastTime.TIME_SHORT);
+			Toast.makeToast((Stage) getScene().getWindow(), "Error file is null!", ToastTime.TIME_SHORT);
 
 		GLoader.loadGUI(nodeMaster, nodeMaster.getNodeMaster(), this);
 

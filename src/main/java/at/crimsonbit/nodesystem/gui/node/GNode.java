@@ -33,6 +33,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 /**
  * 
@@ -173,7 +174,7 @@ public class GNode extends Pane implements IGNode {
 	public AbstractNode getAbstractNode() {
 		return getNodeMaster().getNodeByID(nodeID);
 	}
-	
+
 	public void setBackColor(Color c) {
 		this.backColor = c;
 		redraw();
@@ -507,7 +508,14 @@ public class GNode extends Pane implements IGNode {
 	public void setOutput() {
 		if (getNodeType().equals(Base.OUTPUT)) {
 			setName("Output - " + String.valueOf(this.getAbstractNode().get("output")));
+			computeNewPortLocations();
 			redraw();
+		}
+	}
+
+	public void computeNewPortLocations() {
+		for (GPort p : getOutputPorts()) {
+			p.redrawAndRelocate(this.name.length());
 		}
 	}
 
@@ -532,7 +540,8 @@ public class GNode extends Pane implements IGNode {
 					this.getAbstractNode().set("constant", b);
 
 				} catch (Exception e) {
-					Toast.makeToast("Invalid input!\nPlease type in a boolean type!", ToastTime.TIME_SHORT);
+					Toast.makeToast((Stage) getScene().getWindow(), "Invalid input!\nPlease type in a boolean type!",
+							ToastTime.TIME_SHORT);
 				}
 			} else if (this.type == Constant.DOUBLE) {
 				try {
@@ -540,7 +549,8 @@ public class GNode extends Pane implements IGNode {
 					this.getAbstractNode().set("constant", b);
 
 				} catch (Exception e) {
-					Toast.makeToast("Invalid input!\nPlease type in a double type!", ToastTime.TIME_SHORT);
+					Toast.makeToast((Stage) getScene().getWindow(), "Invalid input!\nPlease type in a double type!",
+							ToastTime.TIME_SHORT);
 				}
 			} else if (this.type == Constant.FLOAT) {
 				try {
@@ -548,7 +558,8 @@ public class GNode extends Pane implements IGNode {
 					this.getAbstractNode().set("constant", b);
 
 				} catch (Exception e) {
-					Toast.makeToast("Invalid input!\nPlease type in a float type!", ToastTime.TIME_SHORT);
+					Toast.makeToast((Stage) getScene().getWindow(), "Invalid input!\nPlease type in a float type!",
+							ToastTime.TIME_SHORT);
 				}
 			} else if (this.type == Constant.INTEGER) {
 				try {
@@ -556,7 +567,8 @@ public class GNode extends Pane implements IGNode {
 					this.getAbstractNode().set("constant", b);
 
 				} catch (Exception e) {
-					Toast.makeToast("Invalid input!\nPlease type in a integer type!", ToastTime.TIME_SHORT);
+					Toast.makeToast((Stage) getScene().getWindow(), "Invalid input!\nPlease type in a integer type!",
+							ToastTime.TIME_SHORT);
 				}
 			} else if (this.type == Constant.BYTE) {
 				try {
@@ -564,7 +576,8 @@ public class GNode extends Pane implements IGNode {
 					this.getAbstractNode().set("constant", b);
 
 				} catch (Exception e) {
-					Toast.makeToast("Invalid input!\nPlease type in a byte type!", ToastTime.TIME_SHORT);
+					Toast.makeToast((Stage) getScene().getWindow(), "Invalid input!\nPlease type in a byte type!",
+							ToastTime.TIME_SHORT);
 				}
 
 			} else if (this.type == Constant.LONG) {
@@ -573,7 +586,8 @@ public class GNode extends Pane implements IGNode {
 					this.getAbstractNode().set("constant", b);
 
 				} catch (Exception e) {
-					Toast.makeToast("Invalid input!\nPlease type in a long type!", ToastTime.TIME_SHORT);
+					Toast.makeToast((Stage) getScene().getWindow(), "Invalid input!\nPlease type in a long type!",
+							ToastTime.TIME_SHORT);
 				}
 			} else if (this.type == Constant.SHORT) {
 				try {
@@ -581,7 +595,8 @@ public class GNode extends Pane implements IGNode {
 					this.getAbstractNode().set("constant", b);
 
 				} catch (Exception e) {
-					Toast.makeToast("Invalid input!\nPlease type in a short type!", ToastTime.TIME_SHORT);
+					Toast.makeToast((Stage) getScene().getWindow(), "Invalid input!\nPlease type in a short type!",
+							ToastTime.TIME_SHORT);
 				}
 			}
 			redraw();

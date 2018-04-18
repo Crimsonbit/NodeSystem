@@ -39,7 +39,7 @@ public class SimpleGraph extends Application {
 		 * initGraph() has to be called AFTER the graph was added to the scene!
 		 **/
 
-		graph.initGraph(false);
+		graph.initGraph(true);
 
 		/**
 		 * Example of how to add custom node-classes to specific node types
