@@ -184,6 +184,7 @@ public class GNodeMaster {
 					e.printStackTrace();
 				}
 				removedConnections.add(c);
+				dirty = true;
 			}
 		}
 		getNodeMaster().deleteNode(node.getAbstractNode());
