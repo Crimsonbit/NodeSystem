@@ -1,6 +1,8 @@
 package at.crimsonbit.nodesystem.gui;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -304,7 +306,8 @@ public class GNodeMaster {
 		}
 	}
 
-	protected void rebuild(NodeMaster master) {
+	protected void rebuild(NodeMaster master) throws NoSuchMethodException, SecurityException, InstantiationException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		allNodes.clear();
 		allConnections.clear();
 		nodeMap.clear();
@@ -312,7 +315,10 @@ public class GNodeMaster {
 		Map<AbstractNode, GNode> cache = new HashMap<>();
 
 		for (AbstractNode node : master.getAllNodes()) {
-			GNode gn = new GNode(master.getTypeOfNode(node).toString(), master.getIdOfNode(node), true, graph);
+			Class<? extends GNode> clazz = getNodeGraph().nodeMap.get(master.getTypeOfNode(node));
+			Constructor<? extends GNode> constr = clazz.getConstructor(String.class, int.class, boolean.class,
+					GNodeGraph.class);
+			GNode gn = constr.newInstance(master.getTypeOfNode(node).toString(), master.getIdOfNode(node), true, graph);
 			allNodes.add(gn);
 			addedNodes.add(gn);
 			cache.put(node, gn);

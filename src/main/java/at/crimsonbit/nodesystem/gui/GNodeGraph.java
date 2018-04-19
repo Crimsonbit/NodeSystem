@@ -62,7 +62,7 @@ import javafx.stage.Stage;
  * @author Florian Wagner
  *
  */
-
+@SuppressWarnings("restriction")
 public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 	private static final String INTERNAL_NODES = "at.crimsonbit.nodesystem.node";
@@ -83,7 +83,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private HashMap<GraphSettings, Color> nodeLookup = new HashMap<GraphSettings, Color>();
 	private HashMap<GraphSettings, Object> settings = new HashMap<GraphSettings, Object>();
 
-	private Map<INodeType, Class<? extends GNode>> nodeMap = new HashMap<INodeType, Class<? extends GNode>>();
+	protected final Map<INodeType, Class<? extends GNode>> nodeMap = new HashMap<INodeType, Class<? extends GNode>>();
 
 	private final DragContext dragContext = new DragContext();
 	private FileChooser fileChooser = new FileChooser();
@@ -147,10 +147,10 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		loadMenus();
 		addKeySupport();
 
-		addCustomNode(Base.OUTPUT, new OutputNodeClass().getClass());
-		addCustomNode(Base.PATH, new PathNodeClass().getClass());
+		addCustomNode(Base.OUTPUT, OutputNodeClass.class);
+		addCustomNode(Base.PATH, PathNodeClass.class);
 		for (INodeType t : Constant.values()) {
-			addCustomNode(t, new ConstantNodeClass().getClass());
+			addCustomNode(t, ConstantNodeClass.class);
 		}
 	}
 
@@ -570,7 +570,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 				rebuildNodeGraph(f.getPath());
 				Toast.makeToast((Stage) getScene().getWindow(), "NodeSystem loaded successfully!", ToastTime.TIME_SHORT,
 						ToastPosition.BOTTOM);
-			} catch (IOException | NoSuchNodeException e) {
+			} catch (Exception e) {
 				Toast.makeToast((Stage) getScene().getWindow(), "Error while saving!", ToastTime.TIME_SHORT,
 						ToastPosition.BOTTOM);
 				e.printStackTrace();
@@ -598,7 +598,9 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 			load(graph_file);
 	}
 
-	private void rebuildNodeGraph(String path) throws IOException, NoSuchNodeException {
+	private void rebuildNodeGraph(String path)
+			throws IOException, NoSuchNodeException, NoSuchMethodException, SecurityException, InstantiationException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		clearGraph();
 		getGuiMaster().getNodeMaster().clear();
 		getGuiMaster().clear();

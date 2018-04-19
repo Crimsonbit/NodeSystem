@@ -26,6 +26,12 @@ public class ConstantNodeClass extends GNode {
 		addPopUpItem(ppc, "set Constant"); // Adds a custom pop-up menu item.
 	}
 
+	public ConstantNodeClass(String name, int id, boolean draw, GNodeGraph graph) {
+		super(name, id, draw, graph);
+		ppc = getInternalIDCounter() + 1;
+		addPopUpItem(ppc, "set Constant"); // Adds a custom pop-up menu item.
+	}
+
 	/**
 	 * Every pop-up message id that is above getInternalIDCounter() will be consumed
 	 * by the method below. You can react to your custom id's here.
