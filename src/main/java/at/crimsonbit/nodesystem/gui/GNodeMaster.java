@@ -1,7 +1,6 @@
 package at.crimsonbit.nodesystem.gui;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,7 +19,6 @@ import at.crimsonbit.nodesystem.nodebackend.api.NodeMaster;
 import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
 import at.crimsonbit.nodesystem.nodebackend.util.NodeConnection;
 import at.crimsonbit.nodesystem.nodebackend.util.Tuple;
-import javafx.scene.Node;
 
 /**
  * 
@@ -62,7 +60,6 @@ public class GNodeMaster {
 		clear();
 	}
 
-	@SuppressWarnings("restriction")
 	private void loadCoordinates(AbstractNode node, Tuple<Double, Double> coords) {
 		for (GNode gn : allNodes) {
 			if (gn.getAbstractNode().equals(node)) {
@@ -71,7 +68,6 @@ public class GNodeMaster {
 		}
 	}
 
-	@SuppressWarnings("restriction")
 	private Tuple<Double, Double> saveCoordinates(AbstractNode node) {
 		for (GNode gn : allNodes) {
 			if (gn.getAbstractNode().equals(node)) {

@@ -57,7 +57,7 @@ import javafx.stage.Stage;
  * @author Florian Wagner
  *
  */
-@SuppressWarnings("restriction")
+
 public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 	private static final String INTERNAL_NODES = "at.crimsonbit.nodesystem.node";
@@ -520,13 +520,15 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private void onLoad() {
 		fileChooser.getExtensionFilters().add(extFilter);
 		File f = fileChooser.showOpenDialog(getParent().getScene().getWindow());
+		load(f);
+		// GLoader.loadGUI(nodeMaster, nodeMaster.getNodeMaster(), this);
+
+	}
+
+	private void load(File f) {
 		if (f != null)
 			try {
-				clearGraph();
-				getGuiMaster().getNodeMaster().clear();
-				getGuiMaster().clear();
-				getGuiMaster().setNodeMaster(NodeMaster.load(f.getPath()));
-				getGuiMaster().rebuild(getGuiMaster().getNodeMaster());
+				rebuildNodeGraph(f.getPath());
 				Toast.makeToast((Stage) getScene().getWindow(), "NodeSystem loaded successfully!", ToastTime.TIME_SHORT,
 						ToastPosition.BOTTOM);
 			} catch (IOException | NoSuchNodeException e) {
@@ -535,11 +537,34 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 				e.printStackTrace();
 			}
 		else
-			Toast.makeToast((Stage) getScene().getWindow(), "Error file is null!", ToastTime.TIME_SHORT,
+			Toast.makeToast((Stage) getScene().getWindow(), "Error: No file selected!", ToastTime.TIME_SHORT,
 					ToastPosition.BOTTOM);
 
-		// GLoader.loadGUI(nodeMaster, nodeMaster.getNodeMaster(), this);
+	}
 
+	/**
+	 * <h1>public void loadGraphFromFile({@link File})</h1>
+	 * <p>
+	 * This method attempts to load an existing graph from a file. It is always
+	 * advised to make file-checks yourself before attempting to load <br>
+	 * This method has to be called AFTER the window was already created, meaning
+	 * after primaryStage.show() -> see LoadExistingGraph.java example!
+	 * </p>
+	 * 
+	 * @param graph_file
+	 *            the graph file you want to load
+	 */
+	public void loadGraphFromFile(File graph_file) {
+		if (graph_file != null)
+			load(graph_file);
+	}
+
+	private void rebuildNodeGraph(String path) throws IOException, NoSuchNodeException {
+		clearGraph();
+		getGuiMaster().getNodeMaster().clear();
+		getGuiMaster().clear();
+		getGuiMaster().setNodeMaster(NodeMaster.load(path));
+		getGuiMaster().rebuild(getGuiMaster().getNodeMaster());
 	}
 
 	/**

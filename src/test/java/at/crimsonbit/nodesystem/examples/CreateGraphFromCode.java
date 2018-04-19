@@ -25,7 +25,7 @@ public class CreateGraphFromCode extends Application {
 		primaryStage.setTitle("Node Editor");
 
 		GNodeSystem nodeSystem = new GNodeSystem(false);
-		GNodeView view = nodeSystem.getGUI();
+		GNodeView view = nodeSystem.getNodeView();
 		GNodeGraph graph = view.getNodeGraph();
 		Scene scene = new Scene(view, 1024, 768);
 

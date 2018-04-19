@@ -1,5 +1,8 @@
 package at.crimsonbit.nodesystem.examples;
 
+import java.io.File;
+import java.net.URISyntaxException;
+
 import at.crimsonbit.nodesystem.examples.customnode.CustomNodeClassExample;
 import at.crimsonbit.nodesystem.examples.customnode.CustomNodes;
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
@@ -11,17 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-/**
- * This example shows how to create a new nodegraph, add a custom node and a
- * custom node class to the nodesystem.
- * 
- * 
- * 
- * @author Florian Wagner
- *
- */
-public class SimpleGraph extends Application {
-
+public class LoadExistingGraph extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("Node Editor");
@@ -29,7 +22,6 @@ public class SimpleGraph extends Application {
 		GNodeSystem nodeSystem = new GNodeSystem(false);
 		GNodeView view = nodeSystem.getNodeView();
 		GNodeGraph graph = view.getNodeGraph();
-
 		Scene scene = new Scene(view, 1024, 768);
 
 		graph.registerNodes("at.crimsonbit.nodesystem.examples.customnode"); // has to be called before initGraph!
@@ -57,7 +49,12 @@ public class SimpleGraph extends Application {
 		scene.getStylesheets().add(getClass().getResource("node-menu.css").toExternalForm());
 		primaryStage.setScene(scene);
 		primaryStage.show();
-		
+
+		/**
+		 * Loading an existing graph from file
+		 */
+		graph.loadGraphFromFile(new File(getClass().getResource("nodesys.nsys").getFile()));
+
 	}
 
 	public static void main(String[] args) {
