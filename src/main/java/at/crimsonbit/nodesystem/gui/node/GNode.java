@@ -70,7 +70,7 @@ public class GNode extends Pane implements IGNode {
 	private int PORT_OUTPUT_START_Y = 35;
 	private final int PORT_OFFSET = 40;
 	private double height = 52;
-	private final FileChooser fileChooser = new FileChooser();
+	protected final FileChooser fileChooser = new FileChooser();
 	private int ppc = 0; // popup entry counter
 	// private AbstractNode calcNode;
 	private int nodeID;
@@ -391,11 +391,12 @@ public class GNode extends Pane implements IGNode {
 		pop.addItem(ppc++, "remove Active");
 		pop.addItem(ppc++, "Rename");
 		pop.addItem(ppc++, "Remove");
-		if (this.type == Base.OUTPUT) {
-			pop.addItem(ppc++, "Get Output");
-		} else if (this.type == Base.PATH) {
-			pop.addItem(ppc++, "Set Path");
-		}
+
+		// if (this.type == Base.OUTPUT) {
+		// pop.addItem(ppc++, "Get Output");
+		// } else if (this.type == Base.PATH) {
+		// pop.addItem(ppc++, "Set Path");
+		// }
 
 		setPopUpDialog(pop);
 	}
@@ -465,13 +466,13 @@ public class GNode extends Pane implements IGNode {
 			}
 			redraw();
 
-		} else if (id == 4) {
-			if (getNodeType() == Base.PATH) {
-				setPath();
-			} else
-				setOutput();
-			redraw();
-			getNodeGraph().update();
+			// } else if (id == 4) {
+			// if (getNodeType() == Base.PATH) {
+			// setPath();
+			// } else
+			// setOutput();
+			// redraw();
+			// getNodeGraph().update();
 
 		} else if (id == 0) {
 			GNode node = new GNode(this);
@@ -482,44 +483,12 @@ public class GNode extends Pane implements IGNode {
 		}
 	}
 
-	public String getPath() {
-		if (getNodeType().equals(Base.PATH)) {
-			return (String) this.getAbstractNode().get("path");
-		}
-
-		return null;
-	}
-
-	public void setPath() {
-		if (getNodeType().equals(Base.PATH)) {
-			File f = fileChooser.showOpenDialog(getParent().getScene().getWindow());
-			if (f != null)
-				this.getAbstractNode().set("path", f.getPath());
-		}
-		System.out.println(getPath());
-	}
-
-	public Object getOutput() {
-		if (getNodeType().equals(Base.OUTPUT)) {
-			return this.getAbstractNode().get("output");
-		}
-		return null;
-	}
-
-	public void setOutput() {
-		if (getNodeType().equals(Base.OUTPUT)) {
-			setName("Output - " + String.valueOf(this.getAbstractNode().get("output")));
-			computeNewPortLocations();
-			redraw();
-		}
-	}
-
 	public void computeNewPortLocations() {
 		for (GPort p : getOutputPorts()) {
 			p.redrawAndRelocate(this.name.length());
 		}
 	}
-
+	
 	public void setConstant() {
 
 		doBlur();
@@ -608,7 +577,7 @@ public class GNode extends Pane implements IGNode {
 		}
 	}
 
-	private void setName(String string) {
+	protected void setName(String string) {
 		this.name = string;
 
 	}

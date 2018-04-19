@@ -1,19 +1,32 @@
 package at.crimsonbit.nodesystem.examples;
 
-import java.io.File;
+import java.util.function.BiConsumer;
 
 import at.crimsonbit.nodesystem.examples.customnode.CustomNodeClassExample;
 import at.crimsonbit.nodesystem.examples.customnode.CustomNodes;
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.GNodeSystem;
 import at.crimsonbit.nodesystem.gui.GNodeView;
+import at.crimsonbit.nodesystem.gui.dialog.GEntry;
+import at.crimsonbit.nodesystem.gui.dialog.GSubMenu;
 import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
+import at.crimsonbit.nodesystem.gui.widget.toast.Toast;
+import at.crimsonbit.nodesystem.gui.widget.toast.ToastPosition;
+import at.crimsonbit.nodesystem.gui.widget.toast.ToastTime;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-public class LoadExistingGraph extends Application {
+/**
+ * This example shows how to create custom graph dialogs.
+ * 
+ * @author Florian Wagner
+ *
+ */
+
+public class CustomGraphDialogs extends Application {
+
 	@Override
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("Node Editor");
@@ -21,6 +34,7 @@ public class LoadExistingGraph extends Application {
 		GNodeSystem nodeSystem = new GNodeSystem(false);
 		GNodeView view = nodeSystem.getNodeView();
 		GNodeGraph graph = view.getNodeGraph();
+
 		Scene scene = new Scene(view, 1024, 768);
 
 		graph.registerNodes("at.crimsonbit.nodesystem.examples.customnode"); // has to be called before initGraph!
@@ -50,10 +64,18 @@ public class LoadExistingGraph extends Application {
 		primaryStage.show();
 
 		/**
-		 * Loading an existing graph from file
+		 * Adding custom Menus to the graph.
 		 */
-		graph.loadGraphFromFile(new File(getClass().getResource("nodesys.nsys").getFile()));
+		GSubMenu menu = new GSubMenu(3, "Example Menu");
+		menu.addItem(1, "Example entry"); // adds an entry to the dialog
 
+		BiConsumer<Integer, GEntry> consumer = (id, entry) -> {
+			if (id == 1) {
+				Toast.makeToast(primaryStage, "Example message!", ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
+			}
+		};
+
+		graph.addCustomDialogEntry(menu, consumer);
 	}
 
 	public static void main(String[] args) {

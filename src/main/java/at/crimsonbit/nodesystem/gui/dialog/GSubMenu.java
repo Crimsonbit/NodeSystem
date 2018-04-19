@@ -3,6 +3,11 @@ package at.crimsonbit.nodesystem.gui.dialog;
 import javafx.scene.control.Menu;
 
 /**
+ * <h1>GSubMenu</h1>
+ * <p>
+ * The GSubMenu represents a menu. It can be used to add custom menus in for
+ * e.g. the graph or in the nodes.
+ * </p>
  * 
  * @author Florian Wagner
  *
