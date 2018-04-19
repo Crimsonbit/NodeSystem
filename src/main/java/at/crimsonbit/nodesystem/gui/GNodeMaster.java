@@ -50,7 +50,7 @@ public class GNodeMaster {
 		this.graph = graph;
 		this.nodeMaster = new NodeMaster();
 
-		this.nodeMaster.setExtraInfoSavingFunction(this::saveCoordinates);
+		this.nodeMaster.setExtraInfoSavingFunction(this::saveData);
 
 		// this.nodeMaster.registerNodes("at.crimsonbit.nodesystem.node.nodes");
 		this.graphParent = new GNode("_ROOT_", false);
@@ -60,20 +60,30 @@ public class GNodeMaster {
 		clear();
 	}
 
-	private void loadCoordinates(AbstractNode node, Tuple<Double, Double> coords) {
+	/**
+	 * Load Data for the provided AbstractNode
+	 * 
+	 * @param node
+	 * @param data
+	 */
+	private void loadData(AbstractNode node, Object data) {
 		for (GNode gn : allNodes) {
-			if (gn.getAbstractNode().equals(node)) {
-				gn.relocate(coords.a, coords.b);
+			if (gn.getNodeID() == getNodeMaster().getIdOfNode(node)) {
+				gn.loadData(data);
 			}
 		}
 	}
 
-	private Tuple<Double, Double> saveCoordinates(AbstractNode node) {
+	/**
+	 * Save Data of the provided AbstractNode
+	 * 
+	 * @param node
+	 * @return
+	 */
+	private Object saveData(AbstractNode node) {
 		for (GNode gn : allNodes) {
 			if (gn.getNodeID() == getNodeMaster().getIdOfNode(node)) {
-				double x = gn.getLayoutX();
-				double y = gn.getLayoutY();
-				return new Tuple<Double, Double>(x, y);
+				return gn.storeData();
 			}
 		}
 		return null;
@@ -334,7 +344,7 @@ public class GNodeMaster {
 			}
 		}
 		graph.update();
-		master.getExtraInfo(this::loadCoordinates);
+		master.getExtraInfo(this::loadData);
 		graph.update();
 	}
 

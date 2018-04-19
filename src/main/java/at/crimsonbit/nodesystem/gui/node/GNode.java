@@ -11,6 +11,7 @@ import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeMaster;
+import at.crimsonbit.nodesystem.nodebackend.util.Tuple;
 import at.crimsonbit.nodesystem.util.RangeMapper;
 import javafx.scene.Node;
 import javafx.scene.control.MenuItem;
@@ -587,6 +588,28 @@ public class GNode extends Pane implements IGNode {
 	public String toString() {
 		return name + ", connections=" + connections + ", type=" + type + ", inPortCount=" + inPortCount
 				+ ", outPortcount=" + outPortcount + ", ppc=" + ppc;
+	}
+
+	/**
+	 * Load Data, that was previously stored in {@link GNode#storeData()} again.
+	 * Override to save custom data in GNode
+	 * 
+	 * @param data
+	 */
+	public void loadData(Object data) {
+		Tuple<Double, Double> tu = (Tuple<Double, Double>) data;
+		relocate(tu.a, tu.b);
+	}
+
+	/**
+	 * Store Data, that will be loaded when the Node System is loaded from a
+	 * savefile. This function is called just before the data is saved
+	 * 
+	 * @see GNode#loadData(Object)
+	 * @return
+	 */
+	public Object storeData() {
+		return new Tuple<Double, Double>(this.getLayoutX(), this.getLayoutY());
 	}
 
 }
