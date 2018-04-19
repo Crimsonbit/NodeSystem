@@ -1,20 +1,13 @@
 package at.crimsonbit.nodesystem.gui.node;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.dialog.GPopUp;
 import at.crimsonbit.nodesystem.gui.node.port.GPort;
 import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
-import at.crimsonbit.nodesystem.gui.widget.toast.Toast;
-import at.crimsonbit.nodesystem.gui.widget.toast.ToastPosition;
-import at.crimsonbit.nodesystem.gui.widget.toast.ToastTime;
-import at.crimsonbit.nodesystem.node.types.Base;
-import at.crimsonbit.nodesystem.node.types.Constant;
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeMaster;
@@ -34,7 +27,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 
 /**
  * 
@@ -49,7 +41,7 @@ public class GNode extends Pane implements IGNode {
 	private List<GNode> parents = new ArrayList<GNode>();
 	private List<GPort> inputPorts = new ArrayList<GPort>();
 	private List<GPort> outputPorts = new ArrayList<GPort>();
-	private List<GNodeConnection> connections = new ArrayList<GNodeConnection>();
+	protected List<GNodeConnection> connections = new ArrayList<GNodeConnection>();
 
 	private GPopUp popUpDialog;
 
@@ -59,11 +51,11 @@ public class GNode extends Pane implements IGNode {
 	private boolean doDraw = false;
 	private boolean active = false;
 	private boolean portPressed = false;
-	private INodeType type;
+	protected INodeType type;
 	private String nameAddition = "";
-	private String name;
-	private int inPortCount = 0;
-	private int outPortcount = 0;
+	protected String name;
+	protected int inPortCount = 0;
+	protected int outPortcount = 0;
 	private final int PORT_INPUT_START_X = 5;
 	private final int PORT_INPUT_START_Y = 35;
 	private int PORT_OUTPUT_START_X = 140;
@@ -488,94 +480,6 @@ public class GNode extends Pane implements IGNode {
 			p.redrawAndRelocate(this.name.length());
 		}
 	}
-	
-	public void setConstant() {
-
-		doBlur();
-		TextInputDialog dialog = new TextInputDialog(getName());
-		dialog.setTitle("Constant");
-		dialog.setHeaderText("Set a new constant for the node.");
-		dialog.setContentText("Constant: ");
-
-		Optional<String> result = dialog.showAndWait();
-		if (result.isPresent()) {
-			// this.nameAddition = result.get();
-			// setName(this.nameAddition);
-			if (this.type == Constant.STRING) {
-				this.getAbstractNode().set("constant", result.get());
-
-			} else if (this.type == Constant.BOOLEAN) {
-				try {
-					boolean b = Boolean.valueOf(result.get());
-					this.getAbstractNode().set("constant", b);
-
-				} catch (Exception e) {
-					Toast.makeToast((Stage) getScene().getWindow(), "Invalid input!\nPlease type in a boolean type!",
-							ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
-				}
-			} else if (this.type == Constant.DOUBLE) {
-				try {
-					double b = Double.valueOf(result.get());
-					this.getAbstractNode().set("constant", b);
-
-				} catch (Exception e) {
-					Toast.makeToast((Stage) getScene().getWindow(), "Invalid input!\nPlease type in a double type!",
-							ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
-				}
-			} else if (this.type == Constant.FLOAT) {
-				try {
-					float b = Float.valueOf(result.get());
-					this.getAbstractNode().set("constant", b);
-
-				} catch (Exception e) {
-					Toast.makeToast((Stage) getScene().getWindow(), "Invalid input!\nPlease type in a float type!",
-							ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
-				}
-			} else if (this.type == Constant.INTEGER) {
-				try {
-					int b = Integer.valueOf(result.get());
-					this.getAbstractNode().set("constant", b);
-
-				} catch (Exception e) {
-					Toast.makeToast((Stage) getScene().getWindow(), "Invalid input!\nPlease type in a integer type!",
-							ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
-				}
-			} else if (this.type == Constant.BYTE) {
-				try {
-					byte b = Byte.valueOf(result.get());
-					this.getAbstractNode().set("constant", b);
-
-				} catch (Exception e) {
-					Toast.makeToast((Stage) getScene().getWindow(), "Invalid input!\nPlease type in a byte type!",
-							ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
-				}
-
-			} else if (this.type == Constant.LONG) {
-				try {
-					long b = Long.valueOf(result.get());
-					this.getAbstractNode().set("constant", b);
-
-				} catch (Exception e) {
-					Toast.makeToast((Stage) getScene().getWindow(), "Invalid input!\nPlease type in a long type!",
-							ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
-				}
-			} else if (this.type == Constant.SHORT) {
-				try {
-					short b = Short.valueOf(result.get());
-					this.getAbstractNode().set("constant", b);
-
-				} catch (Exception e) {
-					Toast.makeToast((Stage) getScene().getWindow(), "Invalid input!\nPlease type in a short type!",
-							ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
-				}
-			}
-			redraw();
-			removeBlur();
-		} else {
-			removeBlur();
-
-		}
-	}
 
 	protected void setName(String string) {
 		this.name = string;
@@ -670,6 +574,12 @@ public class GNode extends Pane implements IGNode {
 		} else if (!type.equals(other.type))
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return name + ", connections=" + connections + ", type=" + type + ", inPortCount=" + inPortCount
+				+ ", outPortcount=" + outPortcount + ", ppc=" + ppc;
 	}
 
 }

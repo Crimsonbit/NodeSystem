@@ -34,6 +34,16 @@ public class PathNodeClass extends GNode {
 		}
 	}
 
+	@Override
+	public String toString() {
+		String str = name + ", connections=" + connections + ", type=" + type + ", inPortCount=" + inPortCount
+				+ ", outPortcount=" + outPortcount + ", ppc=" + ppc;
+		if (this.getAbstractNode() != null)
+			return str + "\npath: " + this.getAbstractNode().get("path");
+		else
+			return str;
+	}
+
 	public String getPath() {
 		if (getNodeType().equals(Base.PATH)) {
 			if (this.getAbstractNode() != null)

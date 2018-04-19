@@ -32,6 +32,16 @@ public class OutputNodeClass extends GNode {
 		}
 	}
 
+	@Override
+	public String toString() {
+		String str = name + ", connections=" + connections + ", type=" + type + ", inPortCount=" + inPortCount
+				+ ", outPortcount=" + outPortcount + ", ppc=" + ppc;
+		if (this.getAbstractNode() != null)
+			return str + "\noutput: " + this.getAbstractNode().get("output");
+		else
+			return str;
+	}
+
 	public Object getOutput() {
 		if (getNodeType().equals(Base.OUTPUT)) {
 			if (this.getAbstractNode() != null)

@@ -24,6 +24,7 @@ import at.crimsonbit.nodesystem.gui.widget.toast.ToastPosition;
 import at.crimsonbit.nodesystem.gui.widget.toast.ToastTime;
 import at.crimsonbit.nodesystem.node.base.OutputNodeClass;
 import at.crimsonbit.nodesystem.node.base.PathNodeClass;
+import at.crimsonbit.nodesystem.node.constant.ConstantNodeClass;
 import at.crimsonbit.nodesystem.node.types.Base;
 import at.crimsonbit.nodesystem.node.types.Calculate;
 import at.crimsonbit.nodesystem.node.types.Constant;
@@ -148,7 +149,9 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 		addCustomNode(Base.OUTPUT, new OutputNodeClass().getClass());
 		addCustomNode(Base.PATH, new PathNodeClass().getClass());
-
+		for (INodeType t : Constant.values()) {
+			addCustomNode(t, new ConstantNodeClass().getClass());
+		}
 	}
 
 	/**
@@ -376,7 +379,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 				if (event.isShiftDown() && event.getCode().equals(KeyCode.C)) {
 					for (INodeType t : Constant.values())
 						if (getActive().getNodeType().equals(t)) {
-							getActive().setConstant();
+							((ConstantNodeClass) getActive()).setConstant();
 							// update();
 						}
 				}
@@ -718,18 +721,8 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		getGuiMaster().disconnectFromGraphParent(nodeMaster.getRemovedCells());
 		if (getActive() != null) {
 			String baseNode = "";
-			if (getActive().getNodeType().equals(Base.PATH)) {
-				PathNodeClass cl = (PathNodeClass) getActive();
-				if (cl != null)
-					baseNode = ", path: " + cl.getPath();
-			} else if (getActive().getNodeType().equals(Base.OUTPUT)) {
-				OutputNodeClass cl = (OutputNodeClass) getActive();
-				if (cl != null)
-					baseNode = ", output: " + cl.getOutput();
-			}
-			nodeInfo.setText(SystemUsage.getRamInfo() + "\nactive node: " + getActive().getName() + ", input ports: "
-					+ getActive().getInputPorts().size() + ", output ports: " + getActive().getOutputPorts().size()
-					+ ", connections: " + getActive().getConnections().size() + baseNode);
+			baseNode = getActive().toString();
+			nodeInfo.setText(SystemUsage.getRamInfo() + "\n" + baseNode);
 
 		} else
 			nodeInfo.setText(SystemUsage.getRamInfo());
