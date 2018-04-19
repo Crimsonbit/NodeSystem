@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
 
 import at.crimsonbit.nodesystem.gui.dialog.GEntry;
 import at.crimsonbit.nodesystem.gui.dialog.GPopUp;
@@ -21,6 +22,9 @@ import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
 import at.crimsonbit.nodesystem.gui.widget.toast.Toast;
 import at.crimsonbit.nodesystem.gui.widget.toast.ToastPosition;
 import at.crimsonbit.nodesystem.gui.widget.toast.ToastTime;
+import at.crimsonbit.nodesystem.node.base.OutputNodeClass;
+import at.crimsonbit.nodesystem.node.base.PathNodeClass;
+import at.crimsonbit.nodesystem.node.constant.ConstantNodeClass;
 import at.crimsonbit.nodesystem.node.types.Base;
 import at.crimsonbit.nodesystem.node.types.Calculate;
 import at.crimsonbit.nodesystem.node.types.Constant;
@@ -35,6 +39,7 @@ import at.crimsonbit.nodesystem.util.SystemUsage;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -57,7 +62,7 @@ import javafx.stage.Stage;
  * @author Florian Wagner
  *
  */
-@SuppressWarnings("restriction")
+
 public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 	private static final String INTERNAL_NODES = "at.crimsonbit.nodesystem.node";
@@ -142,6 +147,40 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		loadMenus();
 		addKeySupport();
 
+		addCustomNode(Base.OUTPUT, new OutputNodeClass().getClass());
+		addCustomNode(Base.PATH, new PathNodeClass().getClass());
+		for (INodeType t : Constant.values()) {
+			addCustomNode(t, new ConstantNodeClass().getClass());
+		}
+	}
+
+	/**
+	 * 
+	 * <h1>public void addCustomDialogEntry({@link GSubMenu},
+	 * {@link BiConsumer})</h1>
+	 * 
+	 * <p>
+	 * This method can be used to add custom menu entries to the node-graph.
+	 * </p>
+	 * 
+	 * @param menu
+	 *            the menu you want to add.
+	 * @param func
+	 *            a {@link BiConsumer} which has an {@link Integer} and an
+	 *            {@link GEntry}. This is the consumer that gets called when you
+	 *            click on the item. For more information see the
+	 *            CustomGraphDialogs.java example!
+	 */
+	public void addCustomDialogEntry(GSubMenu menu, BiConsumer<Integer, GEntry> func) {
+		graphDialog.addItem(menu);
+		for (MenuItem ent : menu.getItems()) {
+			int id = Integer.valueOf(ent.getId());
+			ent.setOnAction(event -> {
+				func.accept(id, (GEntry) ent);
+				event.consume();
+
+			});
+		}
 	}
 
 	/**
@@ -340,13 +379,13 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 				if (event.isShiftDown() && event.getCode().equals(KeyCode.C)) {
 					for (INodeType t : Constant.values())
 						if (getActive().getNodeType().equals(t)) {
-							getActive().setConstant();
+							((ConstantNodeClass) getActive()).setConstant();
 							// update();
 						}
 				}
 				if (event.isShiftDown() && event.getCode().equals(KeyCode.O)) {
 					if (getActive().getNodeType().equals(Base.OUTPUT)) {
-						getActive().setOutput();
+						((OutputNodeClass) getActive()).setOutput();
 						// update();
 					}
 				}
@@ -520,13 +559,15 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private void onLoad() {
 		fileChooser.getExtensionFilters().add(extFilter);
 		File f = fileChooser.showOpenDialog(getParent().getScene().getWindow());
+		load(f);
+		// GLoader.loadGUI(nodeMaster, nodeMaster.getNodeMaster(), this);
+
+	}
+
+	private void load(File f) {
 		if (f != null)
 			try {
-				clearGraph();
-				getGuiMaster().getNodeMaster().clear();
-				getGuiMaster().clear();
-				getGuiMaster().setNodeMaster(NodeMaster.load(f.getPath()));
-				getGuiMaster().rebuild(getGuiMaster().getNodeMaster());
+				rebuildNodeGraph(f.getPath());
 				Toast.makeToast((Stage) getScene().getWindow(), "NodeSystem loaded successfully!", ToastTime.TIME_SHORT,
 						ToastPosition.BOTTOM);
 			} catch (IOException | NoSuchNodeException e) {
@@ -535,11 +576,34 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 				e.printStackTrace();
 			}
 		else
-			Toast.makeToast((Stage) getScene().getWindow(), "Error file is null!", ToastTime.TIME_SHORT,
+			Toast.makeToast((Stage) getScene().getWindow(), "Error: No file selected!", ToastTime.TIME_SHORT,
 					ToastPosition.BOTTOM);
 
-		// GLoader.loadGUI(nodeMaster, nodeMaster.getNodeMaster(), this);
+	}
 
+	/**
+	 * <h1>public void loadGraphFromFile({@link File})</h1>
+	 * <p>
+	 * This method attempts to load an existing graph from a file. It is always
+	 * advised to make file-checks yourself before attempting to load <br>
+	 * This method has to be called AFTER the window was already created, meaning
+	 * after primaryStage.show() -> see LoadExistingGraph.java example!
+	 * </p>
+	 * 
+	 * @param graph_file
+	 *            the graph file you want to load
+	 */
+	public void loadGraphFromFile(File graph_file) {
+		if (graph_file != null)
+			load(graph_file);
+	}
+
+	private void rebuildNodeGraph(String path) throws IOException, NoSuchNodeException {
+		clearGraph();
+		getGuiMaster().getNodeMaster().clear();
+		getGuiMaster().clear();
+		getGuiMaster().setNodeMaster(NodeMaster.load(path));
+		getGuiMaster().rebuild(getGuiMaster().getNodeMaster());
 	}
 
 	/**
@@ -655,11 +719,12 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		}
 		getGuiMaster().attachOrphansToGraphParent(nodeMaster.getAddedCells());
 		getGuiMaster().disconnectFromGraphParent(nodeMaster.getRemovedCells());
-		if (getActive() != null)
-			nodeInfo.setText(SystemUsage.getRamInfo() + "\nactive node: " + getActive().getName() + ", input ports: "
-					+ getActive().getInputPorts().size() + ", output ports: " + getActive().getOutputPorts().size()
-					+ ", connections: " + getActive().getConnections().size());
-		else
+		if (getActive() != null) {
+			String baseNode = "";
+			baseNode = getActive().toString();
+			nodeInfo.setText(SystemUsage.getRamInfo() + "\n" + baseNode);
+
+		} else
 			nodeInfo.setText(SystemUsage.getRamInfo());
 
 		nodeMaster.getAddedCells().clear();

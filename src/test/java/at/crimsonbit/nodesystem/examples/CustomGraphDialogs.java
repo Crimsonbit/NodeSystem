@@ -19,15 +19,13 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 /**
- * This example shows how to create a new nodegraph, add a custom node and a
- * custom node class to the nodesystem.
- * 
- * 
+ * This example shows how to create custom graph dialogs.
  * 
  * @author Florian Wagner
  *
  */
-public class SimpleGraph extends Application {
+
+public class CustomGraphDialogs extends Application {
 
 	@Override
 	public void start(Stage primaryStage) {
@@ -65,6 +63,19 @@ public class SimpleGraph extends Application {
 		primaryStage.setScene(scene);
 		primaryStage.show();
 
+		/**
+		 * Adding custom Menus to the graph.
+		 */
+		GSubMenu menu = new GSubMenu(3, "Example Menu");
+		menu.addItem(1, "Example entry"); // adds an entry to the dialog
+
+		BiConsumer<Integer, GEntry> consumer = (id, entry) -> {
+			if (id == 1) {
+				Toast.makeToast(primaryStage, "Example message!", ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
+			}
+		};
+
+		graph.addCustomDialogEntry(menu, consumer);
 	}
 
 	public static void main(String[] args) {

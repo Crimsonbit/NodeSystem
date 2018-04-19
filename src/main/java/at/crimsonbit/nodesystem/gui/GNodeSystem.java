@@ -1,8 +1,12 @@
 package at.crimsonbit.nodesystem.gui;
 
 /**
- * 
- * The NodeSystem main class.
+ * <h1>NodeSystem</h1>
+ * <p>
+ * The NodeSystem class is the main class of the NodeSystem library. All you
+ * need to do to get everything up and running, is, to instantiate this class
+ * and call getNodeview() the retrieve {@link GNodeView} *
+ * </p>
  * 
  * @author Florian Wagner
  *
@@ -11,12 +15,12 @@ package at.crimsonbit.nodesystem.gui;
 public class GNodeSystem {
 
 	private GNodeView nodeView;
-
+	
 	public GNodeSystem(boolean addPane) {
 		this.nodeView = new GNodeView(addPane);
 	}
-	
-	public GNodeView getGUI() {
+
+	public GNodeView getNodeView() {
 		return this.nodeView;
 	}
 
