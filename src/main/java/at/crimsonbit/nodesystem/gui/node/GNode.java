@@ -72,6 +72,7 @@ public class GNode extends Pane implements IGNode {
 	private Text text;
 	private DropShadow e;
 	private final Tooltip tooltip = new Tooltip();
+	private final int PORT_TOP_DRAW_OFFSET = 10;
 
 	private NodeMaster getNodeMaster() {
 		return nodeGraph.getGuiMaster().getNodeMaster();
@@ -354,6 +355,8 @@ public class GNode extends Pane implements IGNode {
 	public void redraw(boolean draw) {
 		this.doDraw = draw;
 		draw();
+		computeNewPortLocations();
+
 	}
 
 	public void setPopUpDialog(GPopUp dialog) {
@@ -475,9 +478,9 @@ public class GNode extends Pane implements IGNode {
 		}
 	}
 
-	public void computeNewPortLocations() {
+	protected void computeNewPortLocations() {
 		for (GPort p : getOutputPorts()) {
-			p.redrawAndRelocate(this.name.length());
+			p.redrawAndRelocate(this.top.getWidth() - PORT_TOP_DRAW_OFFSET);
 		}
 	}
 

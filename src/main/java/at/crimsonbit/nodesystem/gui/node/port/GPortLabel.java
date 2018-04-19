@@ -41,6 +41,7 @@ public class GPortLabel extends Text {
 
 	public void setIx(double ix) {
 		this.ix = ix;
+		draw();
 	}
 
 	public double getIy() {
@@ -49,6 +50,7 @@ public class GPortLabel extends Text {
 
 	public void setIy(double iy) {
 		this.iy = iy;
+
 	}
 
 }

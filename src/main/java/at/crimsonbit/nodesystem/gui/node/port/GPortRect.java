@@ -77,6 +77,7 @@ public class GPortRect extends Rectangle {
 
 	public void setRX(double x) {
 		this.x = x;
+		redraw();
 	}
 
 	public double getRY() {
@@ -85,6 +86,7 @@ public class GPortRect extends Rectangle {
 
 	public void setRY(double y) {
 		this.y = y;
+
 	}
 
 	public boolean isInput() {
