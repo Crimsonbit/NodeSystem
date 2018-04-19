@@ -316,11 +316,11 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 			if (getActive() != null) {
 
 				if (event.isControlDown() && event.getCode().equals(KeyCode.C)) {
-					toCopy = new GNode(getActive());
+					toCopy = getActive();
 				}
 				if (event.isControlDown() && event.getCode().equals(KeyCode.V) && toCopy != null) {
 					if (toCopy != null) {
-						toCopy = new GNode(getActive());
+						toCopy = new GNode(toCopy);
 					}
 					getGuiMaster().addNode(toCopy);
 					toCopy.relocate(getActive().getBoundsInParent().getMinX(),

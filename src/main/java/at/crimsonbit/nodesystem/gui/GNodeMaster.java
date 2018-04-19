@@ -74,7 +74,7 @@ public class GNodeMaster {
 	@SuppressWarnings("restriction")
 	private Tuple<Double, Double> saveCoordinates(AbstractNode node) {
 		for (GNode gn : allNodes) {
-			if (gn.getAbstractNode().equals(node)) {
+			if (gn.getNodeID() == getNodeMaster().getIdOfNode(node)) {
 				double x = gn.getLayoutX();
 				double y = gn.getLayoutY();
 				return new Tuple<Double, Double>(x, y);

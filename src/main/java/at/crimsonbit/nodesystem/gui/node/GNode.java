@@ -703,4 +703,8 @@ public class GNode extends Pane implements IGNode {
 		return true;
 	}
 
+	public int getNodeID() {
+		return nodeID;
+	}
+
 }
