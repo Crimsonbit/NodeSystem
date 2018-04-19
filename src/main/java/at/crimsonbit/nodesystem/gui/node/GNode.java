@@ -128,7 +128,8 @@ public class GNode extends Pane implements IGNode {
 	}
 
 	private void addToolTip() {
-		tooltip.setText("Name: " + this.name + "\n" + "type: " + this.type.toString() + "\n");
+		tooltip.setText(
+				"Name: " + name + "\nType: " + getNodeType().toString() + "\nConnections: " + connections.size());
 		Tooltip.install(this, tooltip);
 	}
 
@@ -596,6 +597,7 @@ public class GNode extends Pane implements IGNode {
 	 * 
 	 * @param data
 	 */
+	@SuppressWarnings("unchecked")
 	public void loadData(Object data) {
 		Tuple<Double, Double> tu = (Tuple<Double, Double>) data;
 		relocate(tu.a, tu.b);
