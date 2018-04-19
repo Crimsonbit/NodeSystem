@@ -1,18 +1,11 @@
 package at.crimsonbit.nodesystem.examples;
 
-import java.util.function.BiConsumer;
-
 import at.crimsonbit.nodesystem.examples.customnode.CustomNodeClassExample;
 import at.crimsonbit.nodesystem.examples.customnode.CustomNodes;
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.GNodeSystem;
 import at.crimsonbit.nodesystem.gui.GNodeView;
-import at.crimsonbit.nodesystem.gui.dialog.GEntry;
-import at.crimsonbit.nodesystem.gui.dialog.GSubMenu;
 import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
-import at.crimsonbit.nodesystem.gui.widget.toast.Toast;
-import at.crimsonbit.nodesystem.gui.widget.toast.ToastPosition;
-import at.crimsonbit.nodesystem.gui.widget.toast.ToastTime;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
@@ -26,7 +19,7 @@ import javafx.stage.Stage;
  * 
  * @author Florian Wagner
  *
- */
+ */       
 public class SimpleGraph extends Application {
 
 	@Override
