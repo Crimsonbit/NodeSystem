@@ -34,28 +34,32 @@ public class GNodeConnection extends Group {
 		source.addCellChild(target);
 		target.addCellParent(source);
 
-		line = new CubicCurve();
+		draw();
+		getChildren().add(line);
+	}
 
-		line.startXProperty().bind(source.layoutXProperty().add(sourcePort.getX()));
+	public void draw() {
+		line = new CubicCurve();
+		line.startXProperty().bind(source.layoutXProperty().add(sourcePort.getPortX()));
 		line.startYProperty().bind(source.layoutYProperty().add(sourcePort.getY()));
-		line.setControlX1(sourcePort.getX() + 50);
+		line.setControlX1(sourcePort.getPortX() + 50);
 		line.setControlY1(sourcePort.getY());
-		line.setControlX2(targetPort.getY() - 50);
+		line.setControlX2(targetPort.getPortX() - 50);
 		line.setControlY2(targetPort.getY());
-		line.controlX1Property().bind(source.layoutXProperty().add(sourcePort.getX()
+		line.controlX1Property().bind(source.layoutXProperty().add(sourcePort.getPortX()
 				+ (double) source.getNodeGraph().getSettings().get(GraphSettings.SETTING_CURVE_CURVE)));
 		line.controlY1Property().bind(source.layoutYProperty().add(sourcePort.getY()));
-		line.controlX2Property().bind(target.layoutXProperty().add(targetPort.getX()
+		line.controlX2Property().bind(target.layoutXProperty().add(targetPort.getPortX()
 				- (double) source.getNodeGraph().getSettings().get(GraphSettings.SETTING_CURVE_CURVE)));
 		line.controlY2Property().bind(target.layoutYProperty().add(targetPort.getY()));
 
-		line.endXProperty().bind(target.layoutXProperty().add(targetPort.getX()));
+		line.endXProperty().bind(target.layoutXProperty().add(targetPort.getPortX()));
 		line.endYProperty().bind(target.layoutYProperty().add(targetPort.getY()));
 		line.setStroke(source.getNodeGraph().getColorLookup().get(source.getNodeType()));
 		line.setStrokeWidth((double) source.getNodeGraph().getSettings().get(GraphSettings.SETTING_CURVE_WIDTH));
 		line.setStrokeLineCap(StrokeLineCap.ROUND);
 		line.setFill(Color.TRANSPARENT);
-		
+
 		DropShadow e = new DropShadow();
 		e.setBlurType(BlurType.GAUSSIAN);
 		e.setBlurType(BlurType.GAUSSIAN);
@@ -67,9 +71,6 @@ public class GNodeConnection extends Group {
 		e.setOffsetY((double) source.getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_HEIGHT));
 		e.setRadius((double) source.getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_RADIUS));
 		line.setEffect(e);
-
-		getChildren().add(line);
-
 	}
 
 	public double getWidth() {

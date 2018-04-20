@@ -1,6 +1,5 @@
 package at.crimsonbit.nodesystem.examples;
 
-import java.io.File;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 
@@ -15,6 +14,12 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+/**
+ * This example shows how to load a graph from an existing NodeSystem file.
+ * 
+ * @author Florian Wagner
+ *
+ */
 public class LoadExistingGraph extends Application {
 	@Override
 	public void start(Stage primaryStage) {

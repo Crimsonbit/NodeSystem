@@ -483,6 +483,14 @@ public class GNode extends Pane implements IGNode {
 	protected void computeNewPortLocations() {
 		for (GPort p : getOutputPorts()) {
 			p.redrawAndRelocate(this.top.getWidth() - PORT_TOP_DRAW_OFFSET);
+			p.redraw();
+			List<GNodeConnection> conn = getConnections();
+			// System.out.println(conn.size());
+			conn.stream().filter(con -> getOutputPorts().contains(con.getSourcePort())).forEach(con -> {
+				// System.out.println(con);
+				// con.relocate(this.top.getWidth(), con.sourcePort.getY());
+				con.draw();
+			});
 		}
 	}
 

@@ -16,7 +16,7 @@ import javafx.scene.input.MouseEvent;
  * @author Florian Wagner
  *
  */
-@SuppressWarnings("restriction")
+
 public class GPort extends Group implements IGConsumable {
 
 	private double x;
@@ -146,12 +146,18 @@ public class GPort extends Group implements IGConsumable {
 		getChildren().add(rect);
 	}
 
+	public double getPortX() {
+		return this.x;
+	}
+
 	public void redrawAndRelocate(double x) {
-		//getChildren().clear();
+		// getChildren().clear();
 		label.setIx(x);
 		rect.setRX(x);
-		//getChildren().add(label);
-		//getChildren().add(rect);
+		this.x = x;
+		// relocate(x);
+		// getChildren().add(label);
+		// getChildren().add(rect);
 		// draw();
 	}
 
