@@ -571,7 +571,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 				Toast.makeToast((Stage) getScene().getWindow(), "NodeSystem loaded successfully!", ToastTime.TIME_SHORT,
 						ToastPosition.BOTTOM);
 			} catch (Exception e) {
-				Toast.makeToast((Stage) getScene().getWindow(), "Error while saving!", ToastTime.TIME_SHORT,
+				Toast.makeToast((Stage) getScene().getWindow(), "Error while loading!", ToastTime.TIME_SHORT,
 						ToastPosition.BOTTOM);
 				e.printStackTrace();
 			}

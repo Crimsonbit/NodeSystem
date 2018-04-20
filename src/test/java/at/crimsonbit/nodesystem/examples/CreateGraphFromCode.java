@@ -4,6 +4,8 @@ import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.GNodeSystem;
 import at.crimsonbit.nodesystem.gui.GNodeView;
 import at.crimsonbit.nodesystem.gui.node.GNode;
+import at.crimsonbit.nodesystem.node.base.OutputNodeClass;
+import at.crimsonbit.nodesystem.node.constant.ConstantNodeClass;
 import at.crimsonbit.nodesystem.node.types.Base;
 import at.crimsonbit.nodesystem.node.types.Constant;
 import at.crimsonbit.nodesystem.node.types.Math;
@@ -30,13 +32,13 @@ public class CreateGraphFromCode extends Application {
 		Scene scene = new Scene(view, 1024, 768);
 
 		graph.initGraph(true);
-		
-		GNode constNode1 = new GNode("Constant Node", Constant.DOUBLE, true, graph, 70, 250);
-		GNode constNode2 = new GNode("Constant Node 2", Constant.INTEGER, true, graph, 70, 350);
+
+		GNode constNode1 = new ConstantNodeClass("Constant Node", Constant.DOUBLE, true, graph, 70, 250);
+		GNode constNode2 = new ConstantNodeClass("Constant Node 2", Constant.INTEGER, true, graph, 70, 350);
 		GNode additionNode1 = new GNode("Addition Node", Math.ADD, true, graph, 300, 200);
 		GNode additionNode2 = new GNode("Addition Node", Math.ADD, true, graph, 500, 300);
 		GNode multiplyNode1 = new GNode("Multiply Node 1", Math.MULTIPLY, true, graph, 300, 400);
-		GNode outputNode = new GNode("Output", Base.OUTPUT, true, graph, 700, 300);
+		GNode outputNode = new OutputNodeClass("Output", Base.OUTPUT, true, graph, 700, 300);
 
 		constNode1.getAbstractNode().set("constant", 1337.12345);
 		constNode2.getAbstractNode().set("constant", 2);
@@ -57,7 +59,8 @@ public class CreateGraphFromCode extends Application {
 
 		graph.getGuiMaster().addConnection(additionNode2.getOutputPorts().get(0), outputNode.getInputPortById(0));
 		graph.update();
-
+		
+		graph.addInfo();
 		scene.getStylesheets().add(getClass().getResource("node-menu.css").toExternalForm());
 		primaryStage.setScene(scene);
 		primaryStage.show();

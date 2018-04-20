@@ -14,6 +14,7 @@ import java.util.Set;
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.gui.node.GNodeConnection;
 import at.crimsonbit.nodesystem.gui.node.port.GPort;
+import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
 import at.crimsonbit.nodesystem.node.types.Base;
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
@@ -140,13 +141,13 @@ public class GNodeMaster {
 			if (con.getSourcePort() == port || con.getTargetPort() == port) {
 				try {
 					con.getTargetPort().getPortRectangle()
-							.setInputColor(graph.getColorLookup().get(con.getTarget().getNodeType()));
+							.setInputColor(graph.getColorLookup().get(GraphSettings.COLOR_PORT_INPUT));
 					con.getTargetPort().getPortRectangle().redraw();
 					con.getTargetPort().redraw();
 					getNodeMaster().removeConnection(con.getTarget().getAbstractNode(),
 							con.getTargetPort().getStringID());
 				} catch (NoSuchNodeException e) {
-					// TODO Auto-generated catch block
+
 					e.printStackTrace();
 				}
 				allConnections.remove(con);
