@@ -1,6 +1,8 @@
 package at.crimsonbit.nodesystem.examples;
 
 import java.io.File;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
 
 import at.crimsonbit.nodesystem.examples.customnode.CustomNodeClassExample;
 import at.crimsonbit.nodesystem.examples.customnode.CustomNodes;
@@ -52,7 +54,12 @@ public class LoadExistingGraph extends Application {
 		/**
 		 * Loading an existing graph from file
 		 */
-		graph.loadGraphFromFile(new File(getClass().getResource("nodesys.nsys").getFile()));
+		try {
+			graph.loadGraphFromFile(Paths.get((getClass().getResource("nodesys.nsys").toURI())));
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 

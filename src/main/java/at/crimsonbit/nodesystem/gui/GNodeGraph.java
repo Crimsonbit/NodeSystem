@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.FloatBuffer;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -559,15 +561,16 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private void onLoad() {
 		fileChooser.getExtensionFilters().add(extFilter);
 		File f = fileChooser.showOpenDialog(getParent().getScene().getWindow());
-		load(f);
+		Path p = f.toPath();
+		load(p);
 		// GLoader.loadGUI(nodeMaster, nodeMaster.getNodeMaster(), this);
 
 	}
 
-	private void load(File f) {
+	private void load(Path f) {
 		if (f != null)
 			try {
-				rebuildNodeGraph(f.getPath());
+				rebuildNodeGraph(f);
 				Toast.makeToast((Stage) getScene().getWindow(), "NodeSystem loaded successfully!", ToastTime.TIME_SHORT,
 						ToastPosition.BOTTOM);
 			} catch (Exception e) {
@@ -593,12 +596,12 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	 * @param graph_file
 	 *            the graph file you want to load
 	 */
-	public void loadGraphFromFile(File graph_file) {
+	public void loadGraphFromFile(Path graph_file) {
 		if (graph_file != null)
 			load(graph_file);
 	}
 
-	private void rebuildNodeGraph(String path)
+	private void rebuildNodeGraph(Path path)
 			throws IOException, NoSuchNodeException, NoSuchMethodException, SecurityException, InstantiationException,
 			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		clearGraph();

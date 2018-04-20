@@ -789,11 +789,24 @@ public class NodeMaster {
 	 * @throws IOException
 	 * @throws NoSuchNodeException
 	 */
-	public static NodeMaster load(String savefile) throws IOException, NoSuchNodeException {
+	public static NodeMaster load(Path savefile) throws IOException, NoSuchNodeException {
 		NodeMaster m = new NodeMaster();
 		if (!m.tryLoad(savefile))
 			return null;
 		return m;
+	}
+
+	/**
+	 * Loads a saved NodeMaster from a savefile created by
+	 * {@link NodeMaster#save(String, boolean)}
+	 * 
+	 * @param savefile
+	 * @return
+	 * @throws IOException
+	 * @throws NoSuchNodeException
+	 */
+	public static NodeMaster load(String savefile) throws IOException, NoSuchNodeException {
+		return load(Paths.get(savefile));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -811,8 +824,7 @@ public class NodeMaster {
 		extraInfo = null;
 	}
 
-	private boolean tryLoad(String savefile) throws IOException, NoSuchNodeException {
-		Path p = Paths.get(savefile);
+	private boolean tryLoad(Path p) throws IOException, NoSuchNodeException {
 		if (!Files.exists(p)) {
 			return false;
 		}
