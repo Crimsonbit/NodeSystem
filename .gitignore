@@ -3,4 +3,5 @@ target/
 .classpath
 .project
 NodeSystemV*.jar
+logFile.*
 /bin/

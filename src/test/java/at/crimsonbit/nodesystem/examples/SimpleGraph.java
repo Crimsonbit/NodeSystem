@@ -1,11 +1,15 @@
 package at.crimsonbit.nodesystem.examples;
 
+import java.io.IOException;
+import java.util.logging.Logger;
+
 import at.crimsonbit.nodesystem.examples.customnode.CustomNodeClassExample;
 import at.crimsonbit.nodesystem.examples.customnode.CustomNodes;
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.GNodeSystem;
 import at.crimsonbit.nodesystem.gui.GNodeView;
 import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
+import at.crimsonbit.nodesystem.util.logger.SystemLogger;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
@@ -19,13 +23,13 @@ import javafx.stage.Stage;
  * 
  * @author Florian Wagner
  *
- */       
+ */
 public class SimpleGraph extends Application {
 
 	@Override
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("Node Editor");
-
+		
 		GNodeSystem nodeSystem = new GNodeSystem(false);
 		GNodeView view = nodeSystem.getNodeView();
 		GNodeGraph graph = view.getNodeGraph();
@@ -53,6 +57,8 @@ public class SimpleGraph extends Application {
 		 */
 		graph.addSetting(GraphSettings.SETTING_CURVE_WIDTH, 6d);
 		graph.addSetting(GraphSettings.SETTING_CURVE_CURVE, 100d);
+		graph.getGeneralColorLookup().put(GraphSettings.COLOR_BACKGROUND_LINES, Color.WHITE);
+		graph.updateColors();
 
 		scene.getStylesheets().add(getClass().getResource("node-menu.css").toExternalForm());
 		primaryStage.setScene(scene);

@@ -30,7 +30,7 @@ public class TXTFormatter extends Formatter {
 			throwable = sw.toString();
 		}
 
-		return new String("[" + dat + "][" + record.getLevel() + "]	" + message + throwable + System.lineSeparator());
+		return new String("[" + dat + "][" + record.getLevel() + "] :	" + message + throwable + System.lineSeparator());
 	}
 
 }

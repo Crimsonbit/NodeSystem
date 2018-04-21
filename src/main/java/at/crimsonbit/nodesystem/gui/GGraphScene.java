@@ -1,6 +1,10 @@
 package at.crimsonbit.nodesystem.gui;
 
+import java.io.IOException;
+import java.util.logging.Logger;
+
 import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
+import at.crimsonbit.nodesystem.util.logger.SystemLogger;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.canvas.Canvas;
@@ -46,8 +50,15 @@ public class GGraphScene extends AnchorPane {
 	private double pY;
 	double width;
 	double height;
+	protected Logger log;
 
 	public GGraphScene() {
+		try {
+			log = SystemLogger.getLogger();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		scaleTransform = new Scale(scaleValue, scaleValue, 0, 0);
 		// getTransforms().add(scaleTransform);
@@ -88,20 +99,25 @@ public class GGraphScene extends AnchorPane {
 
 	}
 
+	public Logger getLogger() {
+		return log;
+	}
+
 	public Scale getScaleTransform() {
 		return this.scaleTransform;
 	}
 
-	private void init() {
+	protected void init() {
 		setBackground(new Background(new BackgroundFill(
 				graph.getGeneralColorLookup().get(GraphSettings.COLOR_BACKGROUND), CornerRadii.EMPTY, Insets.EMPTY)));
 		this.lineColor = graph.getGeneralColorLookup().get(GraphSettings.COLOR_BACKGROUND_LINES);
+		layoutChildren();
 	}
 
 	protected void setNodeGraph(GNodeGraph graph) {
 		this.graph = graph;
 		init();
-		layoutChildren();
+
 	}
 
 	public double getLocalMouseX() {
@@ -158,7 +174,7 @@ public class GGraphScene extends AnchorPane {
 
 	@Override
 	protected void layoutChildren() {
-		if (lineColor != null) {
+		if (this.lineColor != null) {
 			final int top = (int) snappedTopInset();
 			final int right = (int) snappedRightInset();
 			final int bottom = (int) snappedBottomInset();
@@ -177,7 +193,7 @@ public class GGraphScene extends AnchorPane {
 				GraphicsContext gc = canvas.getGraphicsContext2D();
 				gc.clearRect(0, 0, width, height);
 
-				gc.setStroke(new Color(lineColor.getRed(), lineColor.getGreen(), lineColor.getBlue(), 1d));
+				gc.setStroke(this.lineColor);
 				gc.setLineWidth(strokeValue);
 
 				final int hLineCount = (int) Math.floor((height + 1) / spacing);

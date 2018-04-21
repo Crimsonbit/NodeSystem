@@ -21,12 +21,20 @@ public class SystemLogger {
 	private static FileHandler fileHTML;
 	private static Formatter htmlFormatter;
 	private static Logger logger;
-
+	private static String logFileName = "logFile";
 	private static final String SUFFIX_TXT = ".txt";
 	private static final String SUFFIX_HTML = ".html";
 
-	public static void setup() throws IOException {
+	private static void createLogger() {
+		try {
+			setup();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
+	private static void setup() throws IOException {
 		logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
 		Logger rootLogger = Logger.getLogger("");
@@ -34,11 +42,10 @@ public class SystemLogger {
 		if (handlers[0] instanceof ConsoleHandler) {
 			rootLogger.removeHandler(handlers[0]);
 		}
+		logger.setLevel(Level.INFO); // default level
 
-		logger.setLevel(Level.INFO);
-
-		fileTxt = new FileHandler("Logging" + SUFFIX_TXT);
-		fileHTML = new FileHandler("Logging" + SUFFIX_HTML);
+		fileTxt = new FileHandler(logFileName + SUFFIX_TXT);
+		fileHTML = new FileHandler(logFileName + SUFFIX_HTML);
 
 		txtFormatter = new TXTFormatter();
 		fileTxt.setFormatter(txtFormatter);
@@ -51,7 +58,7 @@ public class SystemLogger {
 
 	public static Logger getLogger() throws IOException {
 		if (logger == null) {
-			setup();
+			createLogger();
 		}
 		return logger;
 	}

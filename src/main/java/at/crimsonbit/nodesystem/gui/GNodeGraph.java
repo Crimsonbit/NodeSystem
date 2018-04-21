@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
+import java.util.logging.Level;
 
 import at.crimsonbit.nodesystem.gui.dialog.GEntry;
 import at.crimsonbit.nodesystem.gui.dialog.GPopUp;
@@ -97,6 +98,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private GSubMenu fileMenu = new GSubMenu(1, "File");
 
 	public GNodeGraph() {
+		getLogger().log(Level.INFO, "Setting up NodeGraph...");
 
 		setDefaultColorLookup();
 		setNodeGraph(this);
@@ -126,6 +128,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		this.setPopUpDialog(graphDialog);
 
 		setDefaulSettings();
+		getLogger().log(Level.INFO, "NodeGraph set-up successfully!");
 	}
 
 	/**
@@ -142,18 +145,22 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	 */
 
 	public void initGraph(boolean defaultNodes) {
+		getLogger().log(Level.INFO, "Initializing NodeGraph...");
 		if (defaultNodes)
-			getGuiMaster().registerNodes(INTERNAL_NODES);
+			getLogger().log(Level.INFO, "Loading internal nodes...");
+		getGuiMaster().registerNodes(INTERNAL_NODES);
 
 		fillNodeList();
 		loadMenus();
 		addKeySupport();
 
+		getLogger().log(Level.INFO, "Added Menus and Key-support!");
 		addCustomNode(Base.OUTPUT, OutputNodeClass.class);
 		addCustomNode(Base.PATH, PathNodeClass.class);
 		for (INodeType t : Constant.values()) {
 			addCustomNode(t, ConstantNodeClass.class);
 		}
+		getLogger().log(Level.INFO, "Added default custom node classes!");
 	}
 
 	/**
@@ -224,6 +231,10 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		return state;
 	}
 
+	public void updateColors() {
+		init();
+	}
+
 	/**
 	 * <h1>public void setState({@link GState}).</h1>
 	 * <p>
@@ -283,6 +294,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	 */
 	public void addSetting(GraphSettings s, Object r) {
 		this.settings.put(s, r);
+		init();
 	}
 
 	/**
@@ -428,11 +440,12 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	 *            the packaged represented by a {@link String}.
 	 */
 	public void registerNodes(String pckg) {
+		getLogger().log(Level.INFO, "Registering custom nodes...");
 		getGuiMaster().registerNodes(pckg);
 	}
 
 	private void loadMenus() {
-
+		getLogger().log(Level.INFO, "Loading menus....");
 		Set<INodeType> map = getGuiMaster().getNodeMaster().getAllNodeClasses();
 
 		Map<String, GSubMenu> cache = new HashMap<>();
@@ -451,12 +464,13 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 				event.consume();
 
 			});
+			getLogger().log(Level.INFO, "Adding sub-menu: " + menu.toString());
 			menu.addItem(ent);
 
 		}
 		for (GSubMenu menu : cache.values()) {
 			nodeMenu.addMenu(menu);
-
+			getLogger().log(Level.INFO, "Adding menu: " + menu.toString());
 			// menuBar.addMenu(menu);
 		}
 
@@ -485,7 +499,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		fileMenu.addItem(loadGraph);
 		fileMenu.addSeparator(1003);
 		fileMenu.addItem(closeGraph);
-
+		getLogger().log(Level.INFO, "Done loading menus!");
 	}
 
 	private void addPopUpHandler(GPopUp dialog) {
@@ -753,6 +767,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	}
 
 	private void setDefaulSettings() {
+		getLogger().log(Level.INFO, "Setting defaults...");
 		addSetting(GraphSettings.SETTING_CURVE_WIDTH, 4d);
 		addSetting(GraphSettings.SETTING_CURVE_CURVE, 50d);
 		addSetting(GraphSettings.COLOR_SHADOW_COLOR, 0.1d);
@@ -763,6 +778,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	}
 
 	private void setDefaultColorLookup() {
+		getLogger().log(Level.INFO, "Setting up default color lookup...");
 		getColorLookup().put(Base.OUTPUT, Color.LIGHTBLUE);
 		getColorLookup().put(Base.PATH, Color.DARKSEAGREEN);
 		for (INodeType t : Constant.values())
