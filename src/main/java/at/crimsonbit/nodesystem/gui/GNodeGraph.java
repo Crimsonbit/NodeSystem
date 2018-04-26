@@ -163,10 +163,10 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 	public void initGraph(boolean defaultNodes) {
 		log(Level.INFO, "Initializing NodeGraph...");
-		if (defaultNodes)
+		if (defaultNodes) {
 			log(Level.INFO, "Loading internal nodes...");
-		getGuiMaster().registerNodes(INTERNAL_NODES);
-
+			getGuiMaster().registerNodes(INTERNAL_NODES);
+		}
 		fillNodeList();
 		loadMenus();
 		addKeySupport();
@@ -420,7 +420,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 				if (event.isShiftDown() && event.getCode().equals(KeyCode.O)) {
 					if (getActive().getNodeType().equals(Base.OUTPUT)) {
 						((OutputNodeClass) getActive()).setOutput();
-						
+
 						// update();
 					}
 				}

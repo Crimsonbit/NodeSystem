@@ -28,7 +28,7 @@ public class SimpleGraph extends Application {
 		primaryStage.setTitle("Node Editor");
 
 		GNodeGraph graph = new NodeSystemBuilder(1275, 800).attachLogger().init().attachInfo()
-				.registerDefaultNodes(false).registerCustomNodes("at.crimsonbit.nodesystem.examples.customnode")
+				.registerDefaultNodes(true).registerCustomNodes("at.crimsonbit.nodesystem.examples.customnode")
 				.build();
 
 		/**
