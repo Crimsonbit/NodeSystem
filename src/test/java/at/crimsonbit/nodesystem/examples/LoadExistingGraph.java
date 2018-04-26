@@ -26,9 +26,9 @@ public class LoadExistingGraph extends Application {
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("Node Editor");
 
-		GNodeGraph graph = new NodeSystemBuilder(1024, 768).attachLogger().init().attachInfo()
-				.registerDefaultNodes(false).registerCustomNodes("at.crimsonbit.nodesystem.examples.customnode")
-				.build();
+		GNodeGraph graph = new NodeSystemBuilder(1275, 800).attachLogger().init()
+				.registerCustomNodes("at.crimsonbit.nodesystem.examples.customnode").registerDefaultNodes(true)
+				.attachInfo().build();
 
 		/**
 		 * Example of how to add custom node-classes to specific node types

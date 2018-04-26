@@ -59,7 +59,7 @@ public class GGraphScene extends AnchorPane implements ILogging {
 		// setStyle("-fx-background-color: #363b3f");
 
 		setOnScroll(new ZoomHandler());
-
+		addEventHandler(MouseEvent.MOUSE_DRAGGED, new MoveHandler());
 		setTopAnchor(canvas, 0d);
 		setBottomAnchor(canvas, 0d);
 		setLeftAnchor(canvas, 0d);
@@ -243,6 +243,18 @@ public class GGraphScene extends AnchorPane implements ILogging {
 		layoutChildren();
 	}
 
+	protected class MoveHandler implements EventHandler<MouseEvent> {
+
+		@Override
+		public void handle(MouseEvent event) {
+			if (event.isMiddleButtonDown()) {
+				zoomTo(scaleValue);
+			}
+
+		}
+
+	}
+
 	/**
 	 * <h1>ZoomHandler</h1>
 	 * <p>
@@ -287,7 +299,9 @@ public class GGraphScene extends AnchorPane implements ILogging {
 				if (strokeValue != MIN_STROKE)
 					strokeWidth(strokeValue);
 				scrollEvent.consume();
+
 			} else {
+
 				if (scrollEvent.getDeltaY() < 0) {
 					scaleValue *= DELTA_MINUS;
 					lineSpacing *= DELTA_MINUS;

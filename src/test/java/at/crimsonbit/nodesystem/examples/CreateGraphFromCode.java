@@ -25,10 +25,10 @@ public class CreateGraphFromCode extends Application {
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("Node Editor");
 
-		GNodeGraph graph = new NodeSystemBuilder(1024, 768).attachLogger().init().attachInfo()
-				.registerDefaultNodes(false).registerCustomNodes("at.crimsonbit.nodesystem.examples.customnode")
-				.build();
-		
+		GNodeGraph graph = new NodeSystemBuilder(1275, 800).attachLogger().init()
+				.registerCustomNodes("at.crimsonbit.nodesystem.examples.customnode").registerDefaultNodes(true)
+				.attachInfo().build();
+
 		GNode constNode1 = new ConstantNodeClass("Constant Node", Constant.DOUBLE, true, graph, 70, 250);
 		GNode constNode2 = new ConstantNodeClass("Constant Node 2", Constant.INTEGER, true, graph, 70, 350);
 		GNode additionNode1 = new GNode("Addition Node", Math.ADD, true, graph, 300, 200);
@@ -55,7 +55,7 @@ public class CreateGraphFromCode extends Application {
 
 		graph.getGuiMaster().addConnection(additionNode2.getOutputPorts().get(0), outputNode.getInputPortById(0));
 		graph.update();
-		
+
 		Scene scene = graph.getNodeScene();
 		scene.getStylesheets().add(getClass().getResource("node-menu.css").toExternalForm());
 		primaryStage.setScene(scene);
