@@ -1,15 +1,12 @@
 package at.crimsonbit.nodesystem.examples;
 
-import java.io.IOException;
-import java.util.logging.Logger;
-
 import at.crimsonbit.nodesystem.examples.customnode.CustomNodeClassExample;
 import at.crimsonbit.nodesystem.examples.customnode.CustomNodes;
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.GNodeSystem;
 import at.crimsonbit.nodesystem.gui.GNodeView;
+import at.crimsonbit.nodesystem.gui.NodeSystemBuilder;
 import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
-import at.crimsonbit.nodesystem.util.logger.SystemLogger;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
@@ -29,21 +26,10 @@ public class SimpleGraph extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("Node Editor");
-		
-		GNodeSystem nodeSystem = new GNodeSystem(false);
-		GNodeView view = nodeSystem.getNodeView();
-		GNodeGraph graph = view.getNodeGraph();
 
-		Scene scene = new Scene(view, 1024, 768);
-
-		graph.registerNodes("at.crimsonbit.nodesystem.examples.customnode"); // has to be called before initGraph!
-		graph.addInfo(); // Adds information to the top of the screen
-
-		/**
-		 * initGraph() has to be called AFTER the graph was added to the scene!
-		 **/
-
-		graph.initGraph(true);
+		GNodeGraph graph = new NodeSystemBuilder(1275, 800).attachLogger().init().attachInfo()
+				.registerDefaultNodes(false).registerCustomNodes("at.crimsonbit.nodesystem.examples.customnode")
+				.build();
 
 		/**
 		 * Example of how to add custom node-classes to specific node types
@@ -60,6 +46,7 @@ public class SimpleGraph extends Application {
 		graph.getGeneralColorLookup().put(GraphSettings.COLOR_BACKGROUND_LINES, Color.WHITE);
 		graph.updateColors();
 
+		Scene scene = graph.getNodeScene();
 		scene.getStylesheets().add(getClass().getResource("node-menu.css").toExternalForm());
 		primaryStage.setScene(scene);
 		primaryStage.show();

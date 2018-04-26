@@ -7,6 +7,7 @@ import at.crimsonbit.nodesystem.examples.customnode.CustomNodes;
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.GNodeSystem;
 import at.crimsonbit.nodesystem.gui.GNodeView;
+import at.crimsonbit.nodesystem.gui.NodeSystemBuilder;
 import at.crimsonbit.nodesystem.gui.dialog.GEntry;
 import at.crimsonbit.nodesystem.gui.dialog.GSubMenu;
 import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
@@ -31,20 +32,9 @@ public class CustomGraphDialogs extends Application {
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("Node Editor");
 
-		GNodeSystem nodeSystem = new GNodeSystem(false);
-		GNodeView view = nodeSystem.getNodeView();
-		GNodeGraph graph = view.getNodeGraph();
-
-		Scene scene = new Scene(view, 1024, 768);
-
-		graph.registerNodes("at.crimsonbit.nodesystem.examples.customnode"); // has to be called before initGraph!
-		graph.addInfo(); // Adds information to the top of the screen
-
-		/**
-		 * initGraph() has to be called AFTER the graph was added to the scene!
-		 **/
-
-		graph.initGraph(true);
+		GNodeGraph graph = new NodeSystemBuilder(1024, 768).attachLogger().init().attachInfo()
+				.registerDefaultNodes(false).registerCustomNodes("at.crimsonbit.nodesystem.examples.customnode")
+				.build();
 
 		/**
 		 * Example of how to add custom node-classes to specific node types
@@ -59,6 +49,7 @@ public class CustomGraphDialogs extends Application {
 		graph.addSetting(GraphSettings.SETTING_CURVE_WIDTH, 6d);
 		graph.addSetting(GraphSettings.SETTING_CURVE_CURVE, 100d);
 
+		Scene scene = graph.getNodeScene();
 		scene.getStylesheets().add(getClass().getResource("node-menu.css").toExternalForm());
 		primaryStage.setScene(scene);
 		primaryStage.show();

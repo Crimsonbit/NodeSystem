@@ -16,10 +16,12 @@ import javafx.util.Duration;
 public class Animator {
 	private static Timeline intTimeline = new Timeline();
 	private static Timeline outTImeline = new Timeline();
+	private static boolean isFinished = true;
 
 	private static void resetTimeline() {
 		intTimeline = new Timeline();
 		outTImeline = new Timeline();
+		isFinished = false;
 	}
 
 	public static void animateToast(Stage stage, int duration, int startDuration, int endDuration) {
@@ -42,7 +44,7 @@ public class Animator {
 				outTImeline.getKeyFrames().add(outKey);
 				outTImeline.setOnFinished((finishActionEvent) -> stage.close());
 				outTImeline.play();
-
+				isFinished = true;
 			}).start();
 		});
 
@@ -68,25 +70,33 @@ public class Animator {
 	 */
 	public static void animateProperty(DoubleProperty prop, int holdTime, int startDuration, int endDuration,
 			double firstVal, double secondVal) {
-		resetTimeline();
-		KeyFrame inKey = new KeyFrame(Duration.millis(startDuration), new KeyValue(prop, firstVal));
 
-		intTimeline.getKeyFrames().add(inKey);
-		intTimeline.setOnFinished((actionEvent) -> {
-			new Thread(() -> {
-				try {
-					Thread.sleep(holdTime);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+		if (isFinished) {
+			resetTimeline();
+			KeyFrame inKey = new KeyFrame(Duration.millis(startDuration), new KeyValue(prop, firstVal));
 
-				KeyFrame outKey = new KeyFrame(Duration.millis(endDuration), new KeyValue(prop, secondVal));
-				outTImeline.getKeyFrames().add(outKey);
-				outTImeline.play();
+			intTimeline.getKeyFrames().add(inKey);
+			intTimeline.setOnFinished((actionEvent) -> {
+				new Thread(() -> {
+					try {
+						Thread.sleep(holdTime);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 
-			}).start();
-		});
+					KeyFrame outKey = new KeyFrame(Duration.millis(endDuration), new KeyValue(prop, secondVal));
+					outTImeline.getKeyFrames().add(outKey);
+					outTImeline.play();
+					isFinished = true;
+				}).start();
+			});
 
-		intTimeline.play();
+			intTimeline.play();
+		}
 	}
+
+	public static boolean isFinished() {
+		return isFinished;
+	}
+
 }

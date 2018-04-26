@@ -15,8 +15,12 @@ package at.crimsonbit.nodesystem.gui;
 public class GNodeSystem {
 
 	private GNodeView nodeView;
-	
-	public GNodeSystem(boolean addPane) {
+
+	public GNodeSystem() {
+		nodeView = new GNodeView(false);
+	}
+
+	protected void attachSettingsPane(boolean addPane) {
 		this.nodeView = new GNodeView(addPane);
 	}
 

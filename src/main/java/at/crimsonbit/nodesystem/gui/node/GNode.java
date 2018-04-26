@@ -324,23 +324,23 @@ public class GNode extends Pane implements IGNode {
 			e.setRadius((double) getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_RADIUS));
 			base.setEffect(e);
 
-			setView(base);
+			addView(base);
 			if (active) {
-				setView(outline);
+				addView(outline);
 			} else {
 				removeView(outline);
 			}
-			setView(top);
-			setView(text);
+			addView(top);
+			addView(text);
 
 			for (GPort p : inputPorts) {
 				removeView(p);
-				setView(p);
+				addView(p);
 				p.toFront();
 			}
 			for (GPort p : outputPorts) {
 				removeView(p);
-				setView(p);
+				addView(p);
 				p.toFront();
 			}
 
@@ -412,7 +412,6 @@ public class GNode extends Pane implements IGNode {
 	}
 
 	private void addPopUpHandler() {
-
 		addEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, event -> {
 			this.popUpDialog.show(this, event.getScreenX(), event.getScreenY());
 			event.consume();
@@ -437,23 +436,18 @@ public class GNode extends Pane implements IGNode {
 
 	public void consumeMessage(int id) {
 		if (id == 3) {
-
 			nodeGraph.getGuiMaster().removeNode(this);
 			nodeGraph.update();
-
 		} else if (id == 1) {
-
 			nodeGraph.update();
 			setActive(false);
 			redraw();
-
 		} else if (id == 2) {
 			doBlur();
 			TextInputDialog dialog = new TextInputDialog(getName());
 			dialog.setTitle("Name");
 			dialog.setHeaderText("Set a new name for the node.");
 			dialog.setContentText("Name: ");
-
 			Optional<String> result = dialog.showAndWait();
 			if (result.isPresent()) {
 				setName(result.get() + nameAddition);
@@ -485,7 +479,6 @@ public class GNode extends Pane implements IGNode {
 			p.redrawAndRelocate(this.top.getWidth() - PORT_TOP_DRAW_OFFSET);
 			p.redraw();
 			List<GNodeConnection> conn = getConnections();
-			// System.out.println(conn.size());
 			conn.stream().filter(con -> getOutputPorts().contains(con.getSourcePort())).forEach(con -> {
 				// System.out.println(con);
 				// con.relocate(this.top.getWidth(), con.sourcePort.getY());
@@ -496,7 +489,6 @@ public class GNode extends Pane implements IGNode {
 
 	protected void setName(String string) {
 		this.name = string;
-
 	}
 
 	public void addShape(Shape s) {
@@ -507,19 +499,19 @@ public class GNode extends Pane implements IGNode {
 		return this.shapes;
 	}
 
-	public void addCellChild(GNode cell) {
+	public void addNodeChildren(GNode cell) {
 		children.add(cell);
 	}
 
-	public List<GNode> getCellChildren() {
+	public List<GNode> getNodeChildren() {
 		return children;
 	}
 
-	public void addCellParent(GNode cell) {
+	public void addNodeParent(GNode cell) {
 		parents.add(cell);
 	}
 
-	public List<GNode> getCellParents() {
+	public List<GNode> getNodeParents() {
 		return parents;
 	}
 
@@ -527,8 +519,7 @@ public class GNode extends Pane implements IGNode {
 		children.remove(cell);
 	}
 
-	public void setView(Node view) {
-
+	public void addView(Node view) {
 		getChildren().add(view);
 	}
 
@@ -545,13 +536,11 @@ public class GNode extends Pane implements IGNode {
 	}
 
 	public boolean isPortPressed() {
-		// TODO Auto-generated method stub
 		return this.portPressed;
 	}
 
 	@Override
 	public void consumeCustomMessage(int id) {
-		// TODO Auto-generated method stub
 
 	}
 

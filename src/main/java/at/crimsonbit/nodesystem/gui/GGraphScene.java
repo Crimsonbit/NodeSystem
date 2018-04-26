@@ -1,10 +1,9 @@
 package at.crimsonbit.nodesystem.gui;
 
-import java.io.IOException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
-import at.crimsonbit.nodesystem.util.logger.SystemLogger;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.canvas.Canvas;
@@ -28,7 +27,7 @@ import javafx.scene.transform.Scale;
  * @author Florian Wagner
  *
  */
-public class GGraphScene extends AnchorPane {
+public class GGraphScene extends AnchorPane implements ILogging {
 
 	private static final double HALF_PIXEL_OFFSET = -0.5;
 
@@ -53,12 +52,6 @@ public class GGraphScene extends AnchorPane {
 	protected Logger log;
 
 	public GGraphScene() {
-		try {
-			log = SystemLogger.getLogger();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
 		scaleTransform = new Scale(scaleValue, scaleValue, 0, 0);
 		// getTransforms().add(scaleTransform);
@@ -100,6 +93,8 @@ public class GGraphScene extends AnchorPane {
 	}
 
 	public Logger getLogger() {
+		if (log != null)
+			return log;
 		return log;
 	}
 
@@ -312,6 +307,12 @@ public class GGraphScene extends AnchorPane {
 
 		}
 
+	}
+
+	@Override
+	public void log(Level l, String msg) {
+		if (getLogger() != null)
+			log.log(l, msg);
 	}
 
 }

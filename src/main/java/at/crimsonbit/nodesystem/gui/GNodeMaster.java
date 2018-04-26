@@ -288,8 +288,8 @@ public class GNodeMaster {
 	public void attachOrphansToGraphParent(Collection<GNode> cellList) {
 
 		for (GNode cell : cellList) {
-			if (cell.getCellParents().size() == 0) {
-				graphParent.addCellChild(cell);
+			if (cell.getNodeParents().size() == 0) {
+				graphParent.addNodeChildren(cell);
 			}
 		}
 

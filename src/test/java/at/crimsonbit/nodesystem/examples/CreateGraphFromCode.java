@@ -1,8 +1,7 @@
 package at.crimsonbit.nodesystem.examples;
 
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
-import at.crimsonbit.nodesystem.gui.GNodeSystem;
-import at.crimsonbit.nodesystem.gui.GNodeView;
+import at.crimsonbit.nodesystem.gui.NodeSystemBuilder;
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.node.base.OutputNodeClass;
 import at.crimsonbit.nodesystem.node.constant.ConstantNodeClass;
@@ -26,13 +25,10 @@ public class CreateGraphFromCode extends Application {
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("Node Editor");
 
-		GNodeSystem nodeSystem = new GNodeSystem(false);
-		GNodeView view = nodeSystem.getNodeView();
-		GNodeGraph graph = view.getNodeGraph();
-		Scene scene = new Scene(view, 1024, 768);
-
-		graph.initGraph(true);
-
+		GNodeGraph graph = new NodeSystemBuilder(1024, 768).attachLogger().init().attachInfo()
+				.registerDefaultNodes(false).registerCustomNodes("at.crimsonbit.nodesystem.examples.customnode")
+				.build();
+		
 		GNode constNode1 = new ConstantNodeClass("Constant Node", Constant.DOUBLE, true, graph, 70, 250);
 		GNode constNode2 = new ConstantNodeClass("Constant Node 2", Constant.INTEGER, true, graph, 70, 350);
 		GNode additionNode1 = new GNode("Addition Node", Math.ADD, true, graph, 300, 200);
@@ -60,7 +56,7 @@ public class CreateGraphFromCode extends Application {
 		graph.getGuiMaster().addConnection(additionNode2.getOutputPorts().get(0), outputNode.getInputPortById(0));
 		graph.update();
 		
-		graph.addInfo();
+		Scene scene = graph.getNodeScene();
 		scene.getStylesheets().add(getClass().getResource("node-menu.css").toExternalForm());
 		primaryStage.setScene(scene);
 		primaryStage.show();

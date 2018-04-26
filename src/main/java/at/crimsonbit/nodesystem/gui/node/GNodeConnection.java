@@ -31,8 +31,8 @@ public class GNodeConnection extends Group {
 		this.source = sourcePort.getNode();
 		this.target = targetPort.getNode();
 
-		source.addCellChild(target);
-		target.addCellParent(source);
+		source.addNodeChildren(target);
+		target.addNodeParent(source);
 
 		draw();
 		getChildren().add(line);

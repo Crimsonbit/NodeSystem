@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.FloatBuffer;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,9 +38,11 @@ import at.crimsonbit.nodesystem.nodebackend.api.NodeMaster;
 import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
 import at.crimsonbit.nodesystem.util.DragContext;
 import at.crimsonbit.nodesystem.util.SystemUsage;
+import at.crimsonbit.nodesystem.util.logger.SystemLogger;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
+import javafx.scene.Scene;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.KeyCode;
@@ -79,7 +80,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private GPopUp graphDialog;
 	private GSettingsPane settingsPane;
 	private GNode toCopy;
-
+	private Scene sc;
 	private GNodeLayer nodeLayer;
 	private GLineLayer lineLayer;
 	private HashMap<INodeType, Color> colorLookup = new HashMap<INodeType, Color>();
@@ -96,9 +97,17 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private GState state = GState.DEFAULT;
 	private GSubMenu nodeMenu = new GSubMenu(0, "Add Node");
 	private GSubMenu fileMenu = new GSubMenu(1, "File");
+	private GLogPane logPane;
 
-	public GNodeGraph() {
-		getLogger().log(Level.INFO, "Setting up NodeGraph...");
+	public GNodeGraph(GLogPane logPane) {
+		setLogPane(logPane);
+		try {
+			log = SystemLogger.getLogger(logPane);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		log(Level.INFO, "Setting up NodeGraph...");
 
 		setDefaultColorLookup();
 		setNodeGraph(this);
@@ -128,7 +137,15 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		this.setPopUpDialog(graphDialog);
 
 		setDefaulSettings();
-		getLogger().log(Level.INFO, "NodeGraph set-up successfully!");
+		log(Level.INFO, "NodeGraph set-up successfully!");
+	}
+
+	public GLogPane getLogPane() {
+		return logPane;
+	}
+
+	public void setLogPane(GLogPane logPane) {
+		this.logPane = logPane;
 	}
 
 	/**
@@ -145,22 +162,22 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	 */
 
 	public void initGraph(boolean defaultNodes) {
-		getLogger().log(Level.INFO, "Initializing NodeGraph...");
+		log(Level.INFO, "Initializing NodeGraph...");
 		if (defaultNodes)
-			getLogger().log(Level.INFO, "Loading internal nodes...");
+			log(Level.INFO, "Loading internal nodes...");
 		getGuiMaster().registerNodes(INTERNAL_NODES);
 
 		fillNodeList();
 		loadMenus();
 		addKeySupport();
 
-		getLogger().log(Level.INFO, "Added Menus and Key-support!");
+		log(Level.INFO, "Added Menus and Key-support!");
 		addCustomNode(Base.OUTPUT, OutputNodeClass.class);
 		addCustomNode(Base.PATH, PathNodeClass.class);
 		for (INodeType t : Constant.values()) {
 			addCustomNode(t, ConstantNodeClass.class);
 		}
-		getLogger().log(Level.INFO, "Added default custom node classes!");
+		log(Level.INFO, "Added default custom node classes!");
 	}
 
 	/**
@@ -370,6 +387,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 				if (event.isControlDown() && event.getCode().equals(KeyCode.C)) {
 					toCopy = getActive();
+					log(Level.INFO, "Node: " + getActive().getName() + " copied to clipboard!");
 				}
 				if (event.isControlDown() && event.getCode().equals(KeyCode.V) && toCopy != null) {
 					if (toCopy != null) {
@@ -381,6 +399,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 					setActive(toCopy);
 					toCopy.toFront();
 					update();
+					log(Level.INFO, "Node: " + getActive().getName() + " pasted from clipboard!");
 				}
 				if (event.getCode().equals(KeyCode.DELETE)) {
 					if (getActive() != null) {
@@ -389,6 +408,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 					} else if (getState().equals(GState.PORTCON)) {
 						setState(GState.DEFAULT);
 					}
+					log(Level.INFO, "Node: " + getActive().getName() + " was deleted from the graph!");
 				}
 				if (event.isShiftDown() && event.getCode().equals(KeyCode.C)) {
 					for (INodeType t : Constant.values())
@@ -400,6 +420,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 				if (event.isShiftDown() && event.getCode().equals(KeyCode.O)) {
 					if (getActive().getNodeType().equals(Base.OUTPUT)) {
 						((OutputNodeClass) getActive()).setOutput();
+						
 						// update();
 					}
 				}
@@ -440,12 +461,12 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	 *            the packaged represented by a {@link String}.
 	 */
 	public void registerNodes(String pckg) {
-		getLogger().log(Level.INFO, "Registering custom nodes...");
+		log(Level.INFO, "Registering custom nodes...");
 		getGuiMaster().registerNodes(pckg);
 	}
 
 	private void loadMenus() {
-		getLogger().log(Level.INFO, "Loading menus....");
+		log(Level.INFO, "Loading menus....");
 		Set<INodeType> map = getGuiMaster().getNodeMaster().getAllNodeClasses();
 
 		Map<String, GSubMenu> cache = new HashMap<>();
@@ -464,13 +485,13 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 				event.consume();
 
 			});
-			getLogger().log(Level.INFO, "Adding sub-menu: " + menu.toString());
+			log(Level.INFO, "Adding sub-menu: " + menu.toString());
 			menu.addItem(ent);
 
 		}
 		for (GSubMenu menu : cache.values()) {
 			nodeMenu.addMenu(menu);
-			getLogger().log(Level.INFO, "Adding menu: " + menu.toString());
+			log(Level.INFO, "Adding menu: " + menu.toString());
 			// menuBar.addMenu(menu);
 		}
 
@@ -499,7 +520,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		fileMenu.addItem(loadGraph);
 		fileMenu.addSeparator(1003);
 		fileMenu.addItem(closeGraph);
-		getLogger().log(Level.INFO, "Done loading menus!");
+		log(Level.INFO, "Done loading menus!");
 	}
 
 	private void addPopUpHandler(GPopUp dialog) {
@@ -528,6 +549,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 						double.class);
 				GNode node = con.newInstance(source.getName(), type, true, this, getCurX(), getCurY());
 				getGuiMaster().addNode(node);
+				log(Level.INFO, "Node: " + node.getName() + " was added to the graph!");
 			} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
 					| IllegalArgumentException | InvocationTargetException e) {
 				e.printStackTrace();
@@ -561,15 +583,19 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 				getGuiMaster().getNodeMaster().save(f.getPath(), true);
 				Toast.makeToast((Stage) getScene().getWindow(), "NodeSystem saved successfully!", ToastTime.TIME_SHORT,
 						ToastPosition.BOTTOM);
+				log(Level.FINE, "NodeSystem saved successfully!");
 			} catch (IOException e) {
 				Toast.makeToast((Stage) getScene().getWindow(), "Error while saving!", ToastTime.TIME_SHORT,
 						ToastPosition.BOTTOM);
 				e.printStackTrace();
-
+				log(Level.SEVERE, "Error while saving!");
 			}
-		else
+		else {
 			Toast.makeToast((Stage) getScene().getWindow(), "Error file is null!", ToastTime.TIME_SHORT,
 					ToastPosition.BOTTOM);
+
+			log(Level.SEVERE, "Error file is null!");
+		}
 	}
 
 	private void onLoad() {
@@ -587,15 +613,18 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 				rebuildNodeGraph(f);
 				Toast.makeToast((Stage) getScene().getWindow(), "NodeSystem loaded successfully!", ToastTime.TIME_SHORT,
 						ToastPosition.BOTTOM);
+				log(Level.FINE, "NodeSystem loaded successfully!");
 			} catch (Exception e) {
 				Toast.makeToast((Stage) getScene().getWindow(), "Error while loading!", ToastTime.TIME_SHORT,
 						ToastPosition.BOTTOM);
 				e.printStackTrace();
+				log(Level.SEVERE, "Error while loading!");
 			}
-		else
+		else {
 			Toast.makeToast((Stage) getScene().getWindow(), "Error: No file selected!", ToastTime.TIME_SHORT,
 					ToastPosition.BOTTOM);
-
+			log(Level.SEVERE, "Error: No file selected!");
+		}
 	}
 
 	/**
@@ -767,7 +796,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	}
 
 	private void setDefaulSettings() {
-		getLogger().log(Level.INFO, "Setting defaults...");
+		log(Level.INFO, "Setting defaults...");
 		addSetting(GraphSettings.SETTING_CURVE_WIDTH, 4d);
 		addSetting(GraphSettings.SETTING_CURVE_CURVE, 50d);
 		addSetting(GraphSettings.COLOR_SHADOW_COLOR, 0.1d);
@@ -778,7 +807,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	}
 
 	private void setDefaultColorLookup() {
-		getLogger().log(Level.INFO, "Setting up default color lookup...");
+		log(Level.INFO, "Setting up default color lookup...");
 		getColorLookup().put(Base.OUTPUT, Color.LIGHTBLUE);
 		getColorLookup().put(Base.PATH, Color.DARKSEAGREEN);
 		for (INodeType t : Constant.values())
@@ -858,6 +887,18 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	public void clearGraph() {
 		nodeMaster.removeAll();
 		update();
+	}
+
+	public void setGraphScene(Scene sc) {
+		this.setNodeScene(sc);
+	}
+
+	public Scene getNodeScene() {
+		return sc;
+	}
+
+	public void setNodeScene(Scene sc) {
+		this.sc = sc;
 	}
 
 }
