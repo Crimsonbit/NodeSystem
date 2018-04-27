@@ -18,7 +18,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -26,11 +25,9 @@ import java.util.zip.ZipOutputStream;
 import org.reflections.Reflections;
 
 import com.google.common.base.Function;
-import com.google.common.base.Supplier;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 
 import at.crimsonbit.nodesystem.nodebackend.api.dto.ConnectionDTO;
 import at.crimsonbit.nodesystem.nodebackend.api.dto.FieldDTO;

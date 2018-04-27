@@ -60,6 +60,7 @@ public class GGraphScene extends AnchorPane implements ILogging {
 
 		setOnScroll(new ZoomHandler());
 		addEventHandler(MouseEvent.MOUSE_DRAGGED, new MoveHandler());
+
 		setTopAnchor(canvas, 0d);
 		setBottomAnchor(canvas, 0d);
 		setLeftAnchor(canvas, 0d);
@@ -93,8 +94,6 @@ public class GGraphScene extends AnchorPane implements ILogging {
 	}
 
 	public Logger getLogger() {
-		if (log != null)
-			return log;
 		return log;
 	}
 

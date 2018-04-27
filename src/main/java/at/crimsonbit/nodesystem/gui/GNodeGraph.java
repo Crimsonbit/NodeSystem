@@ -66,7 +66,6 @@ import javafx.stage.Stage;
  * @author Florian Wagner
  *
  */
-@SuppressWarnings("restriction")
 public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 	private static final String INTERNAL_NODES = "at.crimsonbit.nodesystem.node";

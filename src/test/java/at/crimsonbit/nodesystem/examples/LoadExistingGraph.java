@@ -6,8 +6,6 @@ import java.nio.file.Paths;
 import at.crimsonbit.nodesystem.examples.customnode.CustomNodeClassExample;
 import at.crimsonbit.nodesystem.examples.customnode.CustomNodes;
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
-import at.crimsonbit.nodesystem.gui.GNodeSystem;
-import at.crimsonbit.nodesystem.gui.GNodeView;
 import at.crimsonbit.nodesystem.gui.NodeSystemBuilder;
 import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
 import javafx.application.Application;

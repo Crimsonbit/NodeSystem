@@ -9,11 +9,8 @@ import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
 
-import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
-import at.crimsonbit.nodesystem.nodebackend.api.NodeMaster;
 import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
 import at.crimsonbit.nodesystem.nodebackend.testnodes.MyNodeTypes;
-import at.crimsonbit.nodesystem.nodebackend.util.NodeConnection;
 
 class TestPersistence {
 

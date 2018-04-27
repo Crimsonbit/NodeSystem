@@ -5,8 +5,6 @@ import java.util.function.BiConsumer;
 import at.crimsonbit.nodesystem.examples.customnode.CustomNodeClassExample;
 import at.crimsonbit.nodesystem.examples.customnode.CustomNodes;
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
-import at.crimsonbit.nodesystem.gui.GNodeSystem;
-import at.crimsonbit.nodesystem.gui.GNodeView;
 import at.crimsonbit.nodesystem.gui.NodeSystemBuilder;
 import at.crimsonbit.nodesystem.gui.dialog.GEntry;
 import at.crimsonbit.nodesystem.gui.dialog.GSubMenu;

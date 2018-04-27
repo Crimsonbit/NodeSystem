@@ -21,7 +21,6 @@ import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeMaster;
 import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
 import at.crimsonbit.nodesystem.nodebackend.util.NodeConnection;
-import at.crimsonbit.nodesystem.nodebackend.util.Tuple;
 
 /**
  * 
@@ -136,6 +135,7 @@ public class GNodeMaster {
 		return false;
 	}
 
+	@SuppressWarnings("unlikely-arg-type")
 	public void removeConnection(GPort port) {
 		for (GNodeConnection con : getAllEdges()) {
 			if (con.getSourcePort() == port || con.getTargetPort() == port) {

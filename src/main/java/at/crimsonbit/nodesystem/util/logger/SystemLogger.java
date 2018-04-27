@@ -49,6 +49,14 @@ public class SystemLogger {
 		}
 	}
 
+	/**
+	 * Attaches the logger.
+	 * 
+	 * @param uH
+	 *            use HTML logging
+	 * @param uT
+	 *            use TXT logging
+	 */
 	public static void attachLogger(boolean uH, boolean uT) {
 		if (!isAttached) {
 			doLog = true;
