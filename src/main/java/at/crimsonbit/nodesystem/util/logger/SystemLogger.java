@@ -13,10 +13,12 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import at.crimsonbit.nodesystem.gui.GLogPane;
-import at.crimsonbit.nodesystem.gui.animation.Animator;
 
 /**
- * Logger Utility for the NodeSystem.
+ * <h1>SystemLogger</h1>
+ * <p>
+ * This is a utility logger class that is used by the whole NodeSystem.
+ * </p>
  * 
  * @author Florian Wagner
  *
@@ -33,9 +35,10 @@ public class SystemLogger {
 	private static final String SUFFIX_HTML = ".html";
 	private static GLogPane loggingPane;
 	private static final Date dat = new Date();
-	private static int c = 0;
 	private static boolean doLog = false;
 	private static boolean isAttached = false;
+	private static boolean useHTML = true;
+	private static boolean useTXT = true;
 
 	private static void createLogger() {
 		try {
@@ -46,10 +49,12 @@ public class SystemLogger {
 		}
 	}
 
-	public static void attachLogger() {
+	public static void attachLogger(boolean uH, boolean uT) {
 		if (!isAttached) {
 			doLog = true;
 			isAttached = true;
+			useHTML = uH;
+			useTXT = uT;
 			// createLogger();
 		}
 	}
@@ -104,17 +109,18 @@ public class SystemLogger {
 				}
 
 			});
-			fileTxt = new FileHandler(logFileName + SUFFIX_TXT);
-			fileHTML = new FileHandler(logFileName + SUFFIX_HTML);
-
-			txtFormatter = new TXTFormatter();
-			fileTxt.setFormatter(txtFormatter);
-			logger.addHandler(fileTxt);
-
-			htmlFormatter = new HTMLFormatter();
-			fileHTML.setFormatter(htmlFormatter);
-			logger.addHandler(fileHTML);
-
+			if (useTXT) {
+				fileTxt = new FileHandler(logFileName + SUFFIX_TXT);
+				txtFormatter = new TXTFormatter();
+				fileTxt.setFormatter(txtFormatter);
+				logger.addHandler(fileTxt);
+			}
+			if (useHTML) {
+				fileHTML = new FileHandler(logFileName + SUFFIX_HTML);
+				htmlFormatter = new HTMLFormatter();
+				fileHTML.setFormatter(htmlFormatter);
+				logger.addHandler(fileHTML);
+			}
 		}
 
 	}

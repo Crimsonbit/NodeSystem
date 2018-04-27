@@ -1,5 +1,7 @@
 package at.crimsonbit.nodesystem.examples.customnode;
 
+import java.util.logging.Level;
+
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.animation.Animator;
 import at.crimsonbit.nodesystem.gui.node.GNode;
@@ -31,6 +33,7 @@ public class CustomNodeClassExample extends GNode {
 		// internally
 		addPopUpItem(5, "Make Toast"); // Adds a custom pop-up menu item.
 		addPopUpItem(6, "Animate"); // Adds a custom pop-up menu item.
+		addPopUpItem(7, "Append Log"); // Adds a custom pop-up menu item.
 	}
 
 	/**
@@ -44,6 +47,10 @@ public class CustomNodeClassExample extends GNode {
 		}
 		if (id == 6) {
 			Animator.animateProperty(opacityProperty(), 500, 200, 200, 0, 1);
+		}
+		if (id == 7) {
+			// the log function is located in the nodegraph.
+			getNodeGraph().log(Level.WARNING, "This is a custom log warning!");
 		}
 	}
 

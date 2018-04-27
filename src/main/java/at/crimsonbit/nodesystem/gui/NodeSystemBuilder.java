@@ -103,11 +103,33 @@ public class NodeSystemBuilder {
 	 * {@link NodeSystemBuilder#init()}!
 	 * </p>
 	 * 
+	 * @param uH
+	 *            if you want to enable HTML logging
+	 * @param uT
+	 *            if you want to enable TXT logging
+	 * @return this
+	 */
+	public NodeSystemBuilder attachLogger(boolean uH, boolean uT) {
+
+		SystemLogger.attachLogger(uH, uT);
+
+		return this;
+	}
+
+	/**
+	 * <h1>attachLogger()</h1>
+	 * <p>
+	 * Attaches a logger to the nodegraph. <br>
+	 * Attention: You have to call this method <b>BEFORE</b>
+	 * {@link NodeSystemBuilder#init()}! By default HTML and TXT logging will be
+	 * enabled.
+	 * </p>
+	 * 
 	 * @return this
 	 */
 	public NodeSystemBuilder attachLogger() {
 
-		SystemLogger.attachLogger();
+		SystemLogger.attachLogger(true, true);
 
 		return this;
 	}

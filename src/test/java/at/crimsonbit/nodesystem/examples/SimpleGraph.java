@@ -3,8 +3,6 @@ package at.crimsonbit.nodesystem.examples;
 import at.crimsonbit.nodesystem.examples.customnode.CustomNodeClassExample;
 import at.crimsonbit.nodesystem.examples.customnode.CustomNodes;
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
-import at.crimsonbit.nodesystem.gui.GNodeSystem;
-import at.crimsonbit.nodesystem.gui.GNodeView;
 import at.crimsonbit.nodesystem.gui.NodeSystemBuilder;
 import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
 import javafx.application.Application;
@@ -30,7 +28,7 @@ public class SimpleGraph extends Application {
 		GNodeGraph graph = new NodeSystemBuilder(1275, 800).attachLogger().init()
 				.registerCustomNodes("at.crimsonbit.nodesystem.examples.customnode").registerDefaultNodes(true)
 				.attachInfo().build();
-
+		
 		/**
 		 * Example of how to add custom node-classes to specific node types
 		 */

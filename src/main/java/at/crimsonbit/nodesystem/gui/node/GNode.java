@@ -330,6 +330,7 @@ public class GNode extends Pane implements IGNode {
 			} else {
 				removeView(outline);
 			}
+
 			addView(top);
 			addView(text);
 

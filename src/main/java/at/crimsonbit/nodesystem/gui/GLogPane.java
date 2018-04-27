@@ -1,6 +1,5 @@
 package at.crimsonbit.nodesystem.gui;
 
-import java.time.Instant;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -13,9 +12,18 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
+/**
+ * <h1>GLogPane</h1>
+ * <p>
+ * This is the log pane of the nodegraph. This pane is in the nodegraph by
+ * default and is located at the top right hand corner of the nodegrpah.
+ * </p>
+ * 
+ * @author Florian Wagner
+ *
+ */
 public class GLogPane extends Pane {
 	private Text logText;
-	private Instant last = Instant.now();
 
 	public GLogPane() {
 		logText = new Text();
@@ -28,16 +36,25 @@ public class GLogPane extends Pane {
 
 	}
 
+	/**
+	 * Returns the {@link Text} object of the LogPane.
+	 * 
+	 * @return the logging text object
+	 */
 	public Text getLogText() {
 		return logText;
 	}
 
-	public void setLogText(Text logText) {
-		this.logText = logText;
-	}
-
+	/**
+	 * <h1>appendLog({@link String})</h1>
+	 * <p>
+	 * This method appends a log msg to the LogPane. It does not append but rather
+	 * replace the message and animates it.
+	 * </p>
+	 * 
+	 * @param msg
+	 */
 	public void appendLog(String msg) {
-		Instant now = Instant.now();
 		Timer timer = new Timer(false);
 		TimerTask task = new TimerTask() {
 			@Override
@@ -48,10 +65,6 @@ public class GLogPane extends Pane {
 		};
 
 		timer.schedule(task, 1);
-
 		logText.setText("\n" + msg);
-		last = now;
-
 	}
-
 }

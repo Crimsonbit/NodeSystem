@@ -233,6 +233,14 @@ public class GGraphScene extends AnchorPane implements ILogging {
 
 	}
 
+	public void moveTo(double x, double y) {
+		needsLayout = true;
+		layoutChildren();
+		scaleTransform.setPivotX(x);
+		scaleTransform.setPivotY(y);
+
+	}
+
 	public void strokeWidth(double strokeval) {
 		if (strokeval <= 1)
 			strokeval = 1;
@@ -243,12 +251,23 @@ public class GGraphScene extends AnchorPane implements ILogging {
 		layoutChildren();
 	}
 
+	/**
+	 * <h1>MoveHandler</h1>
+	 * <p>
+	 * The MoveHandler class is a support class which allows the dragging of the
+	 * nodegraph.
+	 * </p>
+	 * 
+	 * @author Florian Wagner
+	 *
+	 */
 	protected class MoveHandler implements EventHandler<MouseEvent> {
 
 		@Override
+		// TODO
 		public void handle(MouseEvent event) {
 			if (event.isMiddleButtonDown()) {
-				zoomTo(scaleValue);
+				moveTo(event.getSceneX() / scaleValue, event.getSceneY() / scaleValue);
 			}
 
 		}
@@ -298,7 +317,6 @@ public class GGraphScene extends AnchorPane implements ILogging {
 				strokeValue = clamp(strokeValue, MIN_STROKE, MAX_STROKE);
 				if (strokeValue != MIN_STROKE)
 					strokeWidth(strokeValue);
-				scrollEvent.consume();
 
 			} else {
 
@@ -309,20 +327,27 @@ public class GGraphScene extends AnchorPane implements ILogging {
 					scaleValue *= DELTA_PLUS;
 					lineSpacing *= DELTA_PLUS;
 				}
+
+				// System.out.println(scaleValue);
+				// System.out.println(lineSpacing);
+				scaleValue = clamp(scaleValue, MIN_SCALE, MAX_SCALE);
+				lineSpacing = clamp(lineSpacing, MIN_SPACING, MAX_SPACING);
+				if (scaleValue != MIN_SCALE)
+					zoomTo(scaleValue);
+
 			}
-			// System.out.println(scaleValue);
-			// System.out.println(lineSpacing);
-			scaleValue = clamp(scaleValue, MIN_SCALE, MAX_SCALE);
-			lineSpacing = clamp(lineSpacing, MIN_SPACING, MAX_SPACING);
-			if (scaleValue != MIN_SCALE)
-				zoomTo(scaleValue);
-
 			scrollEvent.consume();
-
 		}
 
 	}
 
+	/**
+	 * <h1>log({@link Level}, {@link String})</h1>
+	 * <p>
+	 * By using this method one can log any message to the graph, and to the log
+	 * file.
+	 * </p>
+	 */
 	@Override
 	public void log(Level l, String msg) {
 		if (getLogger() != null)
