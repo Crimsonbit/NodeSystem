@@ -27,6 +27,13 @@ public class CustomNodeClassExample extends GNode {
 		super();
 	}
 
+	public CustomNodeClassExample(String name, int id, boolean draw, GNodeGraph graph) {
+		super(name, id, draw, graph);
+		addPopUpItem(5, "Make Toast"); // Adds a custom pop-up menu item.
+		addPopUpItem(6, "Animate"); // Adds a custom pop-up menu item.
+		addPopUpItem(7, "Append Log"); // Adds a custom pop-up menu item.
+	}
+	
 	public CustomNodeClassExample(String name, INodeType type, boolean draw, GNodeGraph graph, double x, double y) {
 		super(name, type, draw, graph, x, y);
 		// int ppc = getInternalIDCounter(); // Tells you the latest popup-menu id used
