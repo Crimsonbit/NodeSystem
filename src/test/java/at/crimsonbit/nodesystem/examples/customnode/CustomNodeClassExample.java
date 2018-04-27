@@ -2,6 +2,8 @@ package at.crimsonbit.nodesystem.examples.customnode;
 
 import java.util.logging.Level;
 
+import com.google.common.collect.Sets.SetView;
+
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.animation.Animator;
 import at.crimsonbit.nodesystem.gui.node.GNode;
@@ -9,6 +11,7 @@ import at.crimsonbit.nodesystem.gui.widget.toast.Toast;
 import at.crimsonbit.nodesystem.gui.widget.toast.ToastPosition;
 import at.crimsonbit.nodesystem.gui.widget.toast.ToastTime;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 /**
@@ -37,6 +40,7 @@ public class CustomNodeClassExample extends GNode {
 
 	public CustomNodeClassExample(String name, INodeType type, boolean draw, GNodeGraph graph, double x, double y) {
 		super(name, type, draw, graph, x, y);
+
 		addPopUpItem(5, "Make Toast"); // Adds a custom pop-up menu item.
 		addPopUpItem(6, "Animate"); // Adds a custom pop-up menu item.
 		addPopUpItem(7, "Append Log"); // Adds a custom pop-up menu item.

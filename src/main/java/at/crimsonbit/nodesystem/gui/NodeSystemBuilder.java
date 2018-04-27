@@ -2,8 +2,10 @@ package at.crimsonbit.nodesystem.gui;
 
 import java.util.logging.Level;
 
+import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.util.logger.SystemLogger;
 import javafx.scene.Scene;
+import javafx.scene.paint.Color;
 
 /**
  * <h1>NodeSystemBuilder</h1>
@@ -23,6 +25,7 @@ public class NodeSystemBuilder {
 	private Scene scene;
 	private double w;
 	private double h;
+	private boolean default_nodes;
 
 	/**
 	 * Constructor.
@@ -55,6 +58,7 @@ public class NodeSystemBuilder {
 		graph = view.getNodeGraph();
 		scene = new Scene(view, w, h);
 		graph.setGraphScene(scene);
+		graph.initGraph(false);
 		return this;
 	}
 
@@ -86,12 +90,22 @@ public class NodeSystemBuilder {
 	 * 
 	 * @param pack
 	 *            the package name as string
+	 * @param c
+	 *            the color of the nodes
 	 * @return this
 	 */
-	public NodeSystemBuilder registerCustomNodes(String pack) {
+	public NodeSystemBuilder registerCustomNodes(String pckg) {
 		if (graph != null)
-			graph.registerNodes(pack);
+			graph.registerNodes(pckg);
 
+		return this;
+	}
+
+	public NodeSystemBuilder registerColors(Color c, INodeType... types) {
+		if (graph != null)
+			for (INodeType t : types) {
+				graph.addColorLookup(t, c);
+			}
 		return this;
 	}
 
@@ -146,8 +160,7 @@ public class NodeSystemBuilder {
 	 * @return this
 	 */
 	public NodeSystemBuilder registerDefaultNodes(boolean f) {
-		if (graph != null)
-			graph.initGraph(f);
+		default_nodes = f;
 
 		return this;
 	}
@@ -176,8 +189,12 @@ public class NodeSystemBuilder {
 	 * @return the newly built GNodeGraph object
 	 */
 	public GNodeGraph build() {
-		this.graph.log(Level.INFO, "NodeSystem ready!");
-		return this.graph;
+		if (this.graph != null) {
+			graph.initGraph(default_nodes);
+			this.graph.log(Level.INFO, "NodeSystem ready!");
+			return this.graph;
+		}
+		return null;
 	}
 
 }

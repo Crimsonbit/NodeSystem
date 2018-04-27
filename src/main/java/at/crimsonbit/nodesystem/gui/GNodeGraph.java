@@ -462,6 +462,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	public void registerNodes(String pckg) {
 		log(Level.INFO, "Registering custom nodes...");
 		getGuiMaster().registerNodes(pckg);
+
 	}
 
 	private void loadMenus() {

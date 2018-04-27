@@ -26,15 +26,13 @@ public class SimpleGraph extends Application {
 		primaryStage.setTitle("Node Editor");
 
 		GNodeGraph graph = new NodeSystemBuilder(1275, 800).attachLogger().init()
-				.registerCustomNodes("at.crimsonbit.nodesystem.examples.customnode").registerDefaultNodes(true)
-				.attachInfo().build();
-		
+				.registerCustomNodes("at.crimsonbit.nodesystem.examples.customnode")
+				.registerColors(Color.SANDYBROWN, CustomNodes.values()).registerDefaultNodes(true).attachInfo().build();
+
 		/**
 		 * Example of how to add custom node-classes to specific node types
 		 */
 		graph.addCustomNode(CustomNodes.EXAMPLE, new CustomNodeClassExample().getClass());
-		graph.addColorLookup(CustomNodes.EXAMPLE, Color.SANDYBROWN); // Sets the color of our custom node.
-
 		/**
 		 * Example of how to change settings used in the node-system
 		 * 
