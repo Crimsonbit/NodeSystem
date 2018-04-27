@@ -352,6 +352,7 @@ public class GNodeMaster {
 		}
 		graph.update();
 		master.getExtraInfo(this::loadData);
+		master.setExtraInfoSavingFunction(this::saveData);
 		graph.update();
 	}
 
