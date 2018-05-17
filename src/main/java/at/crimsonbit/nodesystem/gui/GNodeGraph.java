@@ -21,7 +21,7 @@ import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.gui.node.IGConsumable;
 import at.crimsonbit.nodesystem.gui.settings.GSettingsPane;
 import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
-import at.crimsonbit.nodesystem.gui.widget.toast.Toast;
+import at.crimsonbit.nodesystem.gui.widget.toast.JFXToast;
 import at.crimsonbit.nodesystem.gui.widget.toast.ToastPosition;
 import at.crimsonbit.nodesystem.gui.widget.toast.ToastTime;
 import at.crimsonbit.nodesystem.node.base.OutputNodeClass;
@@ -581,17 +581,17 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		if (f != null)
 			try {
 				getGuiMaster().getNodeMaster().save(f.getPath(), true);
-				Toast.makeToast((Stage) getScene().getWindow(), "NodeSystem saved successfully!", ToastTime.TIME_SHORT,
-						ToastPosition.BOTTOM);
+				JFXToast.makeToast((Stage) getScene().getWindow(), "NodeSystem saved successfully!",
+						ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
 				log(Level.FINE, "NodeSystem saved successfully!");
 			} catch (IOException e) {
-				Toast.makeToast((Stage) getScene().getWindow(), "Error while saving!", ToastTime.TIME_SHORT,
+				JFXToast.makeToast((Stage) getScene().getWindow(), "Error while saving!", ToastTime.TIME_SHORT,
 						ToastPosition.BOTTOM);
 				e.printStackTrace();
 				log(Level.SEVERE, "Error while saving!");
 			}
 		else {
-			Toast.makeToast((Stage) getScene().getWindow(), "Error file is null!", ToastTime.TIME_SHORT,
+			JFXToast.makeToast((Stage) getScene().getWindow(), "Error file is null!", ToastTime.TIME_SHORT,
 					ToastPosition.BOTTOM);
 
 			log(Level.SEVERE, "Error file is null!");
@@ -611,17 +611,17 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		if (f != null)
 			try {
 				rebuildNodeGraph(f);
-				Toast.makeToast((Stage) getScene().getWindow(), "NodeSystem loaded successfully!", ToastTime.TIME_SHORT,
-						ToastPosition.BOTTOM);
+				JFXToast.makeToast((Stage) getScene().getWindow(), "NodeSystem loaded successfully!",
+						ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
 				log(Level.FINE, "NodeSystem loaded successfully!");
 			} catch (Exception e) {
-				Toast.makeToast((Stage) getScene().getWindow(), "Error while loading!", ToastTime.TIME_SHORT,
+				JFXToast.makeToast((Stage) getScene().getWindow(), "Error while loading!", ToastTime.TIME_SHORT,
 						ToastPosition.BOTTOM);
 				e.printStackTrace();
 				log(Level.SEVERE, "Error while loading!");
 			}
 		else {
-			Toast.makeToast((Stage) getScene().getWindow(), "Error: No file selected!", ToastTime.TIME_SHORT,
+			JFXToast.makeToast((Stage) getScene().getWindow(), "Error: No file selected!", ToastTime.TIME_SHORT,
 					ToastPosition.BOTTOM);
 			log(Level.SEVERE, "Error: No file selected!");
 		}

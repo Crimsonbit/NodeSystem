@@ -9,7 +9,7 @@ import at.crimsonbit.nodesystem.gui.NodeSystemBuilder;
 import at.crimsonbit.nodesystem.gui.dialog.GEntry;
 import at.crimsonbit.nodesystem.gui.dialog.GSubMenu;
 import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
-import at.crimsonbit.nodesystem.gui.widget.toast.Toast;
+import at.crimsonbit.nodesystem.gui.widget.toast.JFXToast;
 import at.crimsonbit.nodesystem.gui.widget.toast.ToastPosition;
 import at.crimsonbit.nodesystem.gui.widget.toast.ToastTime;
 import javafx.application.Application;
@@ -30,7 +30,7 @@ public class CustomGraphDialogs extends Application {
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("Node Editor");
 
-		GNodeGraph graph = new NodeSystemBuilder(1275, 800).attachLogger().init()
+		GNodeGraph graph = new NodeSystemBuilder(1275, 800, true).init()
 				.registerCustomNodes("at.crimsonbit.nodesystem.examples.customnode").registerDefaultNodes(true)
 				.attachInfo().build();
 
@@ -60,7 +60,7 @@ public class CustomGraphDialogs extends Application {
 
 		BiConsumer<Integer, GEntry> consumer = (id, entry) -> {
 			if (id == 1) {
-				Toast.makeToast(primaryStage, "Example message!", ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
+				JFXToast.makeToast(primaryStage, "Example message!", ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
 			}
 		};
 

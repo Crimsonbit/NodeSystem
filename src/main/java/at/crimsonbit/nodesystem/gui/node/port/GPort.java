@@ -150,7 +150,7 @@ public class GPort extends Group implements IGConsumable {
 		return this.x;
 	}
 
-	public void redrawAndRelocate(double x) {
+	public void relocatePortX(double x) {
 		// getChildren().clear();
 		label.setIx(x);
 		rect.setRX(x);

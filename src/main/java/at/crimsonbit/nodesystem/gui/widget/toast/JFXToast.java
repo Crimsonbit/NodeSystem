@@ -19,7 +19,7 @@ import javafx.stage.StageStyle;
  * @author Florian Wagner
  *
  */
-public class Toast {
+public class JFXToast {
 
 	private static Text tx_msg;
 	private static Scene scene;
@@ -71,7 +71,7 @@ public class Toast {
 		scene.setFill(Color.TRANSPARENT);
 		tx_msg.setFill(Color.WHITE);
 
-		root.getStylesheets().add(Toast.class.getResource("toaststyle.css").toExternalForm());
+		root.getStylesheets().add(JFXToast.class.getResource("toaststyle.css").toExternalForm());
 
 		root.setOpacity(0);
 		stage.setScene(scene);

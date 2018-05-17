@@ -25,7 +25,7 @@ public class CreateGraphFromCode extends Application {
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("Node Editor");
 
-		GNodeGraph graph = new NodeSystemBuilder(1275, 800).attachLogger().init()
+		GNodeGraph graph = new NodeSystemBuilder(1275, 800, true).init()
 				.registerCustomNodes("at.crimsonbit.nodesystem.examples.customnode").registerDefaultNodes(true)
 				.attachInfo().build();
 

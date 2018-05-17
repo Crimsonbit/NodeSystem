@@ -217,11 +217,6 @@ public class GGraphScene extends AnchorPane implements ILogging {
 	public void zoomTo(double scaleValue) {
 
 		this.scaleValue = scaleValue;
-		if (lineSpacing > 500)
-			lineSpacing = 500;
-		if (lineSpacing <= 1)
-			lineSpacing = 1;
-
 		needsLayout = true;
 		layoutChildren();
 
@@ -285,10 +280,13 @@ public class GGraphScene extends AnchorPane implements ILogging {
 	protected class ZoomHandler implements EventHandler<ScrollEvent> {
 		private static final double MAX_SCALE = 10.0d;
 		private static final double MIN_SCALE = 0.4d;
+
 		private static final double DELTA_PLUS = 1.1d;
 		private static final double DELTA_MINUS = 0.9d;
-		private static final double MIN_SPACING = 5;
-		private static final double MAX_SPACING = 40;
+
+		private static final double MIN_SPACING = 10d;
+		private static final double MAX_SPACING = 250d;
+
 		private static final double MIN_STROKE = 0.1d;
 		private static final double MAX_STROKE = 4d;
 
@@ -313,7 +311,6 @@ public class GGraphScene extends AnchorPane implements ILogging {
 					strokeValue *= DELTA_PLUS;
 				}
 
-				strokeValue = clamp(strokeValue, MIN_STROKE, MAX_STROKE);
 				if (strokeValue != MIN_STROKE)
 					strokeWidth(strokeValue);
 
@@ -331,6 +328,7 @@ public class GGraphScene extends AnchorPane implements ILogging {
 				// System.out.println(lineSpacing);
 				scaleValue = clamp(scaleValue, MIN_SCALE, MAX_SCALE);
 				lineSpacing = clamp(lineSpacing, MIN_SPACING, MAX_SPACING);
+				strokeValue = clamp(strokeValue, MIN_STROKE, MAX_STROKE);
 				if (scaleValue != MIN_SCALE)
 					zoomTo(scaleValue);
 

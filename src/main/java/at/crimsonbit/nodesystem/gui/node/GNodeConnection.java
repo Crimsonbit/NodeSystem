@@ -3,6 +3,7 @@ package at.crimsonbit.nodesystem.gui.node;
 import at.crimsonbit.nodesystem.gui.node.port.GPort;
 import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
 import javafx.scene.Group;
+import javafx.scene.control.Tooltip;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
@@ -21,7 +22,7 @@ public class GNodeConnection extends Group {
 	protected GNode source;
 	protected GNode target;
 	private CubicCurve line;
-
+	private Tooltip tTip = new Tooltip();
 	private double width;
 
 	public GNodeConnection(GPort sourcePort, GPort targetPort) {
@@ -30,12 +31,16 @@ public class GNodeConnection extends Group {
 		this.targetPort = targetPort;
 		this.source = sourcePort.getNode();
 		this.target = targetPort.getNode();
-
 		source.addNodeChildren(target);
 		target.addNodeParent(source);
-
+		tTip.setText("Source: " + sourcePort.getStringID() + "\nTarge: " + targetPort.getStringID());
 		draw();
 		getChildren().add(line);
+		Tooltip.install(this, tTip);
+	}
+
+	public void resetSourcePort(GPort source) {
+		this.sourcePort = source;
 	}
 
 	public void draw() {
@@ -71,6 +76,14 @@ public class GNodeConnection extends Group {
 		e.setOffsetY((double) source.getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_HEIGHT));
 		e.setRadius((double) source.getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_RADIUS));
 		line.setEffect(e);
+	}
+
+	public void update(GPort p1, GPort p2) {
+		this.sourcePort = p1;
+		this.targetPort = p2;
+		getChildren().remove(line);
+		draw();
+		getChildren().add(line);
 	}
 
 	public double getWidth() {

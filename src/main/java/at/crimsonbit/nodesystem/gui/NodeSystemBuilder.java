@@ -34,10 +34,15 @@ public class NodeSystemBuilder {
 	 *            width of the nodegraph scene
 	 * @param height
 	 *            height of the nodegraph scene
+	 * 
+	 * @param log
+	 *            tells the nodesystem whether if it should write into a log or not
 	 */
-	public NodeSystemBuilder(double width, double height) {
+	public NodeSystemBuilder(double width, double height, boolean log) {
 		this.w = width;
 		this.h = height;
+		if (log)
+			SystemLogger.attachLogger(true, true);
 
 	}
 
@@ -58,7 +63,7 @@ public class NodeSystemBuilder {
 		graph = view.getNodeGraph();
 		scene = new Scene(view, w, h);
 		graph.setGraphScene(scene);
-		graph.initGraph(false);
+
 		return this;
 	}
 
@@ -126,24 +131,6 @@ public class NodeSystemBuilder {
 	public NodeSystemBuilder attachLogger(boolean uH, boolean uT) {
 
 		SystemLogger.attachLogger(uH, uT);
-
-		return this;
-	}
-
-	/**
-	 * <h1>attachLogger()</h1>
-	 * <p>
-	 * Attaches a logger to the nodegraph. <br>
-	 * Attention: You have to call this method <b>BEFORE</b>
-	 * {@link NodeSystemBuilder#init()}! By default HTML and TXT logging will be
-	 * enabled.
-	 * </p>
-	 * 
-	 * @return this
-	 */
-	public NodeSystemBuilder attachLogger() {
-
-		SystemLogger.attachLogger(true, true);
 
 		return this;
 	}

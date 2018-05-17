@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.node.GNode;
-import at.crimsonbit.nodesystem.gui.widget.toast.Toast;
+import at.crimsonbit.nodesystem.gui.widget.toast.JFXToast;
 import at.crimsonbit.nodesystem.gui.widget.toast.ToastPosition;
 import at.crimsonbit.nodesystem.gui.widget.toast.ToastTime;
 import at.crimsonbit.nodesystem.node.types.Constant;
@@ -75,7 +75,7 @@ public class ConstantNodeClass extends GNode {
 					this.getAbstractNode().set("constant", b);
 
 				} catch (Exception e) {
-					Toast.makeToast((Stage) getScene().getWindow(), "Invalid input!\nPlease type in a boolean type!",
+					JFXToast.makeToast((Stage) getScene().getWindow(), "Invalid input!\nPlease type in a boolean type!",
 							ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
 				}
 			} else if (this.type == Constant.DOUBLE) {
@@ -84,7 +84,7 @@ public class ConstantNodeClass extends GNode {
 					this.getAbstractNode().set("constant", b);
 
 				} catch (Exception e) {
-					Toast.makeToast((Stage) getScene().getWindow(), "Invalid input!\nPlease type in a double type!",
+					JFXToast.makeToast((Stage) getScene().getWindow(), "Invalid input!\nPlease type in a double type!",
 							ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
 				}
 			} else if (this.type == Constant.FLOAT) {
@@ -93,7 +93,7 @@ public class ConstantNodeClass extends GNode {
 					this.getAbstractNode().set("constant", b);
 
 				} catch (Exception e) {
-					Toast.makeToast((Stage) getScene().getWindow(), "Invalid input!\nPlease type in a float type!",
+					JFXToast.makeToast((Stage) getScene().getWindow(), "Invalid input!\nPlease type in a float type!",
 							ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
 				}
 			} else if (this.type == Constant.INTEGER) {
@@ -102,7 +102,7 @@ public class ConstantNodeClass extends GNode {
 					this.getAbstractNode().set("constant", b);
 
 				} catch (Exception e) {
-					Toast.makeToast((Stage) getScene().getWindow(), "Invalid input!\nPlease type in a integer type!",
+					JFXToast.makeToast((Stage) getScene().getWindow(), "Invalid input!\nPlease type in a integer type!",
 							ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
 				}
 			} else if (this.type == Constant.BYTE) {
@@ -111,7 +111,7 @@ public class ConstantNodeClass extends GNode {
 					this.getAbstractNode().set("constant", b);
 
 				} catch (Exception e) {
-					Toast.makeToast((Stage) getScene().getWindow(), "Invalid input!\nPlease type in a byte type!",
+					JFXToast.makeToast((Stage) getScene().getWindow(), "Invalid input!\nPlease type in a byte type!",
 							ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
 				}
 
@@ -121,7 +121,7 @@ public class ConstantNodeClass extends GNode {
 					this.getAbstractNode().set("constant", b);
 
 				} catch (Exception e) {
-					Toast.makeToast((Stage) getScene().getWindow(), "Invalid input!\nPlease type in a long type!",
+					JFXToast.makeToast((Stage) getScene().getWindow(), "Invalid input!\nPlease type in a long type!",
 							ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
 				}
 			} else if (this.type == Constant.SHORT) {
@@ -130,7 +130,7 @@ public class ConstantNodeClass extends GNode {
 					this.getAbstractNode().set("constant", b);
 
 				} catch (Exception e) {
-					Toast.makeToast((Stage) getScene().getWindow(), "Invalid input!\nPlease type in a short type!",
+					JFXToast.makeToast((Stage) getScene().getWindow(), "Invalid input!\nPlease type in a short type!",
 							ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
 				}
 			}

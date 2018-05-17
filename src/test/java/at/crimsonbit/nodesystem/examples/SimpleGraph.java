@@ -25,7 +25,7 @@ public class SimpleGraph extends Application {
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("Node Editor");
 
-		GNodeGraph graph = new NodeSystemBuilder(1275, 800).attachLogger().init()
+		GNodeGraph graph = new NodeSystemBuilder(1275, 800, true).init()
 				.registerCustomNodes("at.crimsonbit.nodesystem.examples.customnode")
 				.registerColors(Color.SANDYBROWN, CustomNodes.values()).registerDefaultNodes(true).attachInfo().build();
 
@@ -37,8 +37,8 @@ public class SimpleGraph extends Application {
 		 * Example of how to change settings used in the node-system
 		 * 
 		 */
-		graph.addSetting(GraphSettings.SETTING_CURVE_WIDTH, 6d);
-		graph.addSetting(GraphSettings.SETTING_CURVE_CURVE, 100d);
+		// graph.addSetting(GraphSettings.SETTING_CURVE_WIDTH, 6d);
+		// graph.addSetting(GraphSettings.SETTING_CURVE_CURVE, 100d);
 		graph.getGeneralColorLookup().put(GraphSettings.COLOR_BACKGROUND_LINES, Color.WHITE);
 		graph.updateColors();
 

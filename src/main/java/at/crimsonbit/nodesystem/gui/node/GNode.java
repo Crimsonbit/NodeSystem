@@ -30,6 +30,12 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 
 /**
+ * <h1>GNode</h1>
+ * <p>
+ * The base Node class. Every node of the NodeSystem is derived from this very
+ * class. It has all the main features in it. To draw custom nodes all you have
+ * to do is to override the draw function.
+ * </p>
  * 
  * @author Florian Wagner
  *
@@ -477,13 +483,11 @@ public class GNode extends Pane implements IGNode {
 
 	protected void computeNewPortLocations() {
 		for (GPort p : getOutputPorts()) {
-			p.redrawAndRelocate(this.top.getWidth() - PORT_TOP_DRAW_OFFSET);
+			p.relocatePortX(this.top.getWidth() - PORT_TOP_DRAW_OFFSET);
 			p.redraw();
 			List<GNodeConnection> conn = getConnections();
 			conn.stream().filter(con -> getOutputPorts().contains(con.getSourcePort())).forEach(con -> {
-				// System.out.println(con);
-				// con.relocate(this.top.getWidth(), con.sourcePort.getY());
-				con.draw();
+				con.update(con.getSourcePort(), con.getTargetPort());
 			});
 		}
 	}
