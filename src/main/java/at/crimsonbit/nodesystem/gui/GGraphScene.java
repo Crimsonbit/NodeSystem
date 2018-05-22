@@ -90,7 +90,8 @@ public class GGraphScene extends AnchorPane implements ILogging {
 				}
 			}
 		});
-
+		
+		GClip.install(this);
 	}
 
 	public Logger getLogger() {
