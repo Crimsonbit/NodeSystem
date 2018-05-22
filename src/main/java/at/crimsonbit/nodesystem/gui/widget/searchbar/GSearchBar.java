@@ -1,5 +1,8 @@
 package at.crimsonbit.nodesystem.gui.widget.searchbar;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
@@ -52,6 +55,7 @@ public class GSearchBar {
 
 	public void search(Stage sc, GNodeGraph graph) {
 		open = true;
+		graph.doBlur();
 		this.graph = graph;
 		stage = new Stage();
 		stage.initOwner(sc);
@@ -65,14 +69,14 @@ public class GSearchBar {
 
 		idd_search_text = new TextField("Search...");
 
-		root.setBottomAnchor(idd_search_text, 0d);
-		root.setTopAnchor(idd_search_text, 0d);
-		root.setLeftAnchor(idd_search_text, 0d);
-		root.setRightAnchor(idd_search_text, 0d);
 		root.getChildren().add(idd_search_text);
 		root.getChildren().add(idd_search_res);
 
 		root.setRightAnchor(idd_search_res, 0d);
+		root.setBottomAnchor(idd_search_text, 0d);
+		root.setTopAnchor(idd_search_text, 0d);
+		root.setLeftAnchor(idd_search_text, 0d);
+		root.setRightAnchor(idd_search_text, 0d);
 
 		scene = new Scene(root);
 		scene.getStylesheets().add(getClass().getResource("searchbar.css").toExternalForm());
@@ -100,6 +104,7 @@ public class GSearchBar {
 			if (idd_search_text.getText() != null)
 				if (s.toLowerCase().contains(idd_search_text.getText().toLowerCase()))
 					idd_search_res.getItems().add(s);
+			idd_search_res.show();
 		}
 	}
 
@@ -116,6 +121,7 @@ public class GSearchBar {
 			if (event.getCode().equals(KeyCode.ESCAPE)) {
 				stage.close();
 				open = false;
+				graph.removeBlur();
 				return;
 			}
 
@@ -126,12 +132,23 @@ public class GSearchBar {
 				open = false;
 				if (graph != null) {
 					// graph.getGuiMaster().addNode();
-					INodeType node = graph.getGuiMaster().getNodeMaster().getStringToTypeMap()
-							.get(idd_search_text.getText());
-					if (node != null) {
-						graph.getGuiMaster().addNode(new GNode(idd_search_text.getText(), node, true, graph,
-								graph.getCurX(), graph.getCurY()));
+
+					INodeType type = graph.getGuiMaster().getNodeMaster().getTypeByName(search);
+					if (type != null) {
+						Class<? extends GNode> clazz = graph.getNodeMap().get(type);
+						Constructor<? extends GNode> con;
+						try {
+							con = clazz.getConstructor(String.class, INodeType.class, boolean.class, GNodeGraph.class,
+									double.class, double.class);
+							GNode n = con.newInstance(search, type, true, graph, graph.getCurX(), graph.getCurY());
+							graph.getGuiMaster().addNode(n);
+						} catch (NoSuchMethodException | SecurityException | InstantiationException
+								| IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+							e.printStackTrace();
+						}
+
 						graph.update();
+						graph.removeBlur();
 					}
 				}
 				return;

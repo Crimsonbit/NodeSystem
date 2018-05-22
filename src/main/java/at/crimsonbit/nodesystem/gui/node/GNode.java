@@ -54,6 +54,7 @@ public class GNode extends Pane implements IGNode {
 
 	private Color topColor;
 	private Color backColor;
+	private String typeName;
 
 	private boolean doDraw = false;
 	private boolean active = false;
@@ -111,6 +112,7 @@ public class GNode extends Pane implements IGNode {
 		this.name = name;
 		this.nodeGraph = graph;
 		this.type = graph.getGuiMaster().getNodeMaster().getTypeOfNode(id);
+		this.typeName = this.type.toString();
 		this.doDraw = draw;
 		defaultTopColor();
 		defaultBackColor();
@@ -133,10 +135,22 @@ public class GNode extends Pane implements IGNode {
 		return this.connections;
 	}
 
+	public String getTypeName() {
+		return this.typeName;
+	}
+
 	private void addToolTip() {
 		tooltip.setText(
 				"Name: " + name + "\nType: " + getNodeType().toString() + "\nConnections: " + connections.size());
 		Tooltip.install(this, tooltip);
+	}
+
+	public INodeType getType() {
+		return type;
+	}
+
+	public void setType(INodeType type) {
+		this.type = type;
 	}
 
 	private void addAllPorts() {
@@ -430,17 +444,6 @@ public class GNode extends Pane implements IGNode {
 		addPopUpItemHandler();
 	}
 
-	public void doBlur() {
-		BoxBlur blur = new BoxBlur(3, 3, 3);
-		getParent().setEffect(blur);
-		nodeGraph.setEffect(blur);
-	}
-
-	public void removeBlur() {
-		getParent().setEffect(null);
-		nodeGraph.setEffect(null);
-	}
-
 	public void consumeMessage(int id) {
 		if (id == 3) {
 			nodeGraph.getGuiMaster().removeNode(this);
@@ -450,7 +453,7 @@ public class GNode extends Pane implements IGNode {
 			setActive(false);
 			redraw();
 		} else if (id == 2) {
-			doBlur();
+			nodeGraph.doBlur();
 			TextInputDialog dialog = new TextInputDialog(getName());
 			dialog.setTitle("Name");
 			dialog.setHeaderText("Set a new name for the node.");
@@ -458,9 +461,9 @@ public class GNode extends Pane implements IGNode {
 			Optional<String> result = dialog.showAndWait();
 			if (result.isPresent()) {
 				setName(result.get() + nameAddition);
-				removeBlur();
+				nodeGraph.removeBlur();
 			} else {
-				removeBlur();
+				nodeGraph.removeBlur();
 			}
 			redraw();
 
@@ -473,11 +476,12 @@ public class GNode extends Pane implements IGNode {
 			// getNodeGraph().update();
 
 		} else if (id == 0) {
-			GNode node = new GNode(this);
-			node.relocate(getBoundsInParent().getMinX(), getBoundsInParent().getMinY());
-			nodeGraph.getGuiMaster().addNode(node);
-			nodeGraph.update();
-
+			getNodeGraph().getClipBoard().copyPaste(this);
+			/*
+			 * GNode node = new GNode(this); node.relocate(getBoundsInParent().getMinX(),
+			 * getBoundsInParent().getMinY()); nodeGraph.getGuiMaster().addNode(node);
+			 * nodeGraph.update();
+			 */
 		}
 	}
 

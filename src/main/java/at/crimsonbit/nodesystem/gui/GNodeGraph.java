@@ -18,7 +18,6 @@ import at.crimsonbit.nodesystem.gui.handlers.GNodeMouseHandler;
 import at.crimsonbit.nodesystem.gui.layer.GLineLayer;
 import at.crimsonbit.nodesystem.gui.layer.GNodeLayer;
 import at.crimsonbit.nodesystem.gui.node.GNode;
-import at.crimsonbit.nodesystem.gui.node.GNodeConnection;
 import at.crimsonbit.nodesystem.gui.node.IGConsumable;
 import at.crimsonbit.nodesystem.gui.settings.GSettingsPane;
 import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
@@ -44,9 +43,9 @@ import at.crimsonbit.nodesystem.util.logger.SystemLogger;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuItem;
+import javafx.scene.effect.BoxBlur;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -89,8 +88,8 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private HashMap<GraphSettings, Color> nodeLookup = new HashMap<GraphSettings, Color>();
 	private HashMap<GraphSettings, Object> settings = new HashMap<GraphSettings, Object>();
 	private GSearchBar bar = new GSearchBar();
-	protected final Map<INodeType, Class<? extends GNode>> nodeMap = new HashMap<INodeType, Class<? extends GNode>>();
-
+	private final Map<INodeType, Class<? extends GNode>> nodeMap = new HashMap<INodeType, Class<? extends GNode>>();
+	private GClipboard clipboard;
 	private final DragContext dragContext = new DragContext();
 	private FileChooser fileChooser = new FileChooser();
 	FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("NodeSystem files (*.nsys)", "*.nsys");
@@ -140,6 +139,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 		setDefaulSettings();
 		log(Level.INFO, "NodeGraph set-up successfully!");
+		clipboard = new GClipboard(this);
 	}
 
 	public GLogPane getLogPane() {
@@ -226,14 +226,14 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	 *            the {@link Class} of your custom node-class you want to use.
 	 */
 	public void addCustomNode(INodeType type, Class<? extends GNode> clazz) {
-		nodeMap.put(type, clazz);
+		getNodeMap().put(type, clazz);
 	}
 
 	private void fillNodeList() {
 		GNode dummy_tmp = new GNode("dummy", false);
 		Set<INodeType> map = getGuiMaster().getNodeMaster().getAllNodeClasses();
 		for (INodeType type : map) {
-			nodeMap.put(type, dummy_tmp.getClass());
+			getNodeMap().put(type, dummy_tmp.getClass());
 		}
 	}
 
@@ -394,21 +394,15 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 			if (getActive() != null) {
 
 				if (event.isControlDown() && event.getCode().equals(KeyCode.C)) {
-					toCopy = getActive();
+					clipboard.copy(getActive());
 					log(Level.INFO, "Node: " + getActive().getName() + " copied to clipboard!");
 				}
-				if (event.isControlDown() && event.getCode().equals(KeyCode.V) && toCopy != null) {
-					if (toCopy != null) {
-						toCopy = new GNode(toCopy);
-					}
-					getGuiMaster().addNode(toCopy);
-					toCopy.relocate(getActive().getBoundsInParent().getMinX(),
-							getActive().getBoundsInParent().getMinY());
-					setActive(toCopy);
-					toCopy.toFront();
-					update();
+				
+				if (event.isControlDown() && event.getCode().equals(KeyCode.V)) {
+					clipboard.paste();
 					log(Level.INFO, "Node: " + getActive().getName() + " pasted from clipboard!");
 				}
+				
 				if (event.getCode().equals(KeyCode.DELETE)) {
 					if (getActive() != null) {
 						getGuiMaster().removeNode(getActive());
@@ -544,6 +538,21 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 			dialog.hide();
 		});
 	}
+	
+	public GClipboard getClipBoard() {
+		return this.clipboard;
+	}
+	
+	public void doBlur() {
+		BoxBlur blur = new BoxBlur(3, 3, 3);
+		getParent().setEffect(blur);
+		setEffect(blur);
+	}
+
+	public void removeBlur() {
+		getParent().setEffect(null);
+		setEffect(null);
+	}
 
 	@SuppressWarnings("static-access")
 	@Override
@@ -551,7 +560,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		if (id < 1000) {
 
 			INodeType type = getGuiMaster().getNodeMaster().getTypeByName(source.getName());
-			Class<? extends GNode> clazz = nodeMap.get(type);
+			Class<? extends GNode> clazz = getNodeMap().get(type);
 			Constructor<? extends GNode> con;
 			try {
 				con = clazz.getConstructor(String.class, INodeType.class, boolean.class, GNodeGraph.class, double.class,
@@ -775,8 +784,10 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		for (GNode cell : nodeMaster.getAddedCells()) {
 			handler.addMouseHandler(cell);
 		}
+
 		getGuiMaster().attachOrphansToGraphParent(nodeMaster.getAddedCells());
 		getGuiMaster().disconnectFromGraphParent(nodeMaster.getRemovedCells());
+
 		if (getActive() != null) {
 			String baseNode = "";
 			baseNode = getActive().toString();
@@ -909,6 +920,10 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 	public void setNodeScene(Scene sc) {
 		this.sc = sc;
+	}
+
+	public Map<INodeType, Class<? extends GNode>> getNodeMap() {
+		return nodeMap;
 	}
 
 }

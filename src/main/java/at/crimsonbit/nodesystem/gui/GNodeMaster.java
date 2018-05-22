@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import at.crimsonbit.nodesystem.gui.animation.Animator;
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.gui.node.GNodeConnection;
 import at.crimsonbit.nodesystem.gui.node.port.GPort;
@@ -316,7 +317,7 @@ public class GNodeMaster {
 		Map<AbstractNode, GNode> cache = new HashMap<>();
 
 		for (AbstractNode node : master.getAllNodes()) {
-			Class<? extends GNode> clazz = getNodeGraph().nodeMap.get(master.getTypeOfNode(node));
+			Class<? extends GNode> clazz = getNodeGraph().getNodeMap().get(master.getTypeOfNode(node));
 			Constructor<? extends GNode> constr = clazz.getConstructor(String.class, int.class, boolean.class,
 					GNodeGraph.class);
 			GNode gn = constr.newInstance(master.getTypeOfNode(node).toString(), master.getIdOfNode(node), true, graph);

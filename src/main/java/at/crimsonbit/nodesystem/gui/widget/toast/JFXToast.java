@@ -71,7 +71,7 @@ public class JFXToast {
 		scene.setFill(Color.TRANSPARENT);
 		tx_msg.setFill(Color.WHITE);
 
-		root.getStylesheets().add(JFXToast.class.getResource("toaststyle.css").toExternalForm());
+		root.setStyle("-fx-background-radius: 15; -fx-background-color: rgba(0, 0, 0, 0.4); -fx-padding: 10px;");
 
 		root.setOpacity(0);
 		stage.setScene(scene);

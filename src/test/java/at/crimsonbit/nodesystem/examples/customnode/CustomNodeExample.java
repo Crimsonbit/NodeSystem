@@ -58,11 +58,11 @@ public class CustomNodeExample extends AbstractNode {
 
 	
 	@NodeOutput("compute")
-	Object outpu;
+	Object output;
 
 	public void compute() {
 		if (input != null)
-			outpu = input;
+			output = input;
 	}
 
 }

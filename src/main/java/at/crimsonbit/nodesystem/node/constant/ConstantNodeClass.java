@@ -56,7 +56,7 @@ public class ConstantNodeClass extends GNode {
 	}
 
 	public void setConstant() {
-		doBlur();
+		getNodeGraph().doBlur();
 		TextInputDialog dialog = new TextInputDialog(getName());
 		dialog.setTitle("Constant");
 		dialog.setHeaderText("Set a new constant for the node.");
@@ -135,9 +135,9 @@ public class ConstantNodeClass extends GNode {
 				}
 			}
 			redraw();
-			removeBlur();
+			getNodeGraph().removeBlur();
 		} else {
-			removeBlur();
+			getNodeGraph().removeBlur();
 
 		}
 	}
