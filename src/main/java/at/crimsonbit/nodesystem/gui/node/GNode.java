@@ -135,6 +135,17 @@ public class GNode extends Pane implements IGNode {
 		return this.connections;
 	}
 
+	public String getConnectionsString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Connected to: ");
+		for (GNodeConnection con : this.connections) {
+			if (con.getSource().equals(this)) {
+				sb.append(con.getTarget().getName());
+			}
+		}
+		return sb.toString();
+	}
+
 	public String getTypeName() {
 		return this.typeName;
 	}
@@ -593,8 +604,7 @@ public class GNode extends Pane implements IGNode {
 
 	@Override
 	public String toString() {
-		return name + ", connections=" + connections + ", type=" + type + ", inPortCount=" + inPortCount
-				+ ", outPortcount=" + outPortcount + ", ppc=" + ppc;
+		return name + ", type: " + type + ", ppc: " + ppc + ", connections: " + getConnectionsString();
 	}
 
 	/**

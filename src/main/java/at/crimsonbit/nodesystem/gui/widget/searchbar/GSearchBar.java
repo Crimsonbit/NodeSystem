@@ -88,7 +88,7 @@ public class GSearchBar {
 
 		stage.setX((sc.getX() + sc.getWidth() / 2) - stage.getWidth() / 2);
 		stage.setY((sc.getY() + sc.getHeight() / 1.1) - stage.getHeight() / 2);
-		idd_search_res.relocate(300, 10);
+		idd_search_res.relocate(300, 0);
 		idd_search_text.setOnKeyPressed(onKeyPressedEventHandler);
 		idd_search_res.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
