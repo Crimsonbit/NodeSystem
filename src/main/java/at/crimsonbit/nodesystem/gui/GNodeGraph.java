@@ -18,9 +18,11 @@ import at.crimsonbit.nodesystem.gui.handlers.GNodeMouseHandler;
 import at.crimsonbit.nodesystem.gui.layer.GLineLayer;
 import at.crimsonbit.nodesystem.gui.layer.GNodeLayer;
 import at.crimsonbit.nodesystem.gui.node.GNode;
+import at.crimsonbit.nodesystem.gui.node.GNodeConnection;
 import at.crimsonbit.nodesystem.gui.node.IGConsumable;
 import at.crimsonbit.nodesystem.gui.settings.GSettingsPane;
 import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
+import at.crimsonbit.nodesystem.gui.widget.searchbar.GSearchBar;
 import at.crimsonbit.nodesystem.gui.widget.toast.JFXToast;
 import at.crimsonbit.nodesystem.gui.widget.toast.ToastPosition;
 import at.crimsonbit.nodesystem.gui.widget.toast.ToastTime;
@@ -42,6 +44,7 @@ import at.crimsonbit.nodesystem.util.logger.SystemLogger;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.ContextMenuEvent;
@@ -85,7 +88,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private HashMap<INodeType, Color> colorLookup = new HashMap<INodeType, Color>();
 	private HashMap<GraphSettings, Color> nodeLookup = new HashMap<GraphSettings, Color>();
 	private HashMap<GraphSettings, Object> settings = new HashMap<GraphSettings, Object>();
-
+	private GSearchBar bar = new GSearchBar();
 	protected final Map<INodeType, Class<? extends GNode>> nodeMap = new HashMap<INodeType, Class<? extends GNode>>();
 
 	private final DragContext dragContext = new DragContext();
@@ -382,6 +385,12 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private EventHandler<KeyEvent> onKeyPressedEventHandler = new EventHandler<KeyEvent>() {
 		@Override
 		public void handle(KeyEvent event) {
+
+			if (event.isControlDown() && event.getCode().equals(KeyCode.SPACE)) {
+				if (!bar.isOpen())
+					bar.search((Stage) getScene().getWindow(), GNodeGraph.this);
+			}
+
 			if (getActive() != null) {
 
 				if (event.isControlDown() && event.getCode().equals(KeyCode.C)) {
@@ -762,6 +771,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		getNodeLayer().getChildren().removeAll(nodeMaster.getRemovedCells());
 		getLineLayer().getChildren().removeAll(nodeMaster.getRemovedEdges());
 		getNodeLayer().toFront();
+		// getLineLayer().toFront();
 		for (GNode cell : nodeMaster.getAddedCells()) {
 			handler.addMouseHandler(cell);
 		}

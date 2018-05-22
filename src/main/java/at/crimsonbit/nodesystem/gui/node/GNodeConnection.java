@@ -24,7 +24,8 @@ public class GNodeConnection extends Group {
 	private CubicCurve line;
 	private Tooltip tTip = new Tooltip();
 	private double width;
-
+	private final int MAGIC_OFFSET = 3;
+	
 	public GNodeConnection(GPort sourcePort, GPort targetPort) {
 
 		this.sourcePort = sourcePort;
@@ -45,8 +46,8 @@ public class GNodeConnection extends Group {
 
 	public void draw() {
 		line = new CubicCurve();
-		line.startXProperty().bind(source.layoutXProperty().add(sourcePort.getPortX()));
-		line.startYProperty().bind(source.layoutYProperty().add(sourcePort.getY()));
+		line.startXProperty().bind(source.layoutXProperty().add(sourcePort.getPortX() + MAGIC_OFFSET));
+		line.startYProperty().bind(source.layoutYProperty().add(sourcePort.getY() + MAGIC_OFFSET));
 		line.setControlX1(sourcePort.getPortX() + 50);
 		line.setControlY1(sourcePort.getY());
 		line.setControlX2(targetPort.getPortX() - 50);
@@ -58,8 +59,8 @@ public class GNodeConnection extends Group {
 				- (double) source.getNodeGraph().getSettings().get(GraphSettings.SETTING_CURVE_CURVE)));
 		line.controlY2Property().bind(target.layoutYProperty().add(targetPort.getY()));
 
-		line.endXProperty().bind(target.layoutXProperty().add(targetPort.getPortX()));
-		line.endYProperty().bind(target.layoutYProperty().add(targetPort.getY()));
+		line.endXProperty().bind(target.layoutXProperty().add(targetPort.getPortX() + MAGIC_OFFSET));
+		line.endYProperty().bind(target.layoutYProperty().add(targetPort.getY() + MAGIC_OFFSET));
 		line.setStroke(source.getNodeGraph().getColorLookup().get(source.getNodeType()));
 		line.setStrokeWidth((double) source.getNodeGraph().getSettings().get(GraphSettings.SETTING_CURVE_WIDTH));
 		line.setStrokeLineCap(StrokeLineCap.ROUND);

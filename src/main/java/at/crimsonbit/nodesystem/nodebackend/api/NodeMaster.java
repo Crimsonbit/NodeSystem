@@ -78,6 +78,10 @@ public class NodeMaster {
 
 	}
 
+	public Map<String, INodeType> getStringToTypeMap() {
+		return stringToType;
+	}
+
 	/**
 	 * Registers all Nodes in the package and all subpackages specified by path. A
 	 * Node is any class, that extends AbstractNode. <br>

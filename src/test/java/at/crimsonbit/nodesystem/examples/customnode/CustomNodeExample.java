@@ -51,11 +51,12 @@ public class CustomNodeExample extends AbstractNode {
 
 	@NodeType
 	private static final CustomNodes type = CustomNodes.EXAMPLE;
-
+	
+	@NodeField
 	@NodeInput
 	Object input;
 
-	@NodeField
+	
 	@NodeOutput("compute")
 	Object outpu;
 
