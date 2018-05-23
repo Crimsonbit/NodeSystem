@@ -26,7 +26,7 @@ public class ImageBlurNode extends AbstractNode {
 	BufferedImage output;
 
 	public ImageBlurNode() {
-
+		
 	}
 
 	public void computeBlur() {

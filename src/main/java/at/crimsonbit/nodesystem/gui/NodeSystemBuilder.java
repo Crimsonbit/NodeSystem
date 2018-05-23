@@ -43,28 +43,11 @@ public class NodeSystemBuilder {
 		this.h = height;
 		if (log)
 			SystemLogger.attachLogger(true, true);
-
-	}
-
-	/**
-	 * <h1>init()</h1>
-	 * <p>
-	 * Initializes the NodeSystemBuilder. This has to be called before all other
-	 * methods with the exception of the {@link NodeSystemBuilder#attachLogger()}
-	 * function. If you want to attach the logger to the nodegraph, you have to call
-	 * it before the {@link NodeSystemBuilder#init()} method!
-	 * </p>
-	 * 
-	 * @return this
-	 */
-	public NodeSystemBuilder init() {
 		sys = new GNodeSystem();
 		view = sys.getNodeView();
 		graph = view.getNodeGraph();
 		scene = new Scene(view, w, h);
 		graph.setGraphScene(scene);
-
-		return this;
 	}
 
 	/**

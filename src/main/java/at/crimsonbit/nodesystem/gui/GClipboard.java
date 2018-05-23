@@ -10,9 +10,14 @@ public class GClipboard {
 
 	private GNode toCopy;
 	private GNodeGraph graph;
+	private Object objToCopy;
 
 	public GClipboard(GNodeGraph graph) {
 		this.graph = graph;
+	}
+
+	public void copy(Object o) {
+		objToCopy = 0;
 	}
 
 	public void copy(GNode node) {

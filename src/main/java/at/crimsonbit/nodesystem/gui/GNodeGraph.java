@@ -80,7 +80,6 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private int idCount = 100;
 	private GPopUp graphDialog;
 	private GSettingsPane settingsPane;
-	private GNode toCopy;
 	private Scene sc;
 	private GNodeLayer nodeLayer;
 	private GLineLayer lineLayer;
@@ -92,7 +91,8 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private GClipboard clipboard;
 	private final DragContext dragContext = new DragContext();
 	private FileChooser fileChooser = new FileChooser();
-	FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("NodeSystem files (*.nsys)", "*.nsys");
+	private FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("NodeSystem files (*.nsys)",
+			"*.nsys");
 	private Rectangle selection;
 	private Text nodeInfo = new Text();
 	private GState state = GState.DEFAULT;
@@ -397,12 +397,12 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 					clipboard.copy(getActive());
 					log(Level.INFO, "Node: " + getActive().getName() + " copied to clipboard!");
 				}
-				
+
 				if (event.isControlDown() && event.getCode().equals(KeyCode.V)) {
 					clipboard.paste();
 					log(Level.INFO, "Node: " + getActive().getName() + " pasted from clipboard!");
 				}
-				
+
 				if (event.getCode().equals(KeyCode.DELETE)) {
 					if (getActive() != null) {
 						getGuiMaster().removeNode(getActive());
@@ -538,11 +538,11 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 			dialog.hide();
 		});
 	}
-	
+
 	public GClipboard getClipBoard() {
 		return this.clipboard;
 	}
-	
+
 	public void doBlur() {
 		BoxBlur blur = new BoxBlur(3, 3, 3);
 		getParent().setEffect(blur);
@@ -557,8 +557,8 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	@SuppressWarnings("static-access")
 	@Override
 	public void consumeMessage(int id, GEntry source) {
-		if (id < 1000) {
 
+		if (id < 1000) {
 			INodeType type = getGuiMaster().getNodeMaster().getTypeByName(source.getName());
 			Class<? extends GNode> clazz = getNodeMap().get(type);
 			Constructor<? extends GNode> con;
@@ -572,18 +572,13 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 					| IllegalArgumentException | InvocationTargetException e) {
 				e.printStackTrace();
 			}
-
+		}
+		if (id == 1000) {
+			onSave();
 		}
 
 		if (id == 1001) {
-			// TODO LOADING
 			onLoad();
-
-		}
-		if (id == 1000) {
-			// TODO SAVING
-			onSave();
-
 		}
 		if (id == 1002) {
 			Stage stage = (Stage) getScene().getWindow();

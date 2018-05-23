@@ -13,7 +13,7 @@ public class ClipTest extends Application {
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("Node Editor");
 
-		GNodeGraph graph = new NodeSystemBuilder(600, 800, true).init().registerDefaultNodes(true).attachInfo().build();
+		GNodeGraph graph = new NodeSystemBuilder(600, 800, true).registerDefaultNodes(true).attachInfo().build();
 		graph.setPrefWidth(600);
 		graph.setPrefHeight(800);
 		Pane root = new Pane();
