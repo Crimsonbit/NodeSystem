@@ -11,5 +11,7 @@ package at.crimsonbit.nodesystem.events;
  *
  */
 public class GStack {
-
+	
+	
+	
 }
