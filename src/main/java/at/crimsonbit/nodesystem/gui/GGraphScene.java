@@ -8,6 +8,8 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.BlurType;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
@@ -36,7 +38,7 @@ public class GGraphScene extends AnchorPane implements ILogging {
 	private boolean needsLayout = false;
 	private Scale scaleTransform;
 	private double scaleValue = 1.0;
-	private double strokeValue = 0.2;
+	private double strokeValue = 0.1;
 	private double lineSpacing = 25;
 
 	private Color lineColor;
@@ -90,7 +92,7 @@ public class GGraphScene extends AnchorPane implements ILogging {
 				}
 			}
 		});
-		
+
 		GClip.install(this);
 	}
 
@@ -195,10 +197,24 @@ public class GGraphScene extends AnchorPane implements ILogging {
 				final int vLineCount = (int) Math.floor((width + 1) / spacing);
 
 				for (int i = 0; i < hLineCount; i++) {
+					if (i % 7 == 0) {
+						gc.setStroke(Color.BLACK);
+						gc.setLineWidth(strokeValue + 2);
+					} else {
+						gc.setStroke(this.lineColor);
+						gc.setLineWidth(strokeValue);
+					}
 					gc.strokeLine(0, snap((i + 1) * spacing), width, snap((i + 1) * spacing));
 				}
 
 				for (int i = 0; i < vLineCount; i++) {
+					if (i % 7 == 0) {
+						gc.setStroke(Color.BLACK);
+						gc.setLineWidth(strokeValue + 2);
+					} else {
+						gc.setStroke(this.lineColor);
+						gc.setLineWidth(strokeValue);
+					}
 					gc.strokeLine(snap((i + 1) * spacing), 0, snap((i + 1) * spacing), height);
 				}
 				// getChildren().add(settingsPane);
@@ -288,7 +304,7 @@ public class GGraphScene extends AnchorPane implements ILogging {
 		private static final double MIN_SPACING = 10d;
 		private static final double MAX_SPACING = 250d;
 
-		private static final double MIN_STROKE = 0.1d;
+		private static final double MIN_STROKE = 0.0d;
 		private static final double MAX_STROKE = 4d;
 
 		public double clamp(double value, double min, double max) {
@@ -311,7 +327,7 @@ public class GGraphScene extends AnchorPane implements ILogging {
 				} else {
 					strokeValue *= DELTA_PLUS;
 				}
-
+				strokeValue = clamp(strokeValue, MIN_STROKE, MAX_STROKE);
 				if (strokeValue != MIN_STROKE)
 					strokeWidth(strokeValue);
 
@@ -329,7 +345,7 @@ public class GGraphScene extends AnchorPane implements ILogging {
 				// System.out.println(lineSpacing);
 				scaleValue = clamp(scaleValue, MIN_SCALE, MAX_SCALE);
 				lineSpacing = clamp(lineSpacing, MIN_SPACING, MAX_SPACING);
-				strokeValue = clamp(strokeValue, MIN_STROKE, MAX_STROKE);
+
 				if (scaleValue != MIN_SCALE)
 					zoomTo(scaleValue);
 

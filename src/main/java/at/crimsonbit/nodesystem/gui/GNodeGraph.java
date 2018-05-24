@@ -45,7 +45,10 @@ import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuItem;
+import javafx.scene.effect.BlurType;
 import javafx.scene.effect.BoxBlur;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.InnerShadow;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -99,6 +102,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private GSubMenu nodeMenu = new GSubMenu(0, "Add Node");
 	private GSubMenu fileMenu = new GSubMenu(1, "File");
 	private GLogPane logPane;
+	private InnerShadow innerShadow;
 
 	public GNodeGraph(GLogPane logPane) {
 		setLogPane(logPane);
@@ -140,6 +144,24 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		setDefaulSettings();
 		log(Level.INFO, "NodeGraph set-up successfully!");
 		clipboard = new GClipboard(this);
+
+		innerShadow = new InnerShadow();
+
+		// Setting the offset values of the inner shadow
+		innerShadow.setOffsetX(4);
+		innerShadow.setOffsetY(4);
+
+		
+		innerShadow.setBlurType(BlurType.GAUSSIAN);
+		double col = (double) getSettings().get(GraphSettings.COLOR_SHADOW_COLOR);
+		innerShadow.setColor(new Color(col, col, col, 1));
+		innerShadow.setWidth((double) getSettings().get(GraphSettings.SETTING_SHADOW_WIDTH));
+		innerShadow.setHeight((double) getSettings().get(GraphSettings.SETTING_SHADOW_HEIGHT));
+		innerShadow.setOffsetX((double) getSettings().get(GraphSettings.SETTING_SHADOW_WIDTH));
+		innerShadow.setOffsetY((double) getSettings().get(GraphSettings.SETTING_SHADOW_HEIGHT));
+		innerShadow.setRadius((double) getSettings().get(GraphSettings.SETTING_SHADOW_RADIUS));
+		
+		setEffect(innerShadow);
 	}
 
 	public GLogPane getLogPane() {

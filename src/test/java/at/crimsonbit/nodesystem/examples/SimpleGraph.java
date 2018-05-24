@@ -1,5 +1,7 @@
 package at.crimsonbit.nodesystem.examples;
 
+import com.sun.javafx.event.EventQueue;
+
 import at.crimsonbit.nodesystem.examples.customnode.CustomNodeClassExample;
 import at.crimsonbit.nodesystem.examples.customnode.CustomNodes;
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
@@ -37,9 +39,9 @@ public class SimpleGraph extends Application {
 		 * Example of how to change settings used in the node-system
 		 * 
 		 */
-		
-		// graph.addSetting(GraphSettings.SETTING_CURVE_WIDTH, 6d);
-		// graph.addSetting(GraphSettings.SETTING_CURVE_CURVE, 100d);
+
+		graph.addSetting(GraphSettings.SETTING_CURVE_WIDTH, 6d);
+		graph.addSetting(GraphSettings.SETTING_CURVE_CURVE, 100d);
 		graph.getGeneralColorLookup().put(GraphSettings.COLOR_BACKGROUND_LINES, Color.WHITE);
 		graph.updateColors();
 
