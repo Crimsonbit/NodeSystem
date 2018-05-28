@@ -13,14 +13,15 @@ import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeMaster;
 import at.crimsonbit.nodesystem.nodebackend.util.Tuple;
 import at.crimsonbit.nodesystem.util.RangeMapper;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.BlurType;
-import javafx.scene.effect.BoxBlur;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -77,10 +78,12 @@ public class GNode extends Pane implements IGNode {
 	private Rectangle outline;
 	private Rectangle base;
 	private Rectangle top;
+	private Rectangle remove;
 	private Text text;
 	private DropShadow e;
 	private final Tooltip tooltip = new Tooltip();
 	private final int PORT_TOP_DRAW_OFFSET = 10;
+	private boolean toggledDraw = false;
 
 	private NodeMaster getNodeMaster() {
 		return nodeGraph.getGuiMaster().getNodeMaster();
@@ -120,6 +123,7 @@ public class GNode extends Pane implements IGNode {
 		addAllPorts();
 		addToolTip();
 		draw();
+
 	}
 
 	public GNode(String name, int id, boolean draw, GNodeGraph graph, double x, double y) {
@@ -296,86 +300,153 @@ public class GNode extends Pane implements IGNode {
 		outputPorts.remove(port);
 	}
 
+	public void drawNodeTop(double width) {
+		top = new Rectangle(width, 50 / 3);
+
+		top.setStroke(topColor);
+		top.setFill(topColor);
+		top.setAccessibleText("node_top"); // top.setArcWidth(20.0); //
+		top.setArcHeight(20.0);
+
+		top.setStroke(nodeGraph.getColorLookup().get(type));
+		top.setFill(nodeGraph.getColorLookup().get(type));
+
+		addView(top);
+	}
+
+	public void drawNodeTopArc(double width, double arc) {
+		top = new Rectangle(width, 50 / 3);
+
+		top.setStroke(topColor);
+		top.setFill(topColor);
+		top.setAccessibleText("node_top"); // top.setArcWidth(20.0); //
+		top.setArcHeight(20.0);
+
+		top.setStroke(nodeGraph.getColorLookup().get(type));
+		top.setFill(nodeGraph.getColorLookup().get(type));
+		top.setArcWidth(arc);
+		top.setArcHeight(arc);
+		addView(top);
+	}
+
+	public void drawNodeBase(double width, double height) {
+		base = new Rectangle(width, height);
+		base.setStroke(backColor);
+		base.setFill(backColor);
+		base.setAccessibleText("node_base");
+		base.setArcWidth(20.0);
+		base.setArcHeight(20.0);
+		addView(base);
+	}
+
+	public void drawNodeOutline(double width, double height, boolean active) {
+
+		outline = new Rectangle(width, height - 5);
+		outline.setTranslateY(5);
+		outline.setFill(Color.TRANSPARENT);
+		outline.setStroke(nodeGraph.getGeneralColorLookup().get(GraphSettings.COLOR_NODE_ACTIVE));
+		outline.setArcWidth(21.0);
+		outline.setArcHeight(21.0);
+		outline.setStrokeWidth(1);
+		if (active) {
+			addView(outline);
+		} else {
+			removeView(outline);
+		}
+
+	}
+
+	public double drawNodeText(String name) {
+		text = new Text(name);
+		text.setFill(nodeGraph.getGeneralColorLookup().get(GraphSettings.COLOR_TEXT_COLOR));
+		text.setTranslateY(12.5);
+
+		return text.getBoundsInLocal().getWidth();
+	}
+
+	public void drawNodeShadow() {
+		e = new DropShadow();
+		e.setBlurType(BlurType.GAUSSIAN);
+		double col = (double) getNodeGraph().getSettings().get(GraphSettings.COLOR_SHADOW_COLOR);
+		e.setColor(new Color(col, col, col, 1));
+		e.setWidth((double) getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_WIDTH));
+		e.setHeight((double) getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_HEIGHT));
+		e.setOffsetX((double) getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_WIDTH));
+		e.setOffsetY((double) getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_HEIGHT));
+		e.setRadius((double) getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_RADIUS));
+		base.setEffect(e);
+	}
+
+	public void toggleDraw() {
+		toggledDraw = !toggledDraw;
+
+	}
+
 	@Override
 	public void draw() {
 
 		if (this.doDraw) {
+			if (!toggledDraw) {
+				double h = height * inPortCount;
+				if (inPortCount < outPortcount) {
+					h = height * outPortcount;
+				}
 
-			double h = height * inPortCount;
-			if (inPortCount < outPortcount) {
-				h = height * outPortcount;
-			}
+				double width = 150;
+				double tWidth = drawNodeText(name);
 
-			double width = 150;
-			text = new Text(name);
-			text.setFill(nodeGraph.getGeneralColorLookup().get(GraphSettings.COLOR_TEXT_COLOR));
-			text.setTranslateY(12.5);
-			double tWidth = text.getBoundsInLocal().getWidth();
-			if (width < tWidth)
-				width = tWidth;
+				if (width < tWidth)
+					width = tWidth;
 
-			PORT_OUTPUT_START_X = (int) width;
-			// addAllNodes();
+				PORT_OUTPUT_START_X = (int) width;
+				// addAllNodes();
 
-			outline = new Rectangle(width, h - 5);
-			outline.setTranslateY(5);
-			outline.setFill(Color.TRANSPARENT);
-			outline.setStroke(nodeGraph.getGeneralColorLookup().get(GraphSettings.COLOR_NODE_ACTIVE));
-			outline.setArcWidth(21.0);
-			outline.setArcHeight(21.0);
-			outline.setStrokeWidth(1);
+				drawNodeBase(width, h);
+				drawNodeOutline(width, h, active);
+				drawNodeTop(width);
+				drawNodeShadow();
+				// text.setTranslateX(35);
 
-			base = new Rectangle(width, h);
-			base.setStroke(backColor);
-			base.setFill(backColor);
-			base.setAccessibleText("node_base");
-			base.setArcWidth(20.0);
-			base.setArcHeight(20.0);
+				addView(text);
 
-			top = new Rectangle(width, 50 / 3);
+				for (GPort p : inputPorts) {
+					removeView(p);
+					addView(p);
+					p.toFront();
+				}
+				for (GPort p : outputPorts) {
+					removeView(p);
+					addView(p);
+					p.toFront();
+				}
 
-			top.setStroke(topColor);
-			top.setFill(topColor);
-			top.setAccessibleText("node_top"); // top.setArcWidth(20.0); //
-			top.setArcHeight(20.0);
+				computeUnToggledPortLocations();
 
-			top.setStroke(nodeGraph.getColorLookup().get(type));
-			top.setFill(nodeGraph.getColorLookup().get(type));
-
-			// text.setTranslateX(35);
-
-			e = new DropShadow();
-			e.setBlurType(BlurType.GAUSSIAN);
-			double col = (double) getNodeGraph().getSettings().get(GraphSettings.COLOR_SHADOW_COLOR);
-			e.setColor(new Color(col, col, col, 1));
-			e.setWidth((double) getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_WIDTH));
-			e.setHeight((double) getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_HEIGHT));
-			e.setOffsetX((double) getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_WIDTH));
-			e.setOffsetY((double) getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_HEIGHT));
-			e.setRadius((double) getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_RADIUS));
-			base.setEffect(e);
-
-			addView(base);
-			if (active) {
-				addView(outline);
 			} else {
-				removeView(outline);
-			}
 
-			addView(top);
-			addView(text);
+				double width = 150;
+				double tWidth = drawNodeText(name);
 
-			for (GPort p : inputPorts) {
-				removeView(p);
-				addView(p);
-				p.toFront();
-			}
-			for (GPort p : outputPorts) {
-				removeView(p);
-				addView(p);
-				p.toFront();
-			}
+				if (width < tWidth)
+					width = tWidth;
 
+				// addAllNodes();
+
+				// drawNodeBase(width, h);
+				drawNodeTopArc(width, 15.0);
+
+				// drawNodeOutline(width, h, active);
+				// drawNodeShadow();
+				// text.setTranslateX(35);
+
+				addView(text);
+				drawToggledConnections(text.getY() / 2);
+
+				/*
+				 * for (GPort p : inputPorts) { removeView(p); addView(p); p.toFront(); } for
+				 * (GPort p : outputPorts) { removeView(p); addView(p); p.toFront(); }
+				 */
+			}
 		} else {
 			getChildren().clear();
 		}
@@ -493,6 +564,54 @@ public class GNode extends Pane implements IGNode {
 			 * getBoundsInParent().getMinY()); nodeGraph.getGuiMaster().addNode(node);
 			 * nodeGraph.update();
 			 */
+		}
+	}
+
+	protected void drawToggledConnections(double y) {
+		for (GPort p : getOutputPorts()) {
+			p.relocatePortY(y);
+			p.redraw();
+			List<GNodeConnection> conn = getConnections();
+			conn.stream().filter(con -> getOutputPorts().contains(con.getSourcePort())).forEach(con -> {
+				con.update(con.getSourcePort(), con.getTargetPort());
+			});
+		}
+		for (GPort p : getInputPorts()) {
+			p.relocatePortY(y);
+			p.redraw();
+			List<GNodeConnection> conn = getConnections();
+			conn.stream().filter(con -> getInputPorts().contains(con.getTargetPort())).forEach(con -> {
+				con.update(con.getSourcePort(), con.getTargetPort());
+			});
+		}
+		// conn.stream().filter(con ->
+		// getInputPorts().contains(con.getTargetPort())).forEach(con -> {
+		// con.draw(1000);
+		// });
+	}
+
+	protected void computeUnToggledPortLocations() {
+		int inPortCount = 0;
+		int outPortCount = 0;
+		for (GPort p : getOutputPorts()) {
+			p.relocatePortX(this.top.getWidth() - PORT_TOP_DRAW_OFFSET);
+			p.relocatePortY(PORT_INPUT_START_Y + (outPortCount * PORT_OFFSET));
+			p.redraw();
+			List<GNodeConnection> conn = getConnections();
+			conn.stream().filter(con -> getOutputPorts().contains(con.getSourcePort())).forEach(con -> {
+				con.update(con.getSourcePort(), con.getTargetPort());
+			});
+			outPortCount++;
+		}
+		for (GPort p : getInputPorts()) {
+			// p.relocatePortX(this.top.getWidth() - PORT_TOP_DRAW_OFFSET);
+			p.relocatePortY(PORT_INPUT_START_Y + (inPortCount * PORT_OFFSET));
+			p.redraw();
+			List<GNodeConnection> conn = getConnections();
+			conn.stream().filter(con -> getInputPorts().contains(con.getTargetPort())).forEach(con -> {
+				con.update(con.getSourcePort(), con.getTargetPort());
+			});
+			inPortCount++;
 		}
 	}
 

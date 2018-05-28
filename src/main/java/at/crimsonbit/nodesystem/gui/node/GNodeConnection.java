@@ -25,7 +25,7 @@ public class GNodeConnection extends Group {
 	private Tooltip tTip = new Tooltip();
 	private double width;
 	private final int MAGIC_OFFSET = 3;
-	
+
 	public GNodeConnection(GPort sourcePort, GPort targetPort) {
 
 		this.sourcePort = sourcePort;
@@ -77,6 +77,50 @@ public class GNodeConnection extends Group {
 		e.setOffsetY((double) source.getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_HEIGHT));
 		e.setRadius((double) source.getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_RADIUS));
 		line.setEffect(e);
+	}
+
+	public void draw(double y) {
+		getChildren().remove(line);
+		line = new CubicCurve();
+
+		line.startXProperty().bind(source.layoutXProperty().add(sourcePort.getPortX() + MAGIC_OFFSET));
+		line.startYProperty().set(y);
+
+		line.setControlX1(sourcePort.getPortX() + 50);
+		line.setControlY1(y);
+
+		line.setControlX2(targetPort.getPortX() - 50);
+		line.setControlY2(targetPort.getY());
+
+		line.controlX1Property().bind(source.layoutXProperty().add(sourcePort.getPortX()
+				+ (double) source.getNodeGraph().getSettings().get(GraphSettings.SETTING_CURVE_CURVE)));
+		line.controlY1Property().set(y);
+
+		line.controlX2Property().bind(target.layoutXProperty().add(targetPort.getPortX()
+				- (double) source.getNodeGraph().getSettings().get(GraphSettings.SETTING_CURVE_CURVE)));
+		line.controlY2Property().bind(target.layoutYProperty().add(targetPort.getY()));
+
+		line.endXProperty().bind(target.layoutXProperty().add(targetPort.getPortX() + MAGIC_OFFSET));
+		line.endYProperty().bind(target.layoutYProperty().add(targetPort.getY() + MAGIC_OFFSET));
+
+		line.setStroke(source.getNodeGraph().getColorLookup().get(source.getNodeType()));
+		line.setStrokeWidth((double) source.getNodeGraph().getSettings().get(GraphSettings.SETTING_CURVE_WIDTH));
+		line.setStrokeLineCap(StrokeLineCap.ROUND);
+		line.setFill(Color.TRANSPARENT);
+
+		DropShadow e = new DropShadow();
+		e.setBlurType(BlurType.GAUSSIAN);
+		e.setBlurType(BlurType.GAUSSIAN);
+		double col = (double) source.getNodeGraph().getSettings().get(GraphSettings.COLOR_SHADOW_COLOR);
+		e.setColor(new Color(col, col, col, 1));
+		e.setWidth((double) source.getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_WIDTH));
+		e.setHeight((double) source.getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_HEIGHT));
+		e.setOffsetX((double) source.getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_WIDTH));
+		e.setOffsetY((double) source.getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_HEIGHT));
+		e.setRadius((double) source.getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_RADIUS));
+		line.setEffect(e);
+		// getChildren().add(line);
+		System.out.println(getChildren());
 	}
 
 	public void update(GPort p1, GPort p2) {

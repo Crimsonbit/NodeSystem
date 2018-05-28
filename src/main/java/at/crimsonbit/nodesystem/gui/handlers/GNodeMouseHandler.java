@@ -7,6 +7,7 @@ import at.crimsonbit.nodesystem.util.DragContext;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
 /**
@@ -29,25 +30,43 @@ public class GNodeMouseHandler {
 		node.setOnMousePressed(onMousePressedEventHandler);
 		node.setOnMouseDragged(onMouseDraggedEventHandler);
 		node.setOnMouseReleased(onMouseReleasedEventHandler);
-
+		// node.setOnMouseClicked(onMouseClickedEventHandler);
 	}
 
+	EventHandler<MouseEvent> onMouseClickedEventHandler = new EventHandler<MouseEvent>() {
+		public void handle(MouseEvent mouseEvent) {
+			if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+				if (mouseEvent.getClickCount() == 2) {
+					System.out.println("Double clicked");
+				}
+			}
+		}
+	};
 	EventHandler<MouseEvent> onMousePressedEventHandler = new EventHandler<MouseEvent>() {
 
 		public void handle(MouseEvent event) {
 			if (event.isPrimaryButtonDown() && !node.getNodeGraph().getState().equals(GState.PORTCON)) {
-				GNode node = (GNode) event.getSource();
-				if (!(node.isPortPressed())) {
-					graph.setActive(node);
-					node.setActive(true);
-
+				if (event.getClickCount() == 2) {
+					GNode node = (GNode) event.getSource();
+					node.toggleDraw();
 					node.redraw(true);
-					node.toFront();
+					
+				} else { 
+					GNode node = (GNode) event.getSource();
+					if (!(node.isPortPressed())) {
+						graph.setActive(node);
+						node.setActive(true);
 
-					double scale = graph.getScaleValue();
-					dragContext.x = node.getBoundsInParent().getMinX() * scale - event.getScreenX();
-					dragContext.y = node.getBoundsInParent().getMinY() * scale - event.getScreenY();
-					node.setCursor(Cursor.HAND);
+						node.redraw(true);
+						node.toFront();
+
+						double scale = graph.getScaleValue();
+						dragContext.x = node.getBoundsInParent().getMinX() * scale - event.getScreenX();
+
+						dragContext.y = node.getBoundsInParent().getMinY() * scale - event.getScreenY();
+
+						node.setCursor(Cursor.HAND);
+					}
 				}
 			}
 		}

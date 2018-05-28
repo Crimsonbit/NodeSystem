@@ -142,7 +142,7 @@ public class GNodeMaster {
 			if (con.getSourcePort() == port || con.getTargetPort() == port) {
 				try {
 					con.getTargetPort().getPortRectangle()
-							.setInputColor(graph.getColorLookup().get(GraphSettings.COLOR_PORT_INPUT));
+							.setInputColor(graph.getGeneralColorLookup().get(GraphSettings.COLOR_PORT_INPUT));
 					con.getTargetPort().getPortRectangle().redraw();
 					con.getTargetPort().redraw();
 					getNodeMaster().removeConnection(con.getTarget().getAbstractNode(),

@@ -161,6 +161,12 @@ public class GPort extends Group implements IGConsumable {
 		// draw();
 	}
 
+	public void relocatePortY(double y) {
+		label.setIy(y);
+		rect.setRY(y);
+		this.y = y;
+	}
+
 	public GPortRect getPortRectangle() {
 		return this.rect;
 	}
