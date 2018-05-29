@@ -47,8 +47,8 @@ public class GNode extends Pane implements IGNode {
 	private List<Shape> shapes = new ArrayList<Shape>();
 	private List<GNode> children = new ArrayList<GNode>();
 	private List<GNode> parents = new ArrayList<GNode>();
-	private List<GPort> inputPorts = new ArrayList<GPort>();
-	private List<GPort> outputPorts = new ArrayList<GPort>();
+	protected List<GPort> inputPorts = new ArrayList<GPort>();
+	protected List<GPort> outputPorts = new ArrayList<GPort>();
 	protected List<GNodeConnection> connections = new ArrayList<GNodeConnection>();
 
 	private GPopUp popUpDialog;
@@ -57,8 +57,8 @@ public class GNode extends Pane implements IGNode {
 	private Color backColor;
 	private String typeName;
 
-	private boolean doDraw = false;
-	private boolean active = false;
+	protected boolean doDraw = false;
+	protected boolean active = false;
 	private boolean portPressed = false;
 	protected INodeType type;
 	private String nameAddition = "";
@@ -67,10 +67,10 @@ public class GNode extends Pane implements IGNode {
 	protected int outPortcount = 0;
 	private final int PORT_INPUT_START_X = 5;
 	private final int PORT_INPUT_START_Y = 35;
-	private int PORT_OUTPUT_START_X = 140;
+	protected int PORT_OUTPUT_START_X = 140;
 	private int PORT_OUTPUT_START_Y = 35;
 	private final int PORT_OFFSET = 40;
-	private double height = 52;
+	protected double height = 52;
 	protected final FileChooser fileChooser = new FileChooser();
 	private int ppc = 0; // popup entry counter
 	// private AbstractNode calcNode;
@@ -79,11 +79,11 @@ public class GNode extends Pane implements IGNode {
 	private Rectangle base;
 	private Rectangle top;
 	private Rectangle remove;
-	private Text text;
+	protected Text text;
 	private DropShadow e;
 	private final Tooltip tooltip = new Tooltip();
 	private final int PORT_TOP_DRAW_OFFSET = 10;
-	private boolean toggledDraw = false;
+	protected boolean toggledDraw = false;
 
 	private NodeMaster getNodeMaster() {
 		return nodeGraph.getGuiMaster().getNodeMaster();

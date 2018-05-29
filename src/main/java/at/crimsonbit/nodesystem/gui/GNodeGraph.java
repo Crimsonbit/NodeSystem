@@ -28,6 +28,7 @@ import at.crimsonbit.nodesystem.gui.widget.toast.ToastTime;
 import at.crimsonbit.nodesystem.node.base.OutputNodeClass;
 import at.crimsonbit.nodesystem.node.base.PathNodeClass;
 import at.crimsonbit.nodesystem.node.constant.ConstantNodeClass;
+import at.crimsonbit.nodesystem.node.image.ImageNodeClass;
 import at.crimsonbit.nodesystem.node.types.Base;
 import at.crimsonbit.nodesystem.node.types.Calculate;
 import at.crimsonbit.nodesystem.node.types.Constant;
@@ -151,7 +152,6 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		innerShadow.setOffsetX(4);
 		innerShadow.setOffsetY(4);
 
-		
 		innerShadow.setBlurType(BlurType.GAUSSIAN);
 		double col = (double) getSettings().get(GraphSettings.COLOR_SHADOW_COLOR);
 		innerShadow.setColor(new Color(col, col, col, 1));
@@ -160,7 +160,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		innerShadow.setOffsetX((double) getSettings().get(GraphSettings.SETTING_SHADOW_WIDTH));
 		innerShadow.setOffsetY((double) getSettings().get(GraphSettings.SETTING_SHADOW_HEIGHT));
 		innerShadow.setRadius((double) getSettings().get(GraphSettings.SETTING_SHADOW_RADIUS));
-		
+
 		setEffect(innerShadow);
 	}
 
@@ -249,6 +249,13 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	 */
 	public void addCustomNode(INodeType type, Class<? extends GNode> clazz) {
 		getNodeMap().put(type, clazz);
+	}
+
+	public void addCustomNode(INodeType[] values, Class<? extends GNode> clazz) {
+		for (INodeType t : values) {
+			getNodeMap().put(t, clazz);
+		}
+
 	}
 
 	private void fillNodeList() {

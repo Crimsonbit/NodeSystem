@@ -40,7 +40,7 @@ public class CustomNodeClassExample extends GNode {
 
 	public CustomNodeClassExample(String name, INodeType type, boolean draw, GNodeGraph graph, double x, double y) {
 		super(name, type, draw, graph, x, y);
-
+		
 		addPopUpItem(5, "Make Toast"); // Adds a custom pop-up menu item.
 		addPopUpItem(6, "Animate"); // Adds a custom pop-up menu item.
 		addPopUpItem(7, "Append Log"); // Adds a custom pop-up menu item.
