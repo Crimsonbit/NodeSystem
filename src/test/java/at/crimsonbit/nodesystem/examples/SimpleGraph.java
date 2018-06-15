@@ -35,12 +35,12 @@ public class SimpleGraph extends Application {
 		 * Example of how to add custom node-classes to specific node types
 		 */
 		graph.addCustomNode(CustomNodes.EXAMPLE, new CustomNodeClassExample().getClass());
-		graph.addCustomNode(Image.values(), new ImageNodeClass().getClass());
+		
 		/**
 		 * Example of how to change settings used in the node-system
 		 * 
 		 */
-
+		
 		graph.addSetting(GraphSettings.SETTING_CURVE_WIDTH, 6d);
 		graph.addSetting(GraphSettings.SETTING_CURVE_CURVE, 100d);
 		graph.getGeneralColorLookup().put(GraphSettings.COLOR_BACKGROUND_LINES, Color.WHITE);

@@ -414,12 +414,23 @@ public class GNode extends Pane implements IGNode {
 					addView(p);
 					p.toFront();
 				}
+				/*
+				 * if (outputPorts.size() == 1) {
+				 * 
+				 * GPort p = outputPorts.get(0);
+				 * 
+				 * getChildren().remove(p); p.setDrawText(false);
+				 * p.getPortRectangle().setSize(15); p.redraw(); p.relocate(width - 15, 0);
+				 * addView(p); p.toFront();
+				 * 
+				 * } else {
+				 */
 				for (GPort p : outputPorts) {
 					removeView(p);
 					addView(p);
 					p.toFront();
 				}
-
+				// }
 				computeUnToggledPortLocations();
 
 			} else {
@@ -440,6 +451,15 @@ public class GNode extends Pane implements IGNode {
 				// text.setTranslateX(35);
 
 				addView(text);
+				/*
+				 * if (outputPorts.size() == 1) {
+				 * 
+				 * GPort p = outputPorts.get(0);
+				 * 
+				 * getChildren().remove(p); p.setDrawText(false);
+				 * p.getPortRectangle().setSize(15); p.redraw(); p.relocate(width - 15, 0);
+				 * addView(p); p.toFront(); }
+				 */
 				drawToggledConnections(text.getY() / 2);
 
 				/*
@@ -447,7 +467,9 @@ public class GNode extends Pane implements IGNode {
 				 * (GPort p : outputPorts) { removeView(p); addView(p); p.toFront(); }
 				 */
 			}
-		} else {
+		} else
+
+		{
 			getChildren().clear();
 		}
 	}
@@ -568,14 +590,15 @@ public class GNode extends Pane implements IGNode {
 	}
 
 	protected void drawToggledConnections(double y) {
-		for (GPort p : getOutputPorts()) {
-			p.relocatePortY(y);
-			p.redraw();
-			List<GNodeConnection> conn = getConnections();
-			conn.stream().filter(con -> getOutputPorts().contains(con.getSourcePort())).forEach(con -> {
-				con.update(con.getSourcePort(), con.getTargetPort());
-			});
-		}
+		if (getOutputPorts().size() > 1)
+			for (GPort p : getOutputPorts()) {
+				p.relocatePortY(y);
+				p.redraw();
+				List<GNodeConnection> conn = getConnections();
+				conn.stream().filter(con -> getOutputPorts().contains(con.getSourcePort())).forEach(con -> {
+					con.update(con.getSourcePort(), con.getTargetPort());
+				});
+			}
 		for (GPort p : getInputPorts()) {
 			p.relocatePortY(y);
 			p.redraw();

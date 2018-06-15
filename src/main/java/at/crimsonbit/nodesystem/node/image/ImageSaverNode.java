@@ -23,6 +23,9 @@ public class ImageSaverNode extends AbstractNode {
 	@NodeInput
 	String path;
 
+	@NodeInput
+	boolean save;
+
 	@NodeOutput("saveImage")
 	BufferedImage output;
 
@@ -31,12 +34,12 @@ public class ImageSaverNode extends AbstractNode {
 	}
 
 	public void saveImage() {
-		if (image != null && path != null && path != " ") {
+		if (image != null && path != null && path != " " && save) {
 			try {
 				ImageIO.write(image, "PNG", new File(path));
-				System.out.println(image);
-				System.out.println(path);
-				System.out.println("Saving image....");
+				// System.out.println(image);
+				// System.out.println(path);
+				// System.out.println("Saving image....");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -6,12 +6,14 @@ import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.gui.node.port.GPort;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
+import at.crimsonbit.nodesystem.util.ImageUtils;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class ImageNodeClass extends GNode {
-
+	
+	
 	public ImageNodeClass() {
 		super();
 	}
@@ -24,13 +26,16 @@ public class ImageNodeClass extends GNode {
 		super(name, type, draw, graph, x, y);
 	}
 
-	private ImageView drawNodeImage(double width) {
-		BufferedImage image = new BufferedImage((int) width, (int) width, BufferedImage.TYPE_INT_ARGB);
-		for (int x = 0; x < width; x++)
-			for (int y = 0; y < width; y++)
-				image.setRGB(x, y, 0xFF0000);
+	private ImageView drawNodeImage(BufferedImage image, double width) {
+		// BufferedImage image = new BufferedImage((int) width, (int) width,
+		// BufferedImage.TYPE_INT_ARGB);
+		image = ImageUtils.resize(image, (int)width/2, (int)width/2, true);
+		//for (int x = 0; x < width; x++)
+		//	for (int y = 0; y < width; y++)
+		//		image.setRGB(x, y, 0xFF0000);
 		Image img = SwingFXUtils.toFXImage(image, null);
 		ImageView view = new ImageView(img);
+		view.relocate((width/2)-(width/4), 96);
 		view.setImage(img);
 		return view;
 
@@ -40,6 +45,8 @@ public class ImageNodeClass extends GNode {
 	public void draw() {
 		if (this.doDraw) {
 			if (!toggledDraw) {
+				BufferedImage image = (BufferedImage) getAbstractNode().get("output");
+				
 				double h = height * inPortCount;
 				if (inPortCount < outPortcount) {
 					h = height * outPortcount;
@@ -72,9 +79,10 @@ public class ImageNodeClass extends GNode {
 					addView(p);
 					p.toFront();
 				}
-				ImageView view = drawNodeImage(width);
-				addView(view);
-				
+				if (image != null) {
+					ImageView view = drawNodeImage(image, width);
+					addView(view);
+				}
 				computeUnToggledPortLocations();
 
 			} else {

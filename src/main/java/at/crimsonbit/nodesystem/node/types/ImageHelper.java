@@ -2,13 +2,13 @@ package at.crimsonbit.nodesystem.node.types;
 
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 
-public enum Image implements INodeType {
-	IMAGE_EMPTY("Empty Image Node"), IMAGE_LOADER("Image-Loader Node"), IMAGE_SAVER("Image-Saver Node"), IMAGE_DISPLAY(
-			"Image-Display Node");
+public enum ImageHelper implements INodeType {
+
+	IMAGE_HEIGHT("Image-Height Node"), IMAGE_WIDTH("Image-Width Node"), IMAGE_COMP_SIZE("Image-Compare-Size Node");
 
 	private String name;
 
-	private Image(String s) {
+	private ImageHelper(String s) {
 
 		this.name = s;
 	}

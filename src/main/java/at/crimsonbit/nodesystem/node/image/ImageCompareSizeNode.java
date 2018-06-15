@@ -2,7 +2,7 @@ package at.crimsonbit.nodesystem.node.image;
 
 import java.awt.image.BufferedImage;
 
-import at.crimsonbit.nodesystem.node.types.Image;
+import at.crimsonbit.nodesystem.node.types.ImageHelper;
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeInput;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeOutput;
@@ -11,7 +11,7 @@ import at.crimsonbit.nodesystem.nodebackend.api.NodeType;
 public class ImageCompareSizeNode extends AbstractNode {
 
 	@NodeType
-	private static final Image type = Image.IMAGE_COMPARE_SIZE;
+	private static final ImageHelper type = ImageHelper.IMAGE_COMP_SIZE;
 
 	@NodeInput
 	BufferedImage image_1;

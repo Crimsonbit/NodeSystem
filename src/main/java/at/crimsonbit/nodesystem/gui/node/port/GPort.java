@@ -29,7 +29,7 @@ public class GPort extends Group implements IGConsumable {
 	private String stringID;
 	private GPortLabel label;
 	private GPortRect rect;
-
+	private boolean drawText = true;
 	private final Tooltip tooltip = new Tooltip();
 
 	public GPort(int id, boolean input, String labels, double x, double y, GNode node) {
@@ -134,15 +134,20 @@ public class GPort extends Group implements IGConsumable {
 		this.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> mouseHandle(event, false));
 	}
 
+	public void setDrawText(boolean f) {
+		this.drawText = f;
+	}
+
 	public void draw() {
-		getChildren().add(label);
+		if (drawText)
+			getChildren().add(label);
 		getChildren().add(rect);
 	}
 
 	public void redraw() {
 		getChildren().clear();
-
-		getChildren().add(label);
+		if (drawText)
+			getChildren().add(label);
 		getChildren().add(rect);
 	}
 

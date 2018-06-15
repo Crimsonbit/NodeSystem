@@ -19,13 +19,14 @@ public class GPortRect extends Rectangle {
 	private boolean input;
 	private Color inputColor;
 	private Color outputColor;
+	private double size = 6;
 
 	public void redraw() {
 
 		setX(x);
 		setY(y);
-		setWidth(6);
-		setHeight(6);
+		setWidth(size);
+		setHeight(size);
 		if (input)
 			setFill(this.inputColor);
 		else
@@ -45,6 +46,14 @@ public class GPortRect extends Rectangle {
 		this.inputColor = node.getNodeGraph().getGeneralColorLookup().get(GraphSettings.COLOR_PORT_INPUT);
 		this.outputColor = node.getNodeGraph().getGeneralColorLookup().get(GraphSettings.COLOR_PORT_OUTPUT);
 		redraw();
+	}
+
+	public void setSize(double s) {
+		this.size = s;
+	}
+
+	public double getSize() {
+		return this.size;
 	}
 
 	public Color getInputColor() {

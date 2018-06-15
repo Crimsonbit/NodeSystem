@@ -6,12 +6,12 @@ import at.crimsonbit.nodesystem.nodebackend.api.NodeInput;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeOutput;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeType;
 
-public class IfNode extends AbstractNode {
+public class IfObject extends AbstractNode {
 	@NodeType
-	private static final Calculate type = Calculate.IF;
+	private static final Calculate type = Calculate.IF_OBJECT;
 
 	@NodeInput
-	boolean bool_condition;
+	Object obj_condition;
 
 	@NodeInput
 	Object object;
@@ -19,12 +19,12 @@ public class IfNode extends AbstractNode {
 	@NodeOutput("computeIf")
 	Object output;
 
-	public IfNode() {
+	public IfObject() {
 
 	}
 
 	public void computeIf() {
-		if (bool_condition)
+		if (obj_condition == object)
 			output = object;
 	}
 

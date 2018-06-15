@@ -34,6 +34,7 @@ import at.crimsonbit.nodesystem.node.types.Calculate;
 import at.crimsonbit.nodesystem.node.types.Constant;
 import at.crimsonbit.nodesystem.node.types.Image;
 import at.crimsonbit.nodesystem.node.types.ImageFilter;
+import at.crimsonbit.nodesystem.node.types.ImageHelper;
 import at.crimsonbit.nodesystem.node.types.Math;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeMaster;
@@ -48,7 +49,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.MenuItem;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.BoxBlur;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.InnerShadow;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.KeyCode;
@@ -198,6 +198,11 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		log(Level.INFO, "Added Menus and Key-support!");
 		addCustomNode(Base.OUTPUT, OutputNodeClass.class);
 		addCustomNode(Base.PATH, PathNodeClass.class);
+
+		for (INodeType t : Image.values()) {
+			addCustomNode(t, ImageNodeClass.class);
+		}
+
 		for (INodeType t : Constant.values()) {
 			addCustomNode(t, ConstantNodeClass.class);
 		}
@@ -415,6 +420,9 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		@Override
 		public void handle(KeyEvent event) {
 
+			/*
+			 * Opens the search bar
+			 */
 			if (event.isControlDown() && event.getCode().equals(KeyCode.SPACE)) {
 				if (!bar.isOpen())
 					bar.search((Stage) getScene().getWindow(), GNodeGraph.this);
@@ -422,16 +430,25 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 			if (getActive() != null) {
 
+				/*
+				 * Copies the active node onto the clipboard (clipboard is for GNodes only!)
+				 */
 				if (event.isControlDown() && event.getCode().equals(KeyCode.C)) {
 					clipboard.copy(getActive());
 					log(Level.INFO, "Node: " + getActive().getName() + " copied to clipboard!");
 				}
 
+				/**
+				 * Pastes from the clipboard
+				 */
 				if (event.isControlDown() && event.getCode().equals(KeyCode.V)) {
 					clipboard.paste();
 					log(Level.INFO, "Node: " + getActive().getName() + " pasted from clipboard!");
 				}
 
+				/**
+				 * Removes the active node
+				 */
 				if (event.getCode().equals(KeyCode.DELETE)) {
 					if (getActive() != null) {
 						getGuiMaster().removeNode(getActive());
@@ -441,6 +458,10 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 					}
 					log(Level.INFO, "Node: " + getActive().getName() + " was deleted from the graph!");
 				}
+
+				/**
+				 * Sets the constant
+				 */
 				if (event.isShiftDown() && event.getCode().equals(KeyCode.C)) {
 					for (INodeType t : Constant.values())
 						if (getActive().getNodeType().equals(t)) {
@@ -448,6 +469,9 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 							// update();
 						}
 				}
+				/**
+				 * calculates the output
+				 */
 				if (event.isShiftDown() && event.getCode().equals(KeyCode.O)) {
 					if (getActive().getNodeType().equals(Base.OUTPUT)) {
 						((OutputNodeClass) getActive()).setOutput();
@@ -456,7 +480,17 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 					}
 				}
 			}
-			if (event.isControlDown() && event.getCode().equals(KeyCode.N)) {
+
+			/*
+			 * Save the graph
+			 */
+			if (event.isControlDown() && event.getCode().equals(KeyCode.S)) {
+				onSave();
+
+			} else if (event.isControlDown() && event.getCode().equals(KeyCode.L)) {
+				onLoad();
+
+			} else if (event.isControlDown() && event.getCode().equals(KeyCode.X)) {
 				popUpDialog.show(nodeMaster.getNodeGraph(), getpX(), getpY());
 			}
 		}
@@ -855,6 +889,11 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		log(Level.INFO, "Setting up default color lookup...");
 		getColorLookup().put(Base.OUTPUT, Color.LIGHTBLUE);
 		getColorLookup().put(Base.PATH, Color.DARKSEAGREEN);
+
+		for (INodeType t : ImageHelper.values()) {
+			getColorLookup().put(t, Color.DARKGREEN);
+		}
+
 		for (INodeType t : Constant.values())
 			getColorLookup().put(t, Color.INDIANRED);
 

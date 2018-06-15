@@ -2,6 +2,9 @@ package at.crimsonbit.nodesystem.gui;
 
 import java.util.logging.Level;
 
+import at.crimsonbit.nodesystem.examples.customnode.CustomNodes;
+import at.crimsonbit.nodesystem.node.image.ImageNodeClass;
+import at.crimsonbit.nodesystem.node.types.Image;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.util.logger.SystemLogger;
 import javafx.scene.Scene;
@@ -130,6 +133,7 @@ public class NodeSystemBuilder {
 	 * @return this
 	 */
 	public NodeSystemBuilder registerDefaultNodes(boolean f) {
+
 		default_nodes = f;
 
 		return this;
