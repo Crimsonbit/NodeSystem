@@ -3,6 +3,7 @@ package at.crimsonbit.nodesystem.gui;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import at.crimsonbit.nodesystem.application.ApplicationContext;
 import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -32,6 +33,7 @@ import javafx.scene.transform.Scale;
 public class GGraphScene extends AnchorPane implements ILogging {
 
 	private static final double HALF_PIXEL_OFFSET = -0.5;
+	private ApplicationContext context = ApplicationContext.getContext();
 
 	private final Canvas canvas = new Canvas();
 	private GNodeGraph graph;
@@ -96,6 +98,10 @@ public class GGraphScene extends AnchorPane implements ILogging {
 		GClip.install(this);
 	}
 
+	public ApplicationContext getApplicationContext() {
+		return context;
+	}
+	
 	public Logger getLogger() {
 		return log;
 	}

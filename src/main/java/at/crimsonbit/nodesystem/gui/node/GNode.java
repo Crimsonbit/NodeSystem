@@ -590,7 +590,7 @@ public class GNode extends Pane implements IGNode {
 	}
 
 	protected void drawToggledConnections(double y) {
-		if (getOutputPorts().size() > 1)
+		if (getOutputPorts().size() >= 1)
 			for (GPort p : getOutputPorts()) {
 				p.relocatePortY(y);
 				p.redraw();

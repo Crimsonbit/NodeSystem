@@ -393,7 +393,7 @@ public class ImageUtils {
 	}
 
 	public static BufferedImage CGS(BufferedImage ih) {
-		ImageFilter filter = new GrayFilter(true, 50);
+		ImageFilter filter = new GrayFilter(false, 0);
 		ImageProducer producer = new FilteredImageSource(ih.getSource(), filter);
 		Image mage = Toolkit.getDefaultToolkit().createImage(producer);
 
