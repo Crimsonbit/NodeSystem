@@ -18,7 +18,6 @@ public class ImageDisplayNode extends AbstractNode {
 	@NodeType
 	private static final Image type = Image.IMAGE_DISPLAY;
 
-	@NodeField
 	@NodeInput
 	BufferedImage input;
 

@@ -18,7 +18,6 @@ public class ImageLoaderNode extends AbstractNode {
 	@NodeType
 	private static final Image type = Image.IMAGE_LOADER;
 
-	@NodeField
 	@NodeInput
 	String path;
 
