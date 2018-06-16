@@ -19,14 +19,13 @@ public class ImageBlurNode extends AbstractNode {
 	BufferedImage image;
 
 	@NodeInput
-	@NodeField
 	int radius;
 
 	@NodeOutput("computeBlur")
 	BufferedImage output;
 
 	public ImageBlurNode() {
-		
+
 	}
 
 	public void computeBlur() {
