@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import at.crimsonbit.nodesystem.gui.GNodeGraph?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="503.0" prefWidth="725.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.crimsonbit.nodesystem.examples.GraphFromFXMLExample">
+   <children>
+      <GNodeGraph fx:id="id_nodeView" layoutX="85.0" layoutY="48.0" prefHeight="408.0" prefWidth="556.0" AnchorPane.bottomAnchor="48.0" AnchorPane.leftAnchor="85.0" AnchorPane.rightAnchor="85.0" AnchorPane.topAnchor="48.0" />
+   </children>
+</AnchorPane>

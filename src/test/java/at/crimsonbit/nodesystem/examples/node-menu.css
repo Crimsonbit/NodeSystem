@@ -1,8 +1,8 @@
 .context-menu {
 	-fx-background-color: #191919;
 	-fx-border-color: white;
-	-fx-border-radius: 10 10 10 10;
-	-fx-background-radius: 10 10 10 10;
+	-fx-border-radius: 10.0 10.0 10.0 10.0;
+	-fx-background-radius: 10.0 10.0 10.0 10.0;
 }
 
 .menu-item .label {

@@ -8,6 +8,7 @@
 .text-field {
 	-fx-border-color: white;
 	-fx-background-radius: 15.0px;
+	-fx-border-radius: 15.0px;
 }
 .combo-box {
 	-fx-background-color: #191919;
@@ -19,5 +20,6 @@
 {
     -fx-background: orange;
     -fx-background-color: orange;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 10, 0, 0, 0);
     -fx-text-fill: -fx-selection-bar-text;
 }

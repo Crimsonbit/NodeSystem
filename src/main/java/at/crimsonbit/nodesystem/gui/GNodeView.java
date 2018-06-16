@@ -16,7 +16,27 @@ public class GNodeView extends AnchorPane {
 	// private GSettingsPane settingsPane;
 	// private boolean addSettingsPane = true;
 	private GLogPane logPane;
-	
+
+	public GNodeView() {
+		logPane = new GLogPane();
+		nodeGraph = new GNodeGraph(logPane);
+
+		// settingsPane = new GSettingsPane(nodeGraph);
+		// nodeGraph.setSettingsPane(settingsPane);
+
+		getChildren().add(nodeGraph);
+
+		// logPane.getChildren().add(rect);
+		getChildren().add(logPane);
+
+		// if (addSettingsPane) {
+		// getChildren().add(settingsPane);
+		// settingsPane.draw();
+		// }
+		// getChildren().add(nodeGraph.getNodeInfo());
+		setupScene();
+	}
+
 	public GNodeView(boolean addSettingsPane) {
 		// this.addSettingsPane = addSettingsPane;
 		logPane = new GLogPane();

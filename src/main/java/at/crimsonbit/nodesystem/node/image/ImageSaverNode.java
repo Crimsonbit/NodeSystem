@@ -16,15 +16,13 @@ public class ImageSaverNode extends AbstractNode {
 
 	@NodeType
 	private static final Image type = Image.IMAGE_SAVER;
-
+	private boolean save = true;
+	
 	@NodeInput
 	BufferedImage image;
 
 	@NodeInput
 	String path;
-
-	@NodeInput
-	boolean save;
 
 	@NodeOutput("saveImage")
 	BufferedImage output;
@@ -40,6 +38,7 @@ public class ImageSaverNode extends AbstractNode {
 				// System.out.println(image);
 				// System.out.println(path);
 				// System.out.println("Saving image....");
+				save = false;
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

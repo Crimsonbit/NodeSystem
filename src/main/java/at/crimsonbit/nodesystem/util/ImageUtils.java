@@ -9,6 +9,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.ConvolveOp;
+import java.awt.image.DataBufferInt;
 import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
 import java.awt.image.ImageProducer;
@@ -44,6 +45,19 @@ public class ImageUtils {
 
 	}
 
+	public static BufferedImage resize(Image originalImage, int scaledWidth, int scaledHeight, boolean preserveAlpha) {
+		// System.out.println("resizing...");
+		int imageType = preserveAlpha ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
+		BufferedImage scaledBI = new BufferedImage(scaledWidth, scaledHeight, imageType);
+		Graphics2D g = scaledBI.createGraphics();
+		if (preserveAlpha) {
+			g.setComposite(AlphaComposite.Src);
+		}
+		g.drawImage(originalImage, 0, 0, scaledWidth, scaledHeight, null);
+		g.dispose();
+		return scaledBI;
+	}
+
 	public static BufferedImage zoom(BufferedImage in, int zoom) {
 		BufferedImage out = new BufferedImage(in.getWidth(), in.getHeight(), BufferedImage.TYPE_INT_ARGB);
 		AffineTransform trans = new AffineTransform();
@@ -72,9 +86,9 @@ public class ImageUtils {
 		int height = img1.getHeight();
 		BufferedImage out = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
-		byte[] outData = ImageUtils.getData(out);
-		byte[] img1Data = ImageUtils.getData(img1);
-		byte[] img2Data = ImageUtils.getData(img2);
+		int[] outData = ImageUtils.getData(out);
+		int[] img1Data = ImageUtils.getData(img1);
+		int[] img2Data = ImageUtils.getData(img2);
 		for (int y = 0; y < height; y++)
 			for (int x = 0; x < width; x++) {
 				int col = img1Data[x + y * width];
@@ -92,22 +106,9 @@ public class ImageUtils {
 					gnew = 255;
 				if (bnew > 255)
 					bnew = 255;
-				outData[x + (y * width)] = (byte) (0xFF000000 | (rnew << 16) | (gnew << 8) | (bnew));
+				outData[x + (y * width)] = 0xFF000000 | (rnew << 16) | (gnew << 8) | (bnew);
 			}
 		return out;
-	}
-
-	public static BufferedImage resize(Image originalImage, int scaledWidth, int scaledHeight, boolean preserveAlpha) {
-		// System.out.println("resizing...");
-		int imageType = preserveAlpha ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
-		BufferedImage scaledBI = new BufferedImage(scaledWidth, scaledHeight, imageType);
-		Graphics2D g = scaledBI.createGraphics();
-		if (preserveAlpha) {
-			g.setComposite(AlphaComposite.Src);
-		}
-		g.drawImage(originalImage, 0, 0, scaledWidth, scaledHeight, null);
-		g.dispose();
-		return scaledBI;
 	}
 
 	/**
@@ -154,9 +155,9 @@ public class ImageUtils {
 		int height = img1.getHeight();
 		BufferedImage out = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
-		byte[] outData = ImageUtils.getData(out);
-		byte[] img1Data = ImageUtils.getData(img1);
-		byte[] img2Data = ImageUtils.getData(img2);
+		int[] outData = ImageUtils.getData(out);
+		int[] img1Data = ImageUtils.getData(img1);
+		int[] img2Data = ImageUtils.getData(img2);
 		for (int y = 0; y < height; y++)
 			for (int x = 0; x < width; x++) {
 				Color col = new Color(img1Data[x + (y * width)]);
@@ -183,7 +184,7 @@ public class ImageUtils {
 					b = 255;
 				if (b < 0)
 					b = 0;
-				outData[x + (y * width)] = (byte) getRGB(r, g, b);
+				outData[x + (y * width)] = getRGB(r, g, b);
 			}
 		return out;
 	}
@@ -198,9 +199,9 @@ public class ImageUtils {
 		int height = img1.getHeight();
 		BufferedImage out = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
-		byte[] outData = ImageUtils.getData(out);
-		byte[] img1Data = ImageUtils.getData(img1);
-		byte[] img2Data = ImageUtils.getData(img2);
+		int[] outData = ImageUtils.getData(out);
+		int[] img1Data = ImageUtils.getData(img1);
+		int[] img2Data = ImageUtils.getData(img2);
 		for (int y = 0; y < height; y++)
 			for (int x = 0; x < width; x++) {
 				Color col = new Color(img1Data[x + y * width]);
@@ -213,7 +214,7 @@ public class ImageUtils {
 				double gnew = greenO / 255d;
 				double bnew = blueO / 255d;
 
-				outData[x + y * width] = (byte) getRGB((int) (rnew * col2.getRed()), (int) (gnew * col2.getGreen()),
+				outData[x + y * width] = getRGB((int) (rnew * col2.getRed()), (int) (gnew * col2.getGreen()),
 						(int) (bnew * col2.getBlue()));
 			}
 		return out;
@@ -339,11 +340,10 @@ public class ImageUtils {
 	public static BufferedImage Normalize(BufferedImage img) {
 		BufferedImage out = img;
 		int size = img.getWidth();
-		int sizey = img.getHeight();
-		int[][] heightmap = retrivePixels(img, size, sizey);
+		int[][] heightmap = retrivePixels(img, size, size);
 		for (int y = 0; y < size; y++) {
 			for (int x = 0; x < size; x++) {
-				heightmap[x][y] = (heightmap[x][y] - 1) / (1 - -1);
+				heightmap[x][y] = (heightmap[x][y] - -1) / (1 - -1);
 			}
 		}
 		for (int y = 0; y < size; y++)
@@ -393,7 +393,7 @@ public class ImageUtils {
 	}
 
 	public static BufferedImage CGS(BufferedImage ih) {
-		ImageFilter filter = new GrayFilter(false, 0);
+		ImageFilter filter = new GrayFilter(true, 50);
 		ImageProducer producer = new FilteredImageSource(ih.getSource(), filter);
 		Image mage = Toolkit.getDefaultToolkit().createImage(producer);
 
@@ -438,13 +438,8 @@ public class ImageUtils {
 		}
 	}
 
-	public static byte[] getData(BufferedImage img) {
-		byte[] arr = new byte[img.getWidth() * img.getHeight()];
-		for (int x = 0; x < img.getWidth(); x++)
-			for (int y = 0; y < img.getHeight(); y++) {
-				arr[y * img.getWidth() + x] = (byte) img.getRGB(x, y);
-			}
-		return arr;
+	public static int[] getData(BufferedImage img) {
+		return ((DataBufferInt) (img.getRaster().getDataBuffer())).getData();
 	}
 
 	/**

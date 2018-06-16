@@ -36,6 +36,8 @@ import at.crimsonbit.nodesystem.node.types.Image;
 import at.crimsonbit.nodesystem.node.types.ImageFilter;
 import at.crimsonbit.nodesystem.node.types.ImageHelper;
 import at.crimsonbit.nodesystem.node.types.Math;
+import at.crimsonbit.nodesystem.node.types.Noise;
+import at.crimsonbit.nodesystem.node.types.Terrain;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeMaster;
 import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
@@ -104,6 +106,70 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private GSubMenu fileMenu = new GSubMenu(1, "File");
 	private GLogPane logPane;
 	private InnerShadow innerShadow;
+
+	public GNodeGraph() {
+		try {
+			log = SystemLogger.getLogger(logPane);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		log(Level.INFO, "Setting up NodeGraph...");
+
+		setDefaultColorLookup();
+		setNodeGraph(this);
+
+		this.selection = new Rectangle();
+		this.selection.setStroke(Color.LIGHTSKYBLUE);
+		this.selection.setArcWidth(21.0);
+		this.selection.setArcHeight(21.0);
+		this.selection.setStrokeWidth(1);
+
+		this.nodeMaster = new GNodeMaster(this);
+
+		this.canvas = new Group();
+		this.nodeLayer = new GNodeLayer();
+		this.lineLayer = new GLineLayer();
+
+		this.canvas.getChildren().add(nodeLayer);
+		this.canvas.getChildren().add(lineLayer);
+		this.canvas.getChildren().add(this.selection);
+		this.getChildren().add(canvas);
+
+		this.handler = new GNodeMouseHandler(this);
+		// this.getChildren().add(this.settingsPane);
+
+		this.canvas.getTransforms().add(getScaleTransform());
+
+		graphDialog = new GPopUp();
+		graphDialog.addItem(-1, "Node Editor", true);
+		graphDialog.addSeparator(-2);
+		graphDialog.addItem(nodeMenu);
+		graphDialog.addItem(fileMenu);
+
+		this.setPopUpDialog(graphDialog);
+
+		setDefaulSettings();
+		log(Level.INFO, "NodeGraph set-up successfully!");
+		clipboard = new GClipboard(this);
+
+		innerShadow = new InnerShadow();
+
+		// Setting the offset values of the inner shadow
+		innerShadow.setOffsetX(4);
+		innerShadow.setOffsetY(4);
+
+		innerShadow.setBlurType(BlurType.GAUSSIAN);
+		double col = (double) getSettings().get(GraphSettings.COLOR_SHADOW_COLOR);
+		innerShadow.setColor(new Color(col, col, col, 1));
+		innerShadow.setWidth((double) getSettings().get(GraphSettings.SETTING_SHADOW_WIDTH));
+		innerShadow.setHeight((double) getSettings().get(GraphSettings.SETTING_SHADOW_HEIGHT));
+		innerShadow.setOffsetX((double) getSettings().get(GraphSettings.SETTING_SHADOW_WIDTH));
+		innerShadow.setOffsetY((double) getSettings().get(GraphSettings.SETTING_SHADOW_HEIGHT));
+		innerShadow.setRadius((double) getSettings().get(GraphSettings.SETTING_SHADOW_RADIUS));
+
+		setEffect(innerShadow);
+	}
 
 	public GNodeGraph(GLogPane logPane) {
 		setLogPane(logPane);
@@ -890,9 +956,14 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		getColorLookup().put(Base.OUTPUT, Color.LIGHTBLUE);
 		getColorLookup().put(Base.PATH, Color.DARKSEAGREEN);
 
-		for (INodeType t : ImageHelper.values()) {
+		for (INodeType t : Noise.values())
+			getColorLookup().put(t, Color.LIGHTCORAL);
+
+		for (INodeType t : ImageHelper.values())
 			getColorLookup().put(t, Color.DARKGREEN);
-		}
+
+		for (INodeType t : Terrain.values())
+			getColorLookup().put(t, Color.BLUEVIOLET);
 
 		for (INodeType t : Constant.values())
 			getColorLookup().put(t, Color.INDIANRED);

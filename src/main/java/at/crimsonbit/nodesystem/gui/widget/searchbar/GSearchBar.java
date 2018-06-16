@@ -79,7 +79,7 @@ public class GSearchBar {
 		root.setRightAnchor(idd_search_text, 0d);
 
 		scene = new Scene(root);
-		// scene.getStylesheets().add(getClass().getResource("searchbar.css").toExternalForm());
+		scene.getStylesheets().add(getClass().getResource("searchbar.css").toExternalForm());
 		// stage.setResizable(false);
 		scene.setFill(Color.TRANSPARENT);
 		stage.initStyle(StageStyle.TRANSPARENT);
