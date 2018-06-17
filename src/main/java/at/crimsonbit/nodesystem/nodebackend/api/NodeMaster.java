@@ -118,6 +118,7 @@ public class NodeMaster {
 			url = new URL("jar:file:" + file + "!/");
 
 		} catch (MalformedURLException e) {
+			jar.close();
 			throw new IllegalArgumentException("Malformed file name", e);
 		}
 		try (URLClassLoader cl = new URLClassLoader(new URL[] { url })) {
@@ -133,6 +134,7 @@ public class NodeMaster {
 				}
 			}
 		}
+		jar.close();
 	}
 
 	private void registerNodeClass(Class<? extends AbstractNode> clazz) {

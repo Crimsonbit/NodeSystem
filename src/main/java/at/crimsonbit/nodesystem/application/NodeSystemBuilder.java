@@ -49,7 +49,7 @@ public class NodeSystemBuilder {
 		if (log) {
 			SystemLogger.attachLogger(true, true);
 		}
-		
+
 		sys = new GNodeSystem();
 		view = sys.getNodeView();
 		graph = view.getNodeGraph();
@@ -92,6 +92,26 @@ public class NodeSystemBuilder {
 	public NodeSystemBuilder registerCustomNodes(String pckg) {
 		if (graph != null)
 			graph.registerNodes(pckg);
+
+		return this;
+	}
+
+	/**
+	 * <h1>registerCustomNodesJar({@link String}</h1>
+	 * <p>
+	 * This method can be called as many times as neccessary! With this method you
+	 * can register your own custom nodes by telling this method the jar File module
+	 * </p>
+	 * 
+	 * @param pack
+	 *            the jar File path
+	 * @param c
+	 *            the color of the nodes
+	 * @return this
+	 */
+	public NodeSystemBuilder registerCustomNodesJar(String jarfile) {
+		if (graph != null)
+			graph.registerNodesInJar(jarfile);
 
 		return this;
 	}

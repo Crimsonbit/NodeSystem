@@ -72,11 +72,15 @@ public class Morph implements IMorph {
 	}
 
 	public static BufferedImage SErode(BufferedImage img, int n) {
-		return new Morph().Erode(img, n);
+		try (Morph morph = new Morph()) {
+			return morph.Erode(img, n);
+		}
 	}
 
 	public static BufferedImage SDilate(BufferedImage img, int n) {
-		return new Morph().Dilate(img, n);
+		try (Morph morph = new Morph()) {
+			return morph.Dilate(img, n);
+		}
 	}
 
 	public BufferedImage Erode(BufferedImage img, int n) {

@@ -1,5 +1,6 @@
 package at.crimsonbit.nodesystem.gui;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -17,6 +18,7 @@ import at.crimsonbit.nodesystem.gui.node.GNodeConnection;
 import at.crimsonbit.nodesystem.gui.node.port.GPort;
 import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
 import at.crimsonbit.nodesystem.node.types.Base;
+import at.crimsonbit.nodesystem.node.types.IGuiNodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeMaster;
@@ -154,6 +156,16 @@ public class GNodeMaster {
 				allConnections.remove(con);
 				removedConnections.add(con);
 			}
+		}
+	}
+
+	public void registerNodesInJar(String jarfile) {
+		try {
+			this.nodeMaster.registerNodesFromJar(jarfile);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -317,7 +329,7 @@ public class GNodeMaster {
 		Map<AbstractNode, GNode> cache = new HashMap<>();
 
 		for (AbstractNode node : master.getAllNodes()) {
-			Class<? extends GNode> clazz = getNodeGraph().getNodeMap().get(master.getTypeOfNode(node));
+			Class<? extends GNode> clazz = ((IGuiNodeType) master.getTypeOfNode(node)).getCustomNodeClass();
 			Constructor<? extends GNode> constr = clazz.getConstructor(String.class, int.class, boolean.class,
 					GNodeGraph.class);
 			GNode gn = constr.newInstance(master.getTypeOfNode(node).toString(), master.getIdOfNode(node), true, graph);

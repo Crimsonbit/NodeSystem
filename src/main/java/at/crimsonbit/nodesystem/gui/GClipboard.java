@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import at.crimsonbit.nodesystem.gui.node.GNode;
+import at.crimsonbit.nodesystem.node.types.IGuiNodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 
 public class GClipboard {
@@ -27,9 +28,9 @@ public class GClipboard {
 	public void copyPaste(GNode node) {
 		if (this.graph != null && node != null) {
 
-			INodeType type = graph.getGuiMaster().getNodeMaster().getTypeByName(node.getTypeName());
+			IGuiNodeType type = (IGuiNodeType) graph.getGuiMaster().getNodeMaster().getTypeByName(node.getTypeName());
 
-			Class<? extends GNode> clazz = graph.getNodeMap().get(type);
+			Class<? extends GNode> clazz = type.getCustomNodeClass();
 			Constructor<? extends GNode> con;
 			try {
 				con = clazz.getConstructor(String.class, INodeType.class, boolean.class, GNodeGraph.class, double.class,
@@ -48,9 +49,10 @@ public class GClipboard {
 	public void paste() {
 		if (this.graph != null && this.toCopy != null) {
 
-			INodeType type = graph.getGuiMaster().getNodeMaster().getTypeByName(this.toCopy.getTypeName());
+			IGuiNodeType type = (IGuiNodeType) graph.getGuiMaster().getNodeMaster()
+					.getTypeByName(this.toCopy.getTypeName());
 
-			Class<? extends GNode> clazz = graph.getNodeMap().get(type);
+			Class<? extends GNode> clazz = type.getCustomNodeClass();
 			Constructor<? extends GNode> con;
 			try {
 				con = clazz.getConstructor(String.class, INodeType.class, boolean.class, GNodeGraph.class, double.class,

@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.node.GNode;
+import at.crimsonbit.nodesystem.node.types.IGuiNodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -135,7 +136,7 @@ public class GSearchBar {
 
 					INodeType type = graph.getGuiMaster().getNodeMaster().getTypeByName(search);
 					if (type != null) {
-						Class<? extends GNode> clazz = graph.getNodeMap().get(type);
+						Class<? extends GNode> clazz = ((IGuiNodeType) type).getCustomNodeClass();
 						Constructor<? extends GNode> con;
 						try {
 							con = clazz.getConstructor(String.class, INodeType.class, boolean.class, GNodeGraph.class,

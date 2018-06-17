@@ -31,7 +31,6 @@ public class LoadExistingGraph extends Application {
 		/**
 		 * Example of how to add custom node-classes to specific node types
 		 */
-		graph.addCustomNode(CustomNodes.EXAMPLE, new CustomNodeClassExample().getClass());
 		graph.addColorLookup(CustomNodes.EXAMPLE, Color.SANDYBROWN); // Sets the color of our custom node.
 
 		/**

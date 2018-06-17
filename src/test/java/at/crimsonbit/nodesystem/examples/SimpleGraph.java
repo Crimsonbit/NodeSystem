@@ -29,18 +29,18 @@ public class SimpleGraph extends Application {
 
 		GNodeGraph graph = new NodeSystemBuilder(1275, 800, true)
 				.registerCustomNodes("at.crimsonbit.nodesystem.examples.customnode")
-				.registerColors(Color.SANDYBROWN, CustomNodes.values()).registerDefaultNodes(true).build();
+				.registerCustomNodesJar("Modules/constants.jar").registerColors(Color.SANDYBROWN, CustomNodes.values())
+				.registerDefaultNodes(true).build();
 
 		/**
 		 * Example of how to add custom node-classes to specific node types
 		 */
-		graph.addCustomNode(CustomNodes.EXAMPLE, new CustomNodeClassExample().getClass());
-		
+
 		/**
 		 * Example of how to change settings used in the node-system
 		 * 
 		 */
-		
+
 		graph.addSetting(GraphSettings.SETTING_CURVE_WIDTH, 6d);
 		graph.addSetting(GraphSettings.SETTING_CURVE_CURVE, 100d);
 		graph.getGeneralColorLookup().put(GraphSettings.COLOR_BACKGROUND_LINES, Color.WHITE);

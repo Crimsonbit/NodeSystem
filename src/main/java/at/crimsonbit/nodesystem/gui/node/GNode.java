@@ -22,6 +22,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -788,6 +789,10 @@ public class GNode extends Pane implements IGNode {
 			this.y = y;
 			this.name = name;
 		}
+
+	}
+
+	public void onKeyPressed(KeyEvent event) {
 
 	}
 
