@@ -1,5 +1,6 @@
 package at.crimsonbit.nodesystem.nodebackend.api;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -37,6 +38,7 @@ import at.crimsonbit.nodesystem.nodebackend.api.dto.Signal;
 import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
 import at.crimsonbit.nodesystem.nodebackend.util.NodeConnection;
 import at.crimsonbit.nodesystem.nodebackend.util.Tuple;
+import at.crimsonbit.nodesystem.nodebackend.util.Util;
 
 /**
  * A Node Master is used to Manage registration and connection of Node, which
@@ -50,6 +52,10 @@ import at.crimsonbit.nodesystem.nodebackend.util.Tuple;
  */
 
 public class NodeMaster {
+
+	public static final int SAVEFILE_VERISON = 1;
+
+	private static final String ENTRY_VERSION_NAME = "version";
 	private static final String ENTRY_EXTRA_NAME = "extra.dat";
 	private static final String ENTRY_CONN_NAME = "connections.dat";
 	private static final String ENTRY_STATE_NAME = "state.dat";
@@ -670,12 +676,14 @@ public class NodeMaster {
 		ZipEntry e = new ZipEntry(ENTRY_EXTRA_NAME);
 		e.setMethod(ZipEntry.DEFLATED);
 		zos.putNextEntry(e);
-		ObjectOutputStream oos = new ObjectOutputStream(zos);
-		for (AbstractNode node : nodePool.values()) {
-			oos.writeObject(new Tuple<Integer, Object>(getIdOfNode(node), getExtraInfo.apply(node)));
+		if (getExtraInfo != null) {
+			ObjectOutputStream oos = new ObjectOutputStream(zos);
+			for (AbstractNode node : nodePool.values()) {
+				oos.writeObject(new Tuple<Integer, Object>(getIdOfNode(node), getExtraInfo.apply(node)));
+			}
+			oos.writeObject(null);
+			oos.flush();
 		}
-		oos.writeObject(null);
-		oos.flush();
 		zos.closeEntry();
 		return true;
 	}
@@ -748,6 +756,15 @@ public class NodeMaster {
 		return true;
 	}
 
+	private boolean trySaveVersion(ZipOutputStream zos) throws IOException {
+		ZipEntry e = new ZipEntry(ENTRY_VERSION_NAME);
+		e.setMethod(ZipEntry.DEFLATED);
+		zos.putNextEntry(e);
+		zos.write(Util.intToByteArray(SAVEFILE_VERISON));
+		zos.closeEntry();
+		return true;
+	}
+
 	/**
 	 * Save the current NodeMaster Instance to the File specified by savefile. If
 	 * this file already exists and override is false, this methods returns false
@@ -764,6 +781,9 @@ public class NodeMaster {
 			return false;
 		}
 		try (ZipOutputStream zos = new ZipOutputStream(Files.newOutputStream(p))) {
+			if (!trySaveVersion(zos)) {
+				return false;
+			}
 			if (!trySaveRegistry(zos)) {
 				return false;
 			}
@@ -790,11 +810,12 @@ public class NodeMaster {
 	 * @throws IOException
 	 * @throws NoSuchNodeException
 	 */
-	public static NodeMaster load(Path savefile) throws IOException, NoSuchNodeException {
+	public static Tuple<NodeMaster, String> load(Path savefile) throws IOException, NoSuchNodeException {
 		NodeMaster m = new NodeMaster();
-		if (!m.tryLoad(savefile))
-			return null;
-		return m;
+		String report = "";
+		if ((report = m.tryLoad(savefile)) != "")
+			return new Tuple<>(null, report);
+		return new Tuple<>(m, report);
 	}
 
 	/**
@@ -806,7 +827,7 @@ public class NodeMaster {
 	 * @throws IOException
 	 * @throws NoSuchNodeException
 	 */
-	public static NodeMaster load(String savefile) throws IOException, NoSuchNodeException {
+	public static Tuple<NodeMaster, String> load(String savefile) throws IOException, NoSuchNodeException {
 		return load(Paths.get(savefile));
 	}
 
@@ -825,37 +846,55 @@ public class NodeMaster {
 		extraInfo = null;
 	}
 
-	private boolean tryLoad(Path p) throws IOException, NoSuchNodeException {
+	private String tryLoad(Path p) throws IOException, NoSuchNodeException {
 		if (!Files.exists(p)) {
-			return false;
+			return "Error, File does not exist";
 		}
+		int found = 0;
 		try (ZipInputStream zin = new ZipInputStream(Files.newInputStream(p))) {
 			ZipEntry e = null;
 			while ((e = zin.getNextEntry()) != null) {
+				found++;
 				switch (e.getName()) {
 				case ENTRY_REG_NAME:
 					if (!tryLoadRegistry(zin)) {
-						return false;
+						return "Error while loading Registry";
 					}
 					break;
 				case ENTRY_STATE_NAME:
 					if (!tryLoadState(zin)) {
-						return false;
+						return "Error while loading State";
 					}
 					break;
 				case ENTRY_CONN_NAME:
 					if (!tryLoadConnections(zin)) {
-						return false;
+						return "Error while loading Connections";
 					}
 					break;
 				case ENTRY_EXTRA_NAME:
 					if (!tryLoadExtraInfo(zin)) {
-						return false;
+						return "Error while loading Extra Data";
 					}
 					break;
+				case ENTRY_VERSION_NAME:
+					if (!tryLoadVersion(zin)) {
+						return "Error, Savefile has a different version";
+					}
+					break;
+				default:
+					throw new IllegalStateException("No ZipEntry: " + e.getName() + " expected");
 				}
 
 			}
+		}
+		return found == 5 ? "" : "Error, did not find all Entries";
+	}
+
+	private boolean tryLoadVersion(ZipInputStream zin) throws IOException {
+		byte[] b = new byte[4];
+		zin.read(b);
+		if (Util.byteArrayToInt(b) != SAVEFILE_VERISON) {
+			return false;
 		}
 		return true;
 	}
@@ -890,8 +929,13 @@ public class NodeMaster {
 	}
 
 	private boolean tryLoadExtraInfo(ZipInputStream zin) throws IOException {
-
-		ObjectInputStream ois = new ObjectInputStream(zin);
+		ObjectInputStream ois;
+		try {
+			ois = new ObjectInputStream(zin);
+		} catch (EOFException e) {
+			// ExtraInfo may be empty
+			return true;
+		}
 		Object read;
 		try {
 			while ((read = ois.readObject()) != null) {
