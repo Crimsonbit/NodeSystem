@@ -3,10 +3,10 @@ package at.crimsonbit.nodesystem.examples;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 
+import at.crimsonbit.nodesystem.application.NodeSystemBuilder;
 import at.crimsonbit.nodesystem.examples.customnode.CustomNodeClassExample;
 import at.crimsonbit.nodesystem.examples.customnode.CustomNodes;
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
-import at.crimsonbit.nodesystem.gui.NodeSystemBuilder;
 import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
 import javafx.application.Application;
 import javafx.scene.Scene;

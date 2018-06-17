@@ -20,7 +20,7 @@ public class GNodeSystem {
 		nodeView = new GNodeView(false);
 	}
 
-	protected void attachSettingsPane(boolean addPane) {
+	public void attachSettingsPane(boolean addPane) {
 		this.nodeView = new GNodeView(addPane);
 	}
 

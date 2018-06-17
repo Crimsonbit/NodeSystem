@@ -1,7 +1,7 @@
 package at.crimsonbit.nodesystem.examples;
 
+import at.crimsonbit.nodesystem.application.NodeSystemBuilder;
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
-import at.crimsonbit.nodesystem.gui.NodeSystemBuilder;
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.node.base.OutputNodeClass;
 import at.crimsonbit.nodesystem.node.constant.ConstantNodeClass;

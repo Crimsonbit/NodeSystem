@@ -29,6 +29,8 @@ import at.crimsonbit.nodesystem.node.base.OutputNodeClass;
 import at.crimsonbit.nodesystem.node.base.PathNodeClass;
 import at.crimsonbit.nodesystem.node.constant.ConstantNodeClass;
 import at.crimsonbit.nodesystem.node.image.ImageNodeClass;
+import at.crimsonbit.nodesystem.node.types.Arduino;
+import at.crimsonbit.nodesystem.node.types.ArduinoPin;
 import at.crimsonbit.nodesystem.node.types.Base;
 import at.crimsonbit.nodesystem.node.types.Calculate;
 import at.crimsonbit.nodesystem.node.types.Constant;
@@ -957,6 +959,12 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		log(Level.INFO, "Setting up default color lookup...");
 		getColorLookup().put(Base.OUTPUT, Color.LIGHTBLUE);
 		getColorLookup().put(Base.PATH, Color.DARKSEAGREEN);
+
+		for (INodeType t : Arduino.values())
+			getColorLookup().put(t, new Color(0, (double) 152 / 255d, (double) 157 / 255d, 1));
+		
+		for (INodeType t : ArduinoPin.values())
+			getColorLookup().put(t, new Color(0, (double) 152 / 255d, (double) 157 / 255d, 1));
 
 		for (INodeType t : Noise.values())
 			getColorLookup().put(t, Color.LIGHTCORAL);
