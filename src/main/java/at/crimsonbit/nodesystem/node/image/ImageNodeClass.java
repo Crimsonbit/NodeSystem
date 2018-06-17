@@ -95,7 +95,7 @@ public class ImageNodeClass extends GNode {
 
 				drawNodeTopArc(width, 15.0);
 				addView(text);
-				drawToggledConnections(text.getY() / 2);
+				drawToggledConnections((12.5d/2d)-1d);
 			}
 		} else {
 			getChildren().clear();

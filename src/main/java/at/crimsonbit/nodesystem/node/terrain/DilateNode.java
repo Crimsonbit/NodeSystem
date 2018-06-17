@@ -14,7 +14,6 @@ public class DilateNode extends AbstractNode {
 
 	@NodeType
 	private static final Terrain type = Terrain.DIALTE;
-	private MultiThreadMorph clm = new MultiThreadMorph();;
 
 	@NodeInput
 	BufferedImage input;

@@ -2,7 +2,11 @@ package at.crimsonbit.nodesystem.terrain;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-
+/**
+ * 
+ * @author Florian Wagner
+ *
+ */
 public class DLA {
 
 	public static BufferedImage genDLA(int size, int rad) {
