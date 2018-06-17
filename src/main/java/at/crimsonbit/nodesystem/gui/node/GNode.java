@@ -1,5 +1,6 @@
 package at.crimsonbit.nodesystem.gui.node;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -460,7 +461,7 @@ public class GNode extends Pane implements IGNode {
 				 * p.getPortRectangle().setSize(15); p.redraw(); p.relocate(width - 15, 0);
 				 * addView(p); p.toFront(); }
 				 */
-				drawToggledConnections((12.5d/2d)-1d);
+				drawToggledConnections((12.5d / 2d) - 1d);
 
 				/*
 				 * for (GPort p : inputPorts) { removeView(p); addView(p); p.toFront(); } for
@@ -757,8 +758,10 @@ public class GNode extends Pane implements IGNode {
 	 */
 	@SuppressWarnings("unchecked")
 	public void loadData(Object data) {
-		Tuple<Double, Double> tu = (Tuple<Double, Double>) data;
-		relocate(tu.a, tu.b);
+		Data d = (Data) data;
+		relocate(d.x, d.y);
+		this.setName(d.name);
+		redraw();
 	}
 
 	/**
@@ -769,7 +772,23 @@ public class GNode extends Pane implements IGNode {
 	 * @return
 	 */
 	public Object storeData() {
-		return new Tuple<Double, Double>(this.getLayoutX(), this.getLayoutY());
+		return new Data(this.getLayoutX(), this.getLayoutY(), this.getName());
+	}
+
+	private static class Data implements Serializable {
+
+		private static final long SerialVersionUID = 0;
+
+		public final double x, y;
+		public final String name;
+
+		public Data(double x, double y, String name) {
+			super();
+			this.x = x;
+			this.y = y;
+			this.name = name;
+		}
+
 	}
 
 }
