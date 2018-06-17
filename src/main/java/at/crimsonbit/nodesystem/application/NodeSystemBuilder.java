@@ -116,13 +116,6 @@ public class NodeSystemBuilder {
 		return this;
 	}
 
-	public NodeSystemBuilder registerColors(Color c, INodeType... types) {
-		if (graph != null)
-			for (INodeType t : types) {
-				graph.addColorLookup(t, c);
-			}
-		return this;
-	}
 
 	/**
 	 * <h1>attachLogger()</h1>

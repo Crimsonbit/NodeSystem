@@ -91,8 +91,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private Scene sc;
 	private GNodeLayer nodeLayer;
 	private GLineLayer lineLayer;
-	private HashMap<INodeType, Color> colorLookup = new HashMap<INodeType, Color>();
-	private HashMap<GraphSettings, Color> nodeLookup = new HashMap<GraphSettings, Color>();
+	private HashMap<GraphSettings, Color> generalColorLookup = new HashMap<GraphSettings, Color>();
 	private HashMap<GraphSettings, Object> settings = new HashMap<GraphSettings, Object>();
 	private GSearchBar bar = new GSearchBar();
 	private GClipboard clipboard;
@@ -942,35 +941,6 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 	private void setDefaultColorLookup() {
 		log(Level.INFO, "Setting up default color lookup...");
-		getColorLookup().put(Base.OUTPUT, Color.LIGHTBLUE);
-		getColorLookup().put(Base.PATH, Color.DARKSEAGREEN);
-
-		for (INodeType t : Arduino.values())
-			getColorLookup().put(t, new Color(0, (double) 152 / 255d, (double) 157 / 255d, 1));
-
-		for (INodeType t : ArduinoPin.values())
-			getColorLookup().put(t, new Color(0, (double) 152 / 255d, (double) 157 / 255d, 1));
-
-		for (INodeType t : Noise.values())
-			getColorLookup().put(t, Color.LIGHTCORAL);
-
-		for (INodeType t : ImageHelper.values())
-			getColorLookup().put(t, Color.DARKGREEN);
-
-		for (INodeType t : Terrain.values())
-			getColorLookup().put(t, Color.BLUEVIOLET);
-
-		for (INodeType t : Math.values())
-			getColorLookup().put(t, Color.ORANGE);
-
-		for (INodeType t : Calculate.values())
-			getColorLookup().put(t, Color.DARKORANGE);
-
-		for (INodeType t : Image.values())
-			getColorLookup().put(t, Color.BROWN);
-
-		for (INodeType t : ImageFilter.values())
-			getColorLookup().put(t, Color.SADDLEBROWN);
 
 		getGeneralColorLookup().put(GraphSettings.COLOR_NODE_ACTIVE, new Color(0.992, 0.647, 0.305, 1));
 		getGeneralColorLookup().put(GraphSettings.COLOR_PORT_INPUT, Color.LIGHTBLUE);
@@ -987,32 +957,13 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	 * @param c
 	 */
 	public void addNodeColorLookup(GraphSettings string, Color c) {
-		this.nodeLookup.put(string, c);
+		this.generalColorLookup.put(string, c);
 	}
 
 	public HashMap<GraphSettings, Color> getGeneralColorLookup() {
-		return this.nodeLookup;
+		return this.generalColorLookup;
 	}
 
-	/**
-	 * <h1>public void addColorLookup({@link INodeType}, {@link Color})</h1>
-	 * <hr>
-	 * <p>
-	 * This method allows the user to add custom colors to nodes.
-	 * </p>
-	 * 
-	 * @param type
-	 *            the type you want to define or change the color
-	 * @param c
-	 *            the color
-	 */
-	public void addColorLookup(INodeType type, Color c) {
-		this.colorLookup.put(type, c);
-	}
-
-	public HashMap<INodeType, Color> getColorLookup() {
-		return colorLookup;
-	}
 
 	@SuppressWarnings("unused")
 	private void setSettingsPane(GSettingsPane settingsPane2) {

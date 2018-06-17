@@ -3,8 +3,6 @@ package at.crimsonbit.nodesystem.examples;
 import java.util.function.BiConsumer;
 
 import at.crimsonbit.nodesystem.application.NodeSystemBuilder;
-import at.crimsonbit.nodesystem.examples.customnode.CustomNodeClassExample;
-import at.crimsonbit.nodesystem.examples.customnode.CustomNodes;
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.dialog.GEntry;
 import at.crimsonbit.nodesystem.gui.dialog.GSubMenu;
@@ -14,7 +12,6 @@ import at.crimsonbit.nodesystem.gui.widget.toast.ToastPosition;
 import at.crimsonbit.nodesystem.gui.widget.toast.ToastTime;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 /**
@@ -37,7 +34,6 @@ public class CustomGraphDialogs extends Application {
 		/**
 		 * Example of how to add custom node-classes to specific node types
 		 */
-		graph.addColorLookup(CustomNodes.EXAMPLE, Color.SANDYBROWN); // Sets the color of our custom node.
 
 		/**
 		 * Example of how to change settings used in the node-system

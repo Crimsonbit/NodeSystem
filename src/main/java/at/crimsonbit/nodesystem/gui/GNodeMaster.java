@@ -277,7 +277,7 @@ public class GNodeMaster {
 		try {
 			getNodeMaster().setConnection(port1.getNode().getAbstractNode(), port1.getStringID(),
 					port2.getNode().getAbstractNode(), port2.getStringID());
-			port1.getPortRectangle().setInputColor(graph.getColorLookup().get(port2.getNode().getNodeType()));
+			port1.getPortRectangle().setInputColor(port2.getNode().getNodeType().getColor());
 			port1.getPortRectangle().redraw();
 			port1.redraw();
 			port1.getNode().getConnections().add(con);

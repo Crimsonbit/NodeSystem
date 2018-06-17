@@ -29,7 +29,7 @@ public class SimpleGraph extends Application {
 
 		GNodeGraph graph = new NodeSystemBuilder(1275, 800, true)
 				.registerCustomNodes("at.crimsonbit.nodesystem.examples.customnode")
-				.registerCustomNodesJar("Modules/constants.jar").registerColors(Color.SANDYBROWN, CustomNodes.values())
+				.registerCustomNodesJar("Modules/constants.jar")
 				.registerDefaultNodes(true).build();
 
 		/**

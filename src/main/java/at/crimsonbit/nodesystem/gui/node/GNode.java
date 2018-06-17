@@ -9,6 +9,7 @@ import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.dialog.GPopUp;
 import at.crimsonbit.nodesystem.gui.node.port.GPort;
 import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
+import at.crimsonbit.nodesystem.node.types.IGuiNodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeMaster;
@@ -62,7 +63,7 @@ public class GNode extends Pane implements IGNode {
 	protected boolean doDraw = false;
 	protected boolean active = false;
 	private boolean portPressed = false;
-	protected INodeType type;
+	protected IGuiNodeType type;
 	private String nameAddition = "";
 	protected String name;
 	protected int inPortCount = 0;
@@ -116,7 +117,7 @@ public class GNode extends Pane implements IGNode {
 		this.nodeID = id;
 		this.name = name;
 		this.nodeGraph = graph;
-		this.type = graph.getGuiMaster().getNodeMaster().getTypeOfNode(id);
+		this.type = (IGuiNodeType) graph.getGuiMaster().getNodeMaster().getTypeOfNode(id);
 		this.typeName = this.type.toString();
 		this.doDraw = draw;
 		defaultTopColor();
@@ -162,11 +163,7 @@ public class GNode extends Pane implements IGNode {
 		Tooltip.install(this, tooltip);
 	}
 
-	public INodeType getType() {
-		return type;
-	}
-
-	public void setType(INodeType type) {
+	public void setType(IGuiNodeType type) {
 		this.type = type;
 	}
 
@@ -200,7 +197,7 @@ public class GNode extends Pane implements IGNode {
 		return this.nodeGraph;
 	}
 
-	public INodeType getNodeType() {
+	public IGuiNodeType getNodeType() {
 		return this.type;
 	}
 
@@ -310,8 +307,8 @@ public class GNode extends Pane implements IGNode {
 		top.setAccessibleText("node_top"); // top.setArcWidth(20.0); //
 		top.setArcHeight(20.0);
 
-		top.setStroke(nodeGraph.getColorLookup().get(type));
-		top.setFill(nodeGraph.getColorLookup().get(type));
+		top.setStroke(type.getColor());
+		top.setFill(type.getColor());
 
 		addView(top);
 	}
@@ -324,8 +321,8 @@ public class GNode extends Pane implements IGNode {
 		top.setAccessibleText("node_top"); // top.setArcWidth(20.0); //
 		top.setArcHeight(20.0);
 
-		top.setStroke(nodeGraph.getColorLookup().get(type));
-		top.setFill(nodeGraph.getColorLookup().get(type));
+		top.setStroke(type.getColor());
+		top.setFill(type.getColor());
 		top.setArcWidth(arc);
 		top.setArcHeight(arc);
 		addView(top);
