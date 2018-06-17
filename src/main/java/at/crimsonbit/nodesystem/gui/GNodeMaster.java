@@ -17,7 +17,6 @@ import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.gui.node.GNodeConnection;
 import at.crimsonbit.nodesystem.gui.node.port.GPort;
 import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
-import at.crimsonbit.nodesystem.node.types.Base;
 import at.crimsonbit.nodesystem.node.types.IGuiNodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
@@ -232,10 +231,6 @@ public class GNodeMaster {
 		n.relocate(x, y);
 		addNode(n);
 
-	}
-
-	public void addNode(String id, Base type, boolean draw, GNodeGraph graph) {
-		addNode(new GNode(id, type, draw, graph));
 	}
 
 	public void addNode(GNode cell) {

@@ -25,12 +25,9 @@ import at.crimsonbit.nodesystem.gui.widget.searchbar.GSearchBar;
 import at.crimsonbit.nodesystem.gui.widget.toast.JFXToast;
 import at.crimsonbit.nodesystem.gui.widget.toast.ToastPosition;
 import at.crimsonbit.nodesystem.gui.widget.toast.ToastTime;
-import at.crimsonbit.nodesystem.node.base.OutputNodeClass;
-import at.crimsonbit.nodesystem.node.base.PathNodeClass;
 import at.crimsonbit.nodesystem.node.image.ImageNodeClass;
 import at.crimsonbit.nodesystem.node.types.Arduino;
 import at.crimsonbit.nodesystem.node.types.ArduinoPin;
-import at.crimsonbit.nodesystem.node.types.Base;
 import at.crimsonbit.nodesystem.node.types.Calculate;
 import at.crimsonbit.nodesystem.node.types.IGuiNodeType;
 import at.crimsonbit.nodesystem.node.types.Image;
@@ -963,7 +960,6 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	public HashMap<GraphSettings, Color> getGeneralColorLookup() {
 		return this.generalColorLookup;
 	}
-
 
 	@SuppressWarnings("unused")
 	private void setSettingsPane(GSettingsPane settingsPane2) {
