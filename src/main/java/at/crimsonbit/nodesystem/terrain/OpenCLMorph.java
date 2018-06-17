@@ -55,11 +55,11 @@ public class OpenCLMorph implements IMorph, AutoCloseable {
 		int numPlatformsArray[] = new int[1];
 		CL.clGetPlatformIDs(0, null, numPlatformsArray);
 		int numPlatforms = numPlatformsArray[0];
-		
-		if(numPlatforms == 0) {
+
+		if (numPlatforms == 0) {
 			throw new NoDeviceAvailableException("No OpenCL Device is available");
 		}
-		
+
 		// Obtain a platform ID
 		cl_platform_id platforms[] = new cl_platform_id[numPlatforms];
 		CL.clGetPlatformIDs(platforms.length, platforms, null);
@@ -96,6 +96,12 @@ public class OpenCLMorph implements IMorph, AutoCloseable {
 		int numDevicesArray[] = new int[1];
 		CL.clGetDeviceIDs(platform, deviceType, 0, null, numDevicesArray);
 		int numDevices = numDevicesArray[0];
+
+		if (deviceIndex >= numDevices) {
+			throw new IllegalStateException(
+					"Requested Device Number " + deviceIndex + ", but that device does not exist");
+
+		}
 
 		// Obtain a device ID
 		cl_device_id devices[] = new cl_device_id[numDevices];

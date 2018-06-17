@@ -29,6 +29,7 @@ public class ErodeNode extends AbstractNode {
 	public void doErode() {
 		if (input != null && amount > 0) {
 			try (IMorph morph = MorphFactory.getMorph()) {
+				System.out.println(morph.getClass());
 				output = morph.Erode(input, amount);
 			}
 		}
