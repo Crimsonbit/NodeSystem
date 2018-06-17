@@ -743,6 +743,8 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private void onLoad() {
 		fileChooser.getExtensionFilters().add(extFilter);
 		File f = fileChooser.showOpenDialog(getParent().getScene().getWindow());
+		if (f == null) // if f == null -> No File was selected, do not do anything
+			return;
 		Path p = f.toPath();
 		load(p);
 		// GLoader.loadGUI(nodeMaster, nodeMaster.getNodeMaster(), this);

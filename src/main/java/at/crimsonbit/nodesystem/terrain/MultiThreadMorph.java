@@ -11,8 +11,9 @@ import java.util.function.IntConsumer;
 import at.crimsonbit.nodesystem.util.ImageUtils;
 import at.crimsonbit.nodesystem.util.OpenSimplexNoise;
 
-public class MultiThreadMorph implements IMorph, AutoCloseable{
+public class MultiThreadMorph implements IMorph, AutoCloseable {
 	private final ExecutorService pool;
+	private final boolean keep_pool;
 	private final int poolSize;
 
 	/**
@@ -28,15 +29,23 @@ public class MultiThreadMorph implements IMorph, AutoCloseable{
 	 * {@link MultiThreadMorph#shutdown()} to prevent Memory leaks
 	 */
 	public MultiThreadMorph(int poolSize) {
+		this.keep_pool = false;
 		this.poolSize = poolSize;
 		pool = Executors.newFixedThreadPool(poolSize);
+	}
+
+	public MultiThreadMorph(ExecutorService executor, int poolSize) {
+		this.poolSize = poolSize;
+		this.pool = executor;
+		this.keep_pool = true;
 	}
 
 	/**
 	 * @see ExecutorService#shutdown()
 	 */
 	public void shutdown() {
-		pool.shutdown();
+		if (!keep_pool)
+			pool.shutdown();
 	}
 
 	/**
@@ -62,7 +71,7 @@ public class MultiThreadMorph implements IMorph, AutoCloseable{
 
 		// perform erosion
 		// buff = new int[100];
-		int[] imgData = ImageUtils.getData(img);
+		int[] imgData = ImageUtils.getData(img).clone();
 		for (int j = 0; j < n; j++) {
 			int[] outRGBBuffer = ((DataBufferInt) (out.getRaster().getDataBuffer())).getData();
 			CountDownLatch counter = new CountDownLatch(poolSize);
@@ -90,7 +99,6 @@ public class MultiThreadMorph implements IMorph, AutoCloseable{
 			} /**
 				 * Save the erosion value in image img.
 				 */
-
 			System.arraycopy(outRGBBuffer, 0, imgData, 0, img.getHeight() * img.getWidth());
 		}
 		return out;

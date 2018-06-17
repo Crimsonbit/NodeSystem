@@ -8,12 +8,12 @@ import at.crimsonbit.nodesystem.nodebackend.api.NodeInput;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeOutput;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeType;
 import at.crimsonbit.nodesystem.terrain.MultiThreadMorph;
+import at.crimsonbit.nodesystem.util.ThreadPool;
 
 public class ErodeNode extends AbstractNode {
 
 	@NodeType
 	private static final Terrain type = Terrain.ERODE;
-	private MultiThreadMorph clm = new MultiThreadMorph();
 
 	@NodeInput
 	BufferedImage input;
@@ -26,10 +26,9 @@ public class ErodeNode extends AbstractNode {
 
 	public void doErode() {
 		if (input != null && amount > 0) {
-			try {
+			try (MultiThreadMorph clm = new MultiThreadMorph(ThreadPool.getThreadPool().getPool(),
+					ThreadPool.getThreadPool().getThreads())) {
 				output = clm.Erode(input, amount);
-			} finally {
-				clm.close();
 			}
 		}
 	}
