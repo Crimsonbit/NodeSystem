@@ -43,6 +43,7 @@ import at.crimsonbit.nodesystem.node.types.Terrain;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeMaster;
 import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
+import at.crimsonbit.nodesystem.nodebackend.util.Tuple;
 import at.crimsonbit.nodesystem.util.DragContext;
 import at.crimsonbit.nodesystem.util.SystemUsage;
 import at.crimsonbit.nodesystem.util.logger.SystemLogger;
@@ -756,10 +757,13 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private void load(Path f) {
 		if (f != null)
 			try {
-				rebuildNodeGraph(f);
-				JFXToast.makeToast((Stage) getScene().getWindow(), "NodeSystem loaded successfully!",
-						ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
-				log(Level.FINE, "NodeSystem loaded successfully!");
+				boolean ret = rebuildNodeGraph(f);
+
+				if (ret) {
+					log(Level.FINE, "NodeSystem loaded successfully!");
+					JFXToast.makeToast((Stage) getScene().getWindow(), "NodeSystem loaded successfully!",
+							ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
+				}
 			} catch (Exception e) {
 				JFXToast.makeToast((Stage) getScene().getWindow(), "Error while loading!", ToastTime.TIME_SHORT,
 						ToastPosition.BOTTOM);
@@ -790,14 +794,21 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 			load(graph_file);
 	}
 
-	private void rebuildNodeGraph(Path path)
+	private boolean rebuildNodeGraph(Path path)
 			throws IOException, NoSuchNodeException, NoSuchMethodException, SecurityException, InstantiationException,
 			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		clearGraph();
 		getGuiMaster().getNodeMaster().clear();
 		getGuiMaster().clear();
-		getGuiMaster().setNodeMaster(NodeMaster.load(path));
+		Tuple<NodeMaster, String> data = NodeMaster.load(path);
+		if (data.a == null) {
+			JFXToast.makeToast((Stage) getScene().getWindow(), data.b, ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
+			log(Level.SEVERE, data.b);
+			return false;
+		}
+		getGuiMaster().setNodeMaster(data.a);
 		getGuiMaster().rebuild(getGuiMaster().getNodeMaster());
+		return true;
 	}
 
 	/**
@@ -962,7 +973,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 		for (INodeType t : Arduino.values())
 			getColorLookup().put(t, new Color(0, (double) 152 / 255d, (double) 157 / 255d, 1));
-		
+
 		for (INodeType t : ArduinoPin.values())
 			getColorLookup().put(t, new Color(0, (double) 152 / 255d, (double) 157 / 255d, 1));
 

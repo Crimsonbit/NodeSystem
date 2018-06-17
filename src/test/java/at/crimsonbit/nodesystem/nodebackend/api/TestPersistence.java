@@ -44,7 +44,7 @@ class TestPersistence {
 
 		m.save("/tmp/nodebackend.zip", true);
 
-		NodeMaster m2 = NodeMaster.load("/tmp/nodebackend.zip");
+		NodeMaster m2 = NodeMaster.load("/tmp/nodebackend.zip").a;
 		for (int i = 0; i < 3; i++) {
 			assertEquals(m.getNodeByID(i).getClass(), m2.getNodeByID(i).getClass());
 		}
