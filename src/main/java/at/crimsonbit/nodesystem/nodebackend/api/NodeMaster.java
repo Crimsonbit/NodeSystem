@@ -7,18 +7,24 @@ import java.io.ObjectOutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -100,46 +106,74 @@ public class NodeMaster {
 	public void registerNodes(String path) {
 		Reflections ref = new Reflections(path);
 		for (Class<? extends AbstractNode> clazz : ref.getSubTypesOf(AbstractNode.class)) {
+			registerNodeClass(clazz);
+		}
+	}
 
-			inputKeyMap.put(clazz, new HashMap<>());
-			outputKeyMap.put(clazz, new HashMap<>());
-			fieldKeyMap.put(clazz, new HashMap<>());
+	public void registerNodesFromJar(String file) throws IOException, ClassNotFoundException {
+		URL url = null;
+		JarFile jar = new JarFile(file);
+		Enumeration<JarEntry> entries = jar.entries();
+		try {
+			url = new URL("jar:file:" + file + "!/");
 
-			try {
-				boolean found = false;
-				Field[] decF = clazz.getDeclaredFields();
-				for (Field f : decF) {
-					if (f.isAnnotationPresent(NodeType.class)) {
-						f.setAccessible(true);
-						if ((f.getModifiers() & Modifier.STATIC) == 0) {
-							throw new IllegalArgumentException("Field annotated with @NodeType in class "
-									+ clazz.getCanonicalName() + " is not static, but must be");
-						}
-						INodeType type = (INodeType) f.get(null);
-						if (registeredNodes.containsKey(type)) {
-							throw new IllegalArgumentException("The Node "
-									+ registeredNodes.get(type).getCanonicalName() + " is registered with type " + type
-									+ ", but tried to register " + clazz.getCanonicalName() + " with the same type");
-						}
-						registeredNodes.put(type, clazz);
-						stringToType.put(type.toString(), type);
-						found = true;
-					}
+		} catch (MalformedURLException e) {
+			throw new IllegalArgumentException("Malformed file name", e);
+		}
+		try (URLClassLoader cl = new URLClassLoader(new URL[] { url })) {
+			while (entries.hasMoreElements()) {
+				JarEntry je = entries.nextElement();
+				if (je.isDirectory() || !je.getName().endsWith(".class"))
+					continue;
+				String className = je.getName().substring(0, je.getName().length() - ".class".length());
+				className = className.replace('/', '.');
+				Class<?> clazz = cl.loadClass(className);
+				if (AbstractNode.class.isAssignableFrom(clazz)) {
+					registerNodeClass(clazz.asSubclass(AbstractNode.class));
 				}
-				if (!found) {
-					throw new IllegalArgumentException("Class " + clazz.getCanonicalName()
-							+ " extends AbstractNode but does not declare Field annotated with @NodeType");
-				}
-
-				populateKeys(clazz, inputKeyMap.get(clazz), NodeInput.class);
-				populateKeys(clazz, outputKeyMap.get(clazz), NodeOutput.class);
-				populateKeys(clazz, fieldKeyMap.get(clazz), NodeField.class);
-			} catch (IllegalArgumentException e) {
-				throw new IllegalStateException("Field annotated with @NodeType in class " + clazz.getCanonicalName()
-						+ " is not static, but must be", e);
-			} catch (IllegalAccessException e) {
-				throw new RuntimeException("Field annotated with @NodeType is not accessible", e);
 			}
+		}
+	}
+
+	private void registerNodeClass(Class<? extends AbstractNode> clazz) {
+		inputKeyMap.put(clazz, new HashMap<>());
+		outputKeyMap.put(clazz, new HashMap<>());
+		fieldKeyMap.put(clazz, new HashMap<>());
+
+		try {
+			boolean found = false;
+			Field[] decF = clazz.getDeclaredFields();
+			for (Field f : decF) {
+				if (f.isAnnotationPresent(NodeType.class)) {
+					f.setAccessible(true);
+					if ((f.getModifiers() & Modifier.STATIC) == 0) {
+						throw new IllegalArgumentException("Field annotated with @NodeType in class "
+								+ clazz.getCanonicalName() + " is not static, but must be");
+					}
+					INodeType type = (INodeType) f.get(null);
+					if (registeredNodes.containsKey(type)) {
+						throw new IllegalArgumentException("The Node " + registeredNodes.get(type).getCanonicalName()
+								+ " is registered with type " + type + ", but tried to register "
+								+ clazz.getCanonicalName() + " with the same type");
+					}
+					registeredNodes.put(type, clazz);
+					stringToType.put(type.toString(), type);
+					found = true;
+				}
+			}
+			if (!found) {
+				throw new IllegalArgumentException("Class " + clazz.getCanonicalName()
+						+ " extends AbstractNode but does not declare Field annotated with @NodeType");
+			}
+
+			populateKeys(clazz, inputKeyMap.get(clazz), NodeInput.class);
+			populateKeys(clazz, outputKeyMap.get(clazz), NodeOutput.class);
+			populateKeys(clazz, fieldKeyMap.get(clazz), NodeField.class);
+		} catch (IllegalArgumentException e) {
+			throw new IllegalStateException("Field annotated with @NodeType in class " + clazz.getCanonicalName()
+					+ " is not static, but must be", e);
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException("Field annotated with @NodeType is not accessible", e);
 		}
 	}
 
