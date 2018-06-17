@@ -123,6 +123,12 @@ public class GNodeMaster {
 				return false;
 			}
 
+			if (this.inPort.isConnected()) {
+				this.inPort = null;
+				this.outPort = null;
+				return false;
+			}
+
 			if (addConnection(this.outPort, this.inPort)) {
 				// System.out.println("INFO!");
 
@@ -138,22 +144,30 @@ public class GNodeMaster {
 
 	@SuppressWarnings("unlikely-arg-type")
 	public void removeConnection(GPort port) {
+		GNodeConnection c = null;
+		boolean succ = false;
 		for (GNodeConnection con : getAllEdges()) {
 			if (con.getSourcePort() == port || con.getTargetPort() == port) {
+				c = con;
 				try {
 					con.getTargetPort().getPortRectangle()
 							.setInputColor(graph.getGeneralColorLookup().get(GraphSettings.COLOR_PORT_INPUT));
 					con.getTargetPort().getPortRectangle().redraw();
 					con.getTargetPort().redraw();
+					con.getTargetPort().setConnected(false);
 					getNodeMaster().removeConnection(con.getTarget().getAbstractNode(),
 							con.getTargetPort().getStringID());
+					succ = true;
 				} catch (NoSuchNodeException e) {
 
 					e.printStackTrace();
 				}
-				allConnections.remove(con);
-				removedConnections.add(con);
+
 			}
+		}
+		if (c != null && succ) {
+			allConnections.remove(c);
+			removedConnections.add(c);
 		}
 	}
 
@@ -187,7 +201,9 @@ public class GNodeMaster {
 			GNodeConnection c = iter.next();
 			if (c.getSource() == node || c.getTarget() == node) {
 				try {
+
 					getNodeMaster().removeConnection(c.getTarget().getAbstractNode(), c.getTargetPort().getStringID());
+					c.getTargetPort().setConnected(false);
 				} catch (NoSuchNodeException e) {
 					e.printStackTrace();
 				}
@@ -270,6 +286,7 @@ public class GNodeMaster {
 			port1.redraw();
 			port1.getNode().getConnections().add(con);
 			port2.getNode().getConnections().add(con);
+			port1.setConnected(true);
 			allConnections.add(con);
 			addedConnections.add(con);
 

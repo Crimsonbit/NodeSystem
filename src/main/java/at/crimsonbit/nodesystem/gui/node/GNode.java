@@ -12,9 +12,7 @@ import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeMaster;
-import at.crimsonbit.nodesystem.nodebackend.util.Tuple;
 import at.crimsonbit.nodesystem.util.RangeMapper;
-import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextInputDialog;
@@ -22,13 +20,13 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
+import javafx.scene.transform.Scale;
 import javafx.stage.FileChooser;
 
 /**
@@ -51,7 +49,7 @@ public class GNode extends Pane implements IGNode {
 	protected List<GPort> inputPorts = new ArrayList<GPort>();
 	protected List<GPort> outputPorts = new ArrayList<GPort>();
 	protected List<GNodeConnection> connections = new ArrayList<GNodeConnection>();
-
+	private Scale scaleTransform;
 	private GPopUp popUpDialog;
 
 	private Color topColor;
@@ -80,6 +78,7 @@ public class GNode extends Pane implements IGNode {
 	private Rectangle base;
 	private Rectangle top;
 	private Rectangle remove;
+	private double scaleValue = 1.0;
 	protected Text text;
 	private DropShadow e;
 	private final Tooltip tooltip = new Tooltip();
@@ -101,6 +100,7 @@ public class GNode extends Pane implements IGNode {
 		defaultTopColor();
 		defaultBackColor();
 		defaultPopUpDialog();
+		scaleTransform = new Scale(scaleValue, scaleValue, 0, 0);
 	}
 
 	public GNode(String name, INodeType type, boolean draw, GNodeGraph graph) {
@@ -124,9 +124,14 @@ public class GNode extends Pane implements IGNode {
 		addAllPorts();
 		addToolTip();
 		draw();
-
+		scaleTransform = new Scale(scaleValue, scaleValue, 0, 0);
+		
 	}
-
+	
+	
+	
+	
+	
 	public GNode(String name, int id, boolean draw, GNodeGraph graph, double x, double y) {
 		this(name, id, draw, graph);
 		relocate(x, y);

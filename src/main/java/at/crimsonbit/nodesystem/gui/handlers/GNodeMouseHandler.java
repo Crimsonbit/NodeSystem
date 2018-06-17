@@ -30,18 +30,9 @@ public class GNodeMouseHandler {
 		node.setOnMousePressed(onMousePressedEventHandler);
 		node.setOnMouseDragged(onMouseDraggedEventHandler);
 		node.setOnMouseReleased(onMouseReleasedEventHandler);
-		// node.setOnMouseClicked(onMouseClickedEventHandler);
+
 	}
 
-	EventHandler<MouseEvent> onMouseClickedEventHandler = new EventHandler<MouseEvent>() {
-		public void handle(MouseEvent mouseEvent) {
-			if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-				if (mouseEvent.getClickCount() == 2) {
-					System.out.println("Double clicked");
-				}
-			}
-		}
-	};
 	EventHandler<MouseEvent> onMousePressedEventHandler = new EventHandler<MouseEvent>() {
 
 		public void handle(MouseEvent event) {
@@ -50,8 +41,8 @@ public class GNodeMouseHandler {
 					GNode node = (GNode) event.getSource();
 					node.toggleDraw();
 					node.redraw(true);
-					
-				} else { 
+
+				} else {
 					GNode node = (GNode) event.getSource();
 					if (!(node.isPortPressed())) {
 						graph.setActive(node);
@@ -62,7 +53,6 @@ public class GNodeMouseHandler {
 
 						double scale = graph.getScaleValue();
 						dragContext.x = node.getBoundsInParent().getMinX() * scale - event.getScreenX();
-
 						dragContext.y = node.getBoundsInParent().getMinY() * scale - event.getScreenY();
 
 						node.setCursor(Cursor.HAND);

@@ -1,15 +1,23 @@
 package at.crimsonbit.nodesystem.gui.node.port;
 
+import java.util.Set;
+
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
+import at.crimsonbit.nodesystem.gui.GNodeMaster;
 import at.crimsonbit.nodesystem.gui.dialog.GEntry;
 import at.crimsonbit.nodesystem.gui.dialog.GPopUp;
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.gui.node.IGConsumable;
+import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.StrokeLineCap;
 
 /**
  * 
@@ -24,13 +32,16 @@ public class GPort extends Group implements IGConsumable {
 	private int id;
 	private boolean input;
 	private GNode node;
-
+	private Line line;
 	private GPopUp dialog;
 	private String stringID;
 	private GPortLabel label;
 	private GPortRect rect;
 	private boolean drawText = true;
 	private final Tooltip tooltip = new Tooltip();
+	private final int MAGIC_OFFSET = 3;
+	private final int SNAP_SIZE = 5;
+	private boolean isConnected = false;
 
 	public GPort(int id, boolean input, String labels, double x, double y, GNode node) {
 		this.node = node;
@@ -73,43 +84,88 @@ public class GPort extends Group implements IGConsumable {
 		Tooltip.install(this, tooltip);
 
 		// getChildren().add(line);
-		/*
-		 * setOnMouseEntered(new EventHandler<MouseEvent>() {
-		 * 
-		 * @Override public void handle(MouseEvent event) { node.setPortPressed(true);
-		 * 
-		 * } });
-		 * 
-		 * setOnMouseReleased(new EventHandler<MouseEvent>() {
-		 * 
-		 * @Override public void handle(MouseEvent event) { node.setPortPressed(false);
-		 * 
-		 * } });
-		 * 
-		 * setOnMouseDragExited(new EventHandler<MouseEvent>() {
-		 * 
-		 * @Override public void handle(MouseEvent event) { node.setPortPressed(false);
-		 * 
-		 * } });
-		 * 
-		 * setOnMouseExited(new EventHandler<MouseEvent>() {
-		 * 
-		 * @Override public void handle(MouseEvent event) { node.setPortPressed(false);
-		 * 
-		 * } }); ;
-		 * 
-		 * setOnMouseDragged(new EventHandler<MouseEvent>() {
-		 * 
-		 * @Override public void handle(MouseEvent event) { // System.out.println("hi");
-		 * node.setPortPressed(true); line.setStartX(x); line.setStartY(y);
-		 * 
-		 * if (event.isPrimaryButtonDown()) {
-		 * line.endXProperty().bind(node.layoutXProperty().add(event.getSceneX() ));
-		 * line.endYProperty().bind(node.layoutYProperty().add(event.getSceneY() )); }
-		 * 
-		 * } });
-		 */
 
+		setOnMouseReleased(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+				node.setPortPressed(false);
+
+				/* Add Code to connect nodes here */
+				boolean isInput = false;
+				boolean isOutput = false;
+				GNodeMaster master = node.getNodeGraph().getGuiMaster();
+				master.removecurConnectPorts();
+
+				if (!input) {
+					master.setFirstPort(GPort.this);
+					isOutput = true;
+				} else {
+					master.setSecondPort(GPort.this);
+					isInput = true;
+				}
+				Set<GNode> allNodes = node.getNodeGraph().getGuiMaster().getAllCells();
+				for (GNode n : allNodes) {
+					if (isInput) {
+						for (GPort p : n.getOutputPorts()) {
+							if (Math.abs(event.getX() - p.getX()) > SNAP_SIZE) {
+								master.setFirstPort(p);
+								master.connectPorts();
+							}
+						}
+					} else {
+						for (GPort p : n.getInputPorts()) {
+							if (Math.abs(event.getX() - p.getX()) > SNAP_SIZE) {
+								master.setSecondPort(p);
+								master.connectPorts();
+							}
+						}
+					}
+
+				}
+
+				master.removecurConnectPorts();
+
+				/* Remove Temporary Line */
+				node.getNodeGraph().getLineLayer().getChildren().remove(line);
+				node.getNodeGraph().update();
+			}
+		});
+
+		setOnMouseDragged(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) { // System.out.println("hi");
+				node.setPortPressed(true);
+				if (line == null)
+					line = new Line();
+
+				line.setStroke(node.getNodeGraph().getColorLookup().get(node.getNodeType()));
+				line.setStrokeWidth((double) node.getNodeGraph().getSettings().get(GraphSettings.SETTING_CURVE_WIDTH));
+				line.startXProperty().bind(node.layoutXProperty().add(getPortX() + MAGIC_OFFSET));
+				line.startYProperty().bind(node.layoutYProperty().add(getY() + MAGIC_OFFSET));
+
+				line.setStrokeLineCap(StrokeLineCap.ROUND);
+				line.setFill(Color.TRANSPARENT);
+
+				line.endXProperty().bind(node.layoutXProperty().add(event.getX()));
+				line.endYProperty().bind(node.layoutYProperty().add(event.getY()));
+
+				node.getNodeGraph().getLineLayer().getChildren().remove(line);
+				node.getNodeGraph().getLineLayer().getChildren().add(line);
+				node.getNodeGraph().update();
+			}
+
+		});
+
+	}
+
+	public boolean isConnected() {
+		return isConnected;
+	}
+
+	public void setConnected(boolean isConnected) {
+		this.isConnected = isConnected;
 	}
 
 	void mouseHandle(MouseEvent event, boolean press) {

@@ -33,7 +33,6 @@ import javafx.scene.transform.Scale;
 public class GGraphScene extends AnchorPane implements ILogging {
 
 	private static final double HALF_PIXEL_OFFSET = -0.5;
-	private ApplicationContext context = ApplicationContext.getContext();
 
 	private final Canvas canvas = new Canvas();
 	private GNodeGraph graph;
@@ -42,7 +41,8 @@ public class GGraphScene extends AnchorPane implements ILogging {
 	private double scaleValue = 1.0;
 	private double strokeValue = 0.1;
 	private double lineSpacing = 25;
-
+	private double xOffset = 0;
+	private double yOffset = 0;
 	private Color lineColor;
 
 	private double localMouseX = getWidth() / 2;
@@ -98,10 +98,6 @@ public class GGraphScene extends AnchorPane implements ILogging {
 		GClip.install(this);
 	}
 
-	public ApplicationContext getApplicationContext() {
-		return context;
-	}
-	
 	public Logger getLogger() {
 		return log;
 	}
@@ -252,10 +248,9 @@ public class GGraphScene extends AnchorPane implements ILogging {
 
 	public void moveTo(double x, double y) {
 		needsLayout = true;
-		layoutChildren();
 		scaleTransform.setPivotX(x);
 		scaleTransform.setPivotY(y);
-
+		layoutChildren();
 	}
 
 	public void strokeWidth(double strokeval) {
@@ -283,8 +278,12 @@ public class GGraphScene extends AnchorPane implements ILogging {
 		@Override
 		// TODO
 		public void handle(MouseEvent event) {
+
 			if (event.isMiddleButtonDown()) {
-				moveTo(event.getSceneX() / scaleValue, event.getSceneY() / scaleValue);
+				xOffset = event.getSceneX() - event.getScreenX();
+				yOffset = event.getSceneY() - event.getScreenY();
+
+				moveTo(event.getSceneX() + xOffset, event.getSceneY() + yOffset);
 			}
 
 		}

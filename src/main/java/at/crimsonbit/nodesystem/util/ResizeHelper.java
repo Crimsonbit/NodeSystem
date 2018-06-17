@@ -30,16 +30,12 @@ public class ResizeHelper {
 		Stage.getScene().addEventHandler(MouseEvent.MOUSE_DRAGGED, resizeListener);
 		Stage.getScene().addEventHandler(MouseEvent.MOUSE_EXITED, resizeListener);
 		Stage.getScene().addEventHandler(MouseEvent.MOUSE_EXITED_TARGET, resizeListener);
-		
-		
-		
+
 		resizeListener.setMinWidth(minWidth);
 		resizeListener.setMinHeight(minHeight);
 		resizeListener.setMaxWidth(maxWidth);
 		resizeListener.setMaxHeight(maxHeight);
-		
-		
-		
+
 		ObservableList<Node> children = Stage.getScene().getRoot().getChildrenUnmodifiable();
 		for (Node child : children) {
 			addListenerDeeply(child, resizeListener);
