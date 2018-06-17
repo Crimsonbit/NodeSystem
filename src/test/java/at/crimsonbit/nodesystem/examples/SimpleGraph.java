@@ -1,12 +1,8 @@
 package at.crimsonbit.nodesystem.examples;
 
 import at.crimsonbit.nodesystem.application.NodeSystemBuilder;
-import at.crimsonbit.nodesystem.examples.customnode.CustomNodeClassExample;
-import at.crimsonbit.nodesystem.examples.customnode.CustomNodes;
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
-import at.crimsonbit.nodesystem.node.image.ImageNodeClass;
-import at.crimsonbit.nodesystem.node.types.Image;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
@@ -29,8 +25,7 @@ public class SimpleGraph extends Application {
 
 		GNodeGraph graph = new NodeSystemBuilder(1275, 800, true)
 				.registerCustomNodes("at.crimsonbit.nodesystem.examples.customnode")
-				.registerCustomNodesJar("Modules/constants.jar")
-				.registerDefaultNodes(true).build();
+				.registerCustomNodesJar("Modules/constants.jar").registerDefaultNodes(true).build();
 
 		/**
 		 * Example of how to add custom node-classes to specific node types
