@@ -8,7 +8,7 @@ import java.util.Random;
 import at.crimsonbit.nodesystem.util.ImageUtils;
 import at.crimsonbit.nodesystem.util.OpenSimplexNoise;
 
-public class Morph implements IMorph{
+public class Morph implements IMorph {
 
 	private static Random r = new Random();
 
@@ -74,7 +74,7 @@ public class Morph implements IMorph{
 	public static BufferedImage SErode(BufferedImage img, int n) {
 		return new Morph().Erode(img, n);
 	}
-	
+
 	public static BufferedImage SDilate(BufferedImage img, int n) {
 		return new Morph().Dilate(img, n);
 	}
@@ -161,7 +161,7 @@ public class Morph implements IMorph{
 		int[] imgData = ImageUtils.getData(img);
 		for (int j = 0; j < n; j++) {
 			int[] outRGBBuffer = ((DataBufferInt) (out.getRaster().getDataBuffer())).getData();
-			
+
 			for (int y = 0; y < height; y++) {
 				for (int x = 0; x < width; x++) {
 					outRGBBuffer[x + (y * width)] = Morph.findMaxInRange(imgData, width, height, y, x);
@@ -246,6 +246,11 @@ public class Morph implements IMorph{
 				outRGBBuffer[y * size + x] = heightmap[x][y];
 			}
 		return out;
+	}
+
+	@Override
+	public void close() {
+
 	}
 
 }

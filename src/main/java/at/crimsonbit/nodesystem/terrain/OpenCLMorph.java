@@ -21,6 +21,7 @@ import org.jocl.cl_mem;
 import org.jocl.cl_platform_id;
 import org.jocl.cl_program;
 
+import at.crimsonbit.nodesystem.terrain.exceptions.NoDeviceAvailableException;
 import at.crimsonbit.nodesystem.util.ImageUtils;
 
 /**
@@ -38,11 +39,11 @@ public class OpenCLMorph implements IMorph, AutoCloseable {
 	private static cl_kernel kernelDilate;
 	private static cl_kernel kernelCopy;
 
-	public OpenCLMorph() {
+	public OpenCLMorph() throws NoDeviceAvailableException {
 		initCL();
 	}
 
-	private static void initCL() {
+	private static void initCL() throws NoDeviceAvailableException {
 		final int platformIndex = 0;
 		final long deviceType = CL.CL_DEVICE_TYPE_ALL;
 		final int deviceIndex = 0;
@@ -54,7 +55,11 @@ public class OpenCLMorph implements IMorph, AutoCloseable {
 		int numPlatformsArray[] = new int[1];
 		CL.clGetPlatformIDs(0, null, numPlatformsArray);
 		int numPlatforms = numPlatformsArray[0];
-
+		
+		if(numPlatforms == 0) {
+			throw new NoDeviceAvailableException("No OpenCL Device is available");
+		}
+		
 		// Obtain a platform ID
 		cl_platform_id platforms[] = new cl_platform_id[numPlatforms];
 		CL.clGetPlatformIDs(platforms.length, platforms, null);
