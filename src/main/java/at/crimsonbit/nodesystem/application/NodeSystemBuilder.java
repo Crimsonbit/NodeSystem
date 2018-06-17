@@ -1,10 +1,11 @@
-package at.crimsonbit.nodesystem.gui;
+package at.crimsonbit.nodesystem.application;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import at.crimsonbit.nodesystem.examples.customnode.CustomNodes;
-import at.crimsonbit.nodesystem.node.image.ImageNodeClass;
-import at.crimsonbit.nodesystem.node.types.Image;
+import at.crimsonbit.nodesystem.gui.GNodeGraph;
+import at.crimsonbit.nodesystem.gui.GNodeSystem;
+import at.crimsonbit.nodesystem.gui.GNodeView;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.util.logger.SystemLogger;
 import javafx.scene.Scene;
@@ -29,6 +30,7 @@ public class NodeSystemBuilder {
 	private double w;
 	private double h;
 	private boolean default_nodes;
+	private ApplicationContext context = ApplicationContext.getContext();
 
 	/**
 	 * Constructor.
@@ -44,8 +46,10 @@ public class NodeSystemBuilder {
 	public NodeSystemBuilder(double width, double height, boolean log) {
 		this.w = width;
 		this.h = height;
-		if (log)
+		if (log) {
 			SystemLogger.attachLogger(true, true);
+		}
+		
 		sys = new GNodeSystem();
 		view = sys.getNodeView();
 		graph = view.getNodeGraph();

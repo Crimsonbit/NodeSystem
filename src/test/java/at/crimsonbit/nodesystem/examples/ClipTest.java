@@ -1,7 +1,7 @@
 package at.crimsonbit.nodesystem.examples;
 
+import at.crimsonbit.nodesystem.application.NodeSystemBuilder;
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
-import at.crimsonbit.nodesystem.gui.NodeSystemBuilder;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;

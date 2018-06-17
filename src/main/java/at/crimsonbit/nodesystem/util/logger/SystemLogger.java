@@ -49,6 +49,7 @@ public class SystemLogger {
 		}
 	}
 
+
 	/**
 	 * Attaches the logger.
 	 * 
