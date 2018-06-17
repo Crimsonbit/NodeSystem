@@ -25,12 +25,13 @@ import at.crimsonbit.nodesystem.gui.widget.searchbar.GSearchBar;
 import at.crimsonbit.nodesystem.gui.widget.toast.JFXToast;
 import at.crimsonbit.nodesystem.gui.widget.toast.ToastPosition;
 import at.crimsonbit.nodesystem.gui.widget.toast.ToastTime;
+import at.crimsonbit.nodesystem.node.arduino.ArduinoNodeClass;
 import at.crimsonbit.nodesystem.node.base.OutputNodeClass;
 import at.crimsonbit.nodesystem.node.base.PathNodeClass;
 import at.crimsonbit.nodesystem.node.constant.ConstantNodeClass;
 import at.crimsonbit.nodesystem.node.image.ImageNodeClass;
 import at.crimsonbit.nodesystem.node.types.Arduino;
-import at.crimsonbit.nodesystem.node.types.ArduinoPin;
+import at.crimsonbit.nodesystem.node.types.ArduinoPinMode;
 import at.crimsonbit.nodesystem.node.types.Base;
 import at.crimsonbit.nodesystem.node.types.Calculate;
 import at.crimsonbit.nodesystem.node.types.Constant;
@@ -266,6 +267,10 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		log(Level.INFO, "Added Menus and Key-support!");
 		addCustomNode(Base.OUTPUT, OutputNodeClass.class);
 		addCustomNode(Base.PATH, PathNodeClass.class);
+
+		for (INodeType t : Arduino.values()) {
+			addCustomNode(t, ArduinoNodeClass.class);
+		}
 
 		for (INodeType t : Image.values()) {
 			addCustomNode(t, ImageNodeClass.class);
@@ -962,8 +967,8 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 		for (INodeType t : Arduino.values())
 			getColorLookup().put(t, new Color(0, (double) 152 / 255d, (double) 157 / 255d, 1));
-		
-		for (INodeType t : ArduinoPin.values())
+
+		for (INodeType t : ArduinoPinMode.values())
 			getColorLookup().put(t, new Color(0, (double) 152 / 255d, (double) 157 / 255d, 1));
 
 		for (INodeType t : Noise.values())

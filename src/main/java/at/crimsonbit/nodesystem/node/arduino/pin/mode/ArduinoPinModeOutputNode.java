@@ -1,15 +1,15 @@
-package at.crimsonbit.nodesystem.node.arduino;
+package at.crimsonbit.nodesystem.node.arduino.pin.mode;
 
 import org.firmata4j.Pin;
 
-import at.crimsonbit.nodesystem.node.types.ArduinoPin;
+import at.crimsonbit.nodesystem.node.types.ArduinoPinMode;
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeOutput;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeType;
 
-public class ArduinoPinOutputNode extends AbstractNode {
+public class ArduinoPinModeOutputNode extends AbstractNode {
 	@NodeType
-	public static ArduinoPin type = ArduinoPin.OUTPUT;
+	public static ArduinoPinMode type = ArduinoPinMode.OUTPUT;
 
 	@NodeOutput("getMode")
 	Pin.Mode mode;
@@ -18,5 +18,9 @@ public class ArduinoPinOutputNode extends AbstractNode {
 		mode = Pin.Mode.OUTPUT;
 		
 	}
-
+	
+	public ArduinoPinModeOutputNode() {
+		
+	}
+	
 }

@@ -2,70 +2,68 @@ package at.crimsonbit.nodesystem.node.types;
 
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 
-public enum ArduinoPin implements INodeType {
+public enum ArduinoPinMode implements INodeType {
 
-	PIN("Arduino-Pin Node"), MODE("Arudino-Pin-Mode Node"),
-
-	INPUT("PinMode-INPUT Node"),
+	INPUT("INPUT Node"),
 	/**
 	 * Digital pin in output mode
 	 */
-	OUTPUT("PinMode-OUTPUT Node"),
+	OUTPUT("OUTPUT Node"),
 	/**
 	 * Analog pin in analog input mode
 	 */
-	ANALOG("PinMode-ANALOG Node"),
+	ANALOG("ANALOG Node"),
 	/**
 	 * Digital pin in PWM output mode
 	 */
-	PWM("PinMode-PWM Node"),
+	PWM("PWM Node"),
 	/**
 	 * Digital pin in Servo output mode
 	 */
-	SERVO("PinMode-SERVO Node"),
+	SERVO("SERVO Node"),
 	/**
 	 * shiftIn/shiftOut mode
 	 */
-	SHIFT("PinMode-SHIFT Node"),
+	SHIFT("SHIFT Node"),
 	/**
 	 * Pin included in I2C setup
 	 */
-	I2C("PinMode-I2C Node"),
+	I2C("I2C Node"),
 	/**
 	 * Pin configured for 1-wire
 	 */
-	ONEWIRE("PinMode-ONEWIRE Node"),
+	ONEWIRE("ONEWIRE Node"),
 	/**
 	 * Pin configured for stepper motor
 	 */
-	STEPPER("PinMode-STEPPER Node"),
+	STEPPER("STEPPER Node"),
 	/**
 	 * Pin configured for rotary encoders
 	 */
-	ENCODER("PinMode-ENCODER Node"),
+	ENCODER("ENCODER Node"),
 	/**
 	 * Pin configured for serial communication
 	 */
-	SERIAL("PinMode-SERIAL Node"),
+	SERIAL("SERIAL Node"),
 	/**
 	 * Enable internal pull-up resistor for pin
 	 */
-	PULLUP("PinMode-PULLUP Node"),
+	PULLUP("PULLUP Node"),
 
 	// add new modes here
 
 	/**
 	 * Indicates a mode that this client library doesn't support
 	 */
-	UNSUPPORTED("PinMode-UNSUPPORTED Node"),
+	UNSUPPORTED("UNSUPPORTED Node"),
 	/**
 	 * Pin configured to be ignored by digitalWrite and capabilityResponse
 	 */
-	IGNORED("PinMode-IGNORED Node");
+	IGNORED("IGNORED Node");
 
 	private String name;
 
-	ArduinoPin(String name) {
+	ArduinoPinMode(String name) {
 		this.name = name;
 	}
 
@@ -73,4 +71,5 @@ public enum ArduinoPin implements INodeType {
 	public String toString() {
 		return this.name;
 	}
+
 }

@@ -5,8 +5,6 @@ import at.crimsonbit.nodesystem.examples.customnode.CustomNodeClassExample;
 import at.crimsonbit.nodesystem.examples.customnode.CustomNodes;
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
-import at.crimsonbit.nodesystem.node.image.ImageNodeClass;
-import at.crimsonbit.nodesystem.node.types.Image;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
@@ -35,12 +33,12 @@ public class SimpleGraph extends Application {
 		 * Example of how to add custom node-classes to specific node types
 		 */
 		graph.addCustomNode(CustomNodes.EXAMPLE, new CustomNodeClassExample().getClass());
-		
+
 		/**
 		 * Example of how to change settings used in the node-system
 		 * 
 		 */
-		
+
 		graph.addSetting(GraphSettings.SETTING_CURVE_WIDTH, 6d);
 		graph.addSetting(GraphSettings.SETTING_CURVE_CURVE, 100d);
 		graph.getGeneralColorLookup().put(GraphSettings.COLOR_BACKGROUND_LINES, Color.WHITE);
@@ -51,6 +49,12 @@ public class SimpleGraph extends Application {
 		primaryStage.setScene(scene);
 		primaryStage.show();
 
+	}
+
+	@Override
+	public void stop() throws Exception {
+		super.stop();
+		System.exit(0);
 	}
 
 	public static void main(String[] args) {

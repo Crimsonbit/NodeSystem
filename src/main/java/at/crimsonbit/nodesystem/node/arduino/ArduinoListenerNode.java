@@ -14,17 +14,18 @@ import at.crimsonbit.nodesystem.nodebackend.api.NodeType;
 public class ArduinoListenerNode extends AbstractNode {
 
 	@NodeType
-	public static final Arduino type = Arduino.LISTENER;
+	private static final Arduino type = Arduino.LISTENER;
+	private boolean done = false;
 
 	@NodeInput
-	IODevice dev;
+	IODevice arduino;
 
 	@NodeOutput("onStart")
-	IODevice arduinoDevice;
+	IODevice forward;
 
 	public void onStart() {
-		if (dev != null) {
-			dev.addEventListener(new IODeviceEventListener() {
+		if (arduino != null && !done) {
+			arduino.addEventListener(new IODeviceEventListener() {
 				@Override
 				public void onStart(IOEvent event) {
 					// since this moment we are sure that the device is initialized
@@ -51,7 +52,10 @@ public class ArduinoListenerNode extends AbstractNode {
 					System.out.println(message);
 				}
 			});
-		}
+			forward = arduino;
+			done = true;
+		} else
+			done = false;
 	}
 
 }

@@ -45,10 +45,16 @@ public class GraphFromFXMLExample extends Application implements Initializable {
 				getClass().getResource("/at/crimsonbit/nodesystem/examples/fxmlexample.fxml"));
 		root = loader.load();
 		scene = new Scene(root, width, height);
-		
+
 		stage.setScene(scene);
 		stage.show();
 
+	}
+
+	@Override
+	public void stop() throws Exception {
+		super.stop();
+		System.exit(0);
 	}
 
 	public static void main(String[] args) {

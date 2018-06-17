@@ -67,6 +67,12 @@ public class CustomGraphDialogs extends Application {
 		graph.addCustomDialogEntry(menu, consumer);
 	}
 
+	@Override
+	public void stop() throws Exception {
+		super.stop();
+		System.exit(0);
+	}
+
 	public static void main(String[] args) {
 		launch(args);
 	}

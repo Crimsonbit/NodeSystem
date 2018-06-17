@@ -22,15 +22,19 @@ public class ArduinoDeviceNode extends AbstractNode {
 	String port;
 
 	@NodeOutput("openDevice")
-	IODevice arduinoDevice;
+	IODevice arduino;
 
+	public ArduinoDeviceNode() {
+
+	}	
+	
 	public void openDevice() {
-		if (arduinoDevice == null) {
+		if (arduino == null) {
 			if (port != null) {
-				arduinoDevice = new FirmataDevice(port);
+				arduino = new FirmataDevice(port);
 				try {
-					arduinoDevice.start();
-					arduinoDevice.ensureInitializationIsDone();
+					arduino.start();
+					arduino.ensureInitializationIsDone();
 				} catch (IOException | InterruptedException e) {
 					e.printStackTrace();
 				}
