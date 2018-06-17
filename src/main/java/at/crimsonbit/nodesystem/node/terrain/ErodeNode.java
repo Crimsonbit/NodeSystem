@@ -8,12 +8,14 @@ import at.crimsonbit.nodesystem.nodebackend.api.NodeInput;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeOutput;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeType;
 import at.crimsonbit.nodesystem.terrain.MultiThreadMorph;
+import at.crimsonbit.nodesystem.terrain.OpenCLMorph;
+import at.crimsonbit.nodesystem.terrain.SingletonCLMorph;
 
 public class ErodeNode extends AbstractNode {
 
 	@NodeType
 	private static final Terrain type = Terrain.ERODE;
-	private MultiThreadMorph clm = new MultiThreadMorph();
+	private OpenCLMorph clm = SingletonCLMorph.getInstance();
 
 	@NodeInput
 	BufferedImage input;
@@ -29,7 +31,7 @@ public class ErodeNode extends AbstractNode {
 			try {
 				output = clm.Erode(input, amount);
 			} finally {
-				clm.close();
+				//clm.close();
 			}
 		}
 	}

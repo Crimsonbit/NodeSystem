@@ -7,13 +7,14 @@ import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeInput;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeOutput;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeType;
-import at.crimsonbit.nodesystem.terrain.MultiThreadMorph;
+import at.crimsonbit.nodesystem.terrain.OpenCLMorph;
+import at.crimsonbit.nodesystem.terrain.SingletonCLMorph;
 
 public class DilateNode extends AbstractNode {
 
 	@NodeType
 	private static final Terrain type = Terrain.DIALTE;
-	private MultiThreadMorph clm = new MultiThreadMorph();;
+	private OpenCLMorph clm = SingletonCLMorph.getInstance();
 
 	@NodeInput
 	BufferedImage input;
@@ -29,7 +30,7 @@ public class DilateNode extends AbstractNode {
 			try {
 				output = clm.Dilate(input, amount);
 			} finally {
-				clm.close();
+				//clm.close();
 			}
 		}
 	}

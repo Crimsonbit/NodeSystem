@@ -460,7 +460,7 @@ public class GNode extends Pane implements IGNode {
 				 * p.getPortRectangle().setSize(15); p.redraw(); p.relocate(width - 15, 0);
 				 * addView(p); p.toFront(); }
 				 */
-				drawToggledConnections(text.getY() / 2);
+				drawToggledConnections((12.5d/2d)-1d);
 
 				/*
 				 * for (GPort p : inputPorts) { removeView(p); addView(p); p.toFront(); } for
