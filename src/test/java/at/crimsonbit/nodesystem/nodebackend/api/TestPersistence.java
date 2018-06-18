@@ -30,7 +30,7 @@ class TestPersistence {
 	}
 
 	@Test
-	void testLoad() throws NoSuchNodeException, IOException {
+	void testLoad() throws NoSuchNodeException, IOException, ClassNotFoundException {
 		assumeTrue(new File("/tmp").exists());
 		NodeMaster m = new NodeMaster();
 		m.registerNodes("at.crimsonbit.nodesystem.nodebackend.testnodes");

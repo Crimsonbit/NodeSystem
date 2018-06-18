@@ -158,7 +158,7 @@ public class GNodeMaster {
 		}
 	}
 
-	public void registerNodesInJar(String jarfile) {
+	public void registerNodesInJar(String[] jarfile) {
 		try {
 			this.nodeMaster.registerNodesFromJar(jarfile);
 		} catch (ClassNotFoundException e) {

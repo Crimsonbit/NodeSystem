@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
-
-import javax.management.RuntimeErrorException;
 
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.GNodeSystem;
@@ -34,6 +34,8 @@ public class NodeSystemBuilder {
 	private double h;
 	private boolean default_nodes;
 	private ApplicationContext context = ApplicationContext.getContext();
+
+	private List<String> jarfiles = new ArrayList<>();
 
 	/**
 	 * Constructor.
@@ -113,8 +115,7 @@ public class NodeSystemBuilder {
 	 * @return this
 	 */
 	public NodeSystemBuilder registerCustomNodesJar(String jarfile) {
-		if (graph != null)
-			graph.registerNodesInJar(jarfile);
+		jarfiles.add(jarfile);
 
 		return this;
 	}
@@ -197,6 +198,7 @@ public class NodeSystemBuilder {
 	 */
 	public GNodeGraph build() {
 		if (this.graph != null) {
+			this.graph.registerNodesInJar(jarfiles.toArray(new String[jarfiles.size()]));
 			graph.initGraph(default_nodes);
 			this.graph.log(Level.INFO, "NodeSystem ready!");
 			return this.graph;

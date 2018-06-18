@@ -25,13 +25,7 @@ import at.crimsonbit.nodesystem.gui.widget.searchbar.GSearchBar;
 import at.crimsonbit.nodesystem.gui.widget.toast.JFXToast;
 import at.crimsonbit.nodesystem.gui.widget.toast.ToastPosition;
 import at.crimsonbit.nodesystem.gui.widget.toast.ToastTime;
-import at.crimsonbit.nodesystem.node.types.Arduino;
-import at.crimsonbit.nodesystem.node.types.ArduinoPin;
-import at.crimsonbit.nodesystem.node.types.Calculate;
 import at.crimsonbit.nodesystem.node.types.IGuiNodeType;
-import at.crimsonbit.nodesystem.node.types.Math;
-import at.crimsonbit.nodesystem.node.types.Noise;
-import at.crimsonbit.nodesystem.node.types.Terrain;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeMaster;
 import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
@@ -541,7 +535,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	 * @param jarfile
 	 *            The path to the jar File
 	 */
-	public void registerNodesInJar(String jarfile) {
+	public void registerNodesInJar(String[] jarfile) {
 		log(Level.INFO, "Registering custom nodes...");
 		getGuiMaster().registerNodesInJar(jarfile);
 

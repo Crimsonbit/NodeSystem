@@ -13,6 +13,7 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -20,6 +21,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -43,6 +45,7 @@ import at.crimsonbit.nodesystem.nodebackend.api.dto.RegistryDTO;
 import at.crimsonbit.nodesystem.nodebackend.api.dto.Signal;
 import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
 import at.crimsonbit.nodesystem.nodebackend.util.NodeConnection;
+import at.crimsonbit.nodesystem.nodebackend.util.ObjectInputStreamWithLoader;
 import at.crimsonbit.nodesystem.nodebackend.util.Tuple;
 import at.crimsonbit.nodesystem.nodebackend.util.Util;
 
@@ -59,17 +62,24 @@ import at.crimsonbit.nodesystem.nodebackend.util.Util;
 
 public class NodeMaster {
 
-	public static final int SAVEFILE_VERISON = 1;
+	public static final int SAVEFILE_VERISON = 2;
 
 	private static final String ENTRY_VERSION_NAME = "version";
 	private static final String ENTRY_EXTRA_NAME = "extra.dat";
 	private static final String ENTRY_CONN_NAME = "connections.dat";
 	private static final String ENTRY_STATE_NAME = "state.dat";
 	private static final String ENTRY_REG_NAME = "registry.dat";
+	private static final String ENTRY_MODULES_NAME = "modules.dat";
+
 	private final BiMap<INodeType, Class<? extends AbstractNode>> registeredNodes;
 	private final Map<Class<? extends AbstractNode>, Map<String, Field>> inputKeyMap;
 	private final Map<Class<? extends AbstractNode>, Map<String, Field>> outputKeyMap;
 	private final Map<Class<? extends AbstractNode>, Map<String, Field>> fieldKeyMap;
+
+	private final List<String> loadedModules = new ArrayList<>();
+
+	private ClassLoader loader = NodeMaster.class.getClassLoader();
+
 	// map to enable creating Nodes by using strings
 	private final Map<String, INodeType> stringToType;
 	private final BiMap<Integer, AbstractNode> nodePool;
@@ -110,18 +120,23 @@ public class NodeMaster {
 		}
 	}
 
-	public void registerNodesFromJar(String file) throws IOException, ClassNotFoundException {
-		URL url = null;
-		JarFile jar = new JarFile(file);
-		Enumeration<JarEntry> entries = jar.entries();
+	public synchronized void registerNodesFromJar(String[] files) throws IOException, ClassNotFoundException {
+		URL[] urls = new URL[files.length];
+
 		try {
-			url = new URL("jar:file:" + file + "!/");
+			for (int i = 0; i < files.length; i++) {
+				urls[i] = new URL("jar:file:" + files[i] + "!/");
+				loadedModules.add(files[i]);
+			}
 
 		} catch (MalformedURLException e) {
-			jar.close();
 			throw new IllegalArgumentException("Malformed file name", e);
 		}
-		try (URLClassLoader cl = new URLClassLoader(new URL[] { url })) {
+
+		URLClassLoader cl = new URLClassLoader(urls, this.loader);
+		for (String f : files) {
+			JarFile jf = new JarFile(f);
+			Enumeration<JarEntry> entries = jf.entries();
 			while (entries.hasMoreElements()) {
 				JarEntry je = entries.nextElement();
 				if (je.isDirectory() || !je.getName().endsWith(".class"))
@@ -133,8 +148,9 @@ public class NodeMaster {
 					registerNodeClass(clazz.asSubclass(AbstractNode.class));
 				}
 			}
+			jf.close();
 		}
-		jar.close();
+		this.loader = cl;
 	}
 
 	private void registerNodeClass(Class<? extends AbstractNode> clazz) {
@@ -801,6 +817,17 @@ public class NodeMaster {
 		return true;
 	}
 
+	private boolean trySaveLoadedModules(ZipOutputStream zos) throws IOException {
+		ZipEntry e = new ZipEntry(ENTRY_MODULES_NAME);
+		e.setMethod(ZipEntry.DEFLATED);
+		zos.putNextEntry(e);
+		ObjectOutputStream oos = new ObjectOutputStream(zos);
+		oos.writeObject(loadedModules);
+		oos.flush();
+		zos.closeEntry();
+		return true;
+	}
+
 	/**
 	 * Save the current NodeMaster Instance to the File specified by savefile. If
 	 * this file already exists and override is false, this methods returns false
@@ -818,6 +845,9 @@ public class NodeMaster {
 		}
 		try (ZipOutputStream zos = new ZipOutputStream(Files.newOutputStream(p))) {
 			if (!trySaveVersion(zos)) {
+				return false;
+			}
+			if (!trySaveLoadedModules(zos)) {
 				return false;
 			}
 			if (!trySaveRegistry(zos)) {
@@ -845,6 +875,7 @@ public class NodeMaster {
 	 * @return
 	 * @throws IOException
 	 * @throws NoSuchNodeException
+	 * @throws ClassNotFoundException
 	 */
 	public static Tuple<NodeMaster, String> load(Path savefile) throws IOException, NoSuchNodeException {
 		NodeMaster m = new NodeMaster();
@@ -862,6 +893,7 @@ public class NodeMaster {
 	 * @return
 	 * @throws IOException
 	 * @throws NoSuchNodeException
+	 * @throws ClassNotFoundException
 	 */
 	public static Tuple<NodeMaster, String> load(String savefile) throws IOException, NoSuchNodeException {
 		return load(Paths.get(savefile));
@@ -917,13 +949,19 @@ public class NodeMaster {
 						return "Error, Savefile has a different version";
 					}
 					break;
+				case ENTRY_MODULES_NAME:
+					if (!tryLoadLoadedModules(zin)) {
+						return "Error while loading Modules";
+					}
+					break;
 				default:
 					throw new IllegalStateException("No ZipEntry: " + e.getName() + " expected");
 				}
+				zin.closeEntry();
 
 			}
 		}
-		return found == 5 ? "" : "Error, did not find all Entries";
+		return found == 6 ? "" : "Error, did not find all Entries";
 	}
 
 	private boolean tryLoadVersion(ZipInputStream zin) throws IOException {
@@ -935,8 +973,21 @@ public class NodeMaster {
 		return true;
 	}
 
+	private boolean tryLoadLoadedModules(ZipInputStream zin) throws IOException {
+		ObjectInputStream oin = new ObjectInputStream(zin);
+
+		try {
+			@SuppressWarnings("unchecked")
+			List<String> modules = (List<String>) oin.readObject();
+			this.registerNodesFromJar(modules.toArray(new String[modules.size()]));
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+		return true;
+	}
+
 	private boolean tryLoadRegistry(ZipInputStream zin) throws IOException {
-		ObjectInputStream ois = new ObjectInputStream(zin);
+		ObjectInputStream ois = new ObjectInputStreamWithLoader(zin, loader);
 		Object read;
 		try {
 			while ((read = ois.readObject()) != null) {
@@ -964,10 +1015,11 @@ public class NodeMaster {
 		return true;
 	}
 
+	@SuppressWarnings("resource")
 	private boolean tryLoadExtraInfo(ZipInputStream zin) throws IOException {
 		ObjectInputStream ois;
 		try {
-			ois = new ObjectInputStream(zin);
+			ois = new ObjectInputStreamWithLoader(zin, loader);
 		} catch (EOFException e) {
 			// ExtraInfo may be empty
 			return true;
@@ -994,7 +1046,7 @@ public class NodeMaster {
 
 	private boolean tryLoadState(ZipInputStream zin) throws IOException, NoSuchNodeException {
 
-		ObjectInputStream ois = new ObjectInputStream(zin);
+		ObjectInputStream ois = new ObjectInputStreamWithLoader(zin, loader);
 		Object read;
 		NodeDTO[] allNodes;
 		try {
