@@ -250,6 +250,14 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		this.logPane = logPane;
 	}
 
+	public Set<GNode> getSelectedNodesGroup() {
+		return selectedNodesGroup;
+	}
+
+	public void setSelectedNodesGroup(Set<GNode> selectedNodesGroup) {
+		this.selectedNodesGroup = selectedNodesGroup;
+	}
+
 	/**
 	 * <h1>public void initGraph({@link Boolean}).</h1>
 	 * <hr>
@@ -477,8 +485,9 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 		setOnMouseReleased(event -> {
 			// Do what you want with selection's properties here
-			System.out.printf("X: %.2f, Y: %.2f, Width: %.2f, Height: %.2f%n", selection.getX(), selection.getY(),
-					selection.getWidth(), selection.getHeight());
+			// System.out.printf("X: %.2f, Y: %.2f, Width: %.2f, Height: %.2f%n",
+			// selection.getX(), selection.getY(),
+			// selection.getWidth(), selection.getHeight());
 
 			/**
 			 * Check if nodes are in bounds.
@@ -486,7 +495,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 			for (GNode n : getGuiMaster().getAllCells()) {
 				if ((n.getLayoutX() > selection.getX() && n.getLayoutX() < selection.getWidth())
 						&& (n.getLayoutY() > selection.getY() && n.getLayoutY() < selection.getHeight())) {
-					System.out.println(n);
+					//System.out.println(n);
 					n.setActive(true);
 					n.redraw();
 					selectedNodesGroup.add(n);
@@ -553,21 +562,13 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 					bar.search((Stage) getScene().getWindow(), GNodeGraph.this);
 			}
 
-			if (getActive() != null) {
-
-				/*
-				 * Copies the active node onto the clipboard (clipboard is for GNodes only!)
-				 */
-				if (event.isControlDown() && event.getCode().equals(KeyCode.C)) {
-					clipboard.copy(getActive());
-					log(Level.INFO, "Node: " + getActive().getName() + " copied to clipboard!");
-				}
+			if (getActive() != null || getSelectedNodesGroup().size() > 0) {
 
 				/**
 				 * Rename node
 				 */
 
-				if (event.getCode().equals(KeyCode.F2)) {
+				if (event.getCode().equals(KeyCode.F2) && !(getSelectedNodesGroup().size() > 0)) {
 					doBlur();
 					TextInputDialog dialog = new TextInputDialog(getActive().getName());
 					dialog.setTitle("Name");
@@ -584,31 +585,63 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 					getActive().redraw();
 				}
 
+				/*
+				 * Copies the active node onto the clipboard (clipboard is for GNodes only!)
+				 */
+				if (event.isControlDown() && event.getCode().equals(KeyCode.C)) {
+					if (getSelectedNodesGroup().size() > 0) {
+						clipboard.copy(getSelectedNodesGroup());
+						log(Level.INFO,
+								"Copied node group of size: " + getSelectedNodesGroup().size() + " to the clpboard!");
+
+					} else {
+						clipboard.copy(getActive());
+						log(Level.INFO, "Node: " + getActive().getName() + " copied to clipboard!");
+					}
+				}
+
 				/**
 				 * Pastes from the clipboard
 				 */
 				if (event.isControlDown() && event.getCode().equals(KeyCode.V)) {
-					clipboard.paste();
-					log(Level.INFO, "Node: " + getActive().getName() + " pasted from clipboard!");
+					if (getSelectedNodesGroup().size() > 0) {
+						clipboard.pasteNodeGroup();
+						log(Level.INFO,
+								"Pasted node group of size: " + getSelectedNodesGroup().size() + " to the graph!");
+						getSelectedNodesGroup().clear();
+					} else {
+						clipboard.paste();
+						log(Level.INFO, "Node: " + getActive().getName() + " pasted from clipboard!");
+					}
 				}
 
 				/**
 				 * Removes the active node
 				 */
 				if (event.getCode().equals(KeyCode.DELETE)) {
-					if (getActive() != null) {
-						getGuiMaster().removeNode(getActive());
-						update();
-					} else if (getState().equals(GState.PORTCON)) {
-						setState(GState.DEFAULT);
+					if (getSelectedNodesGroup().size() > 0) {
+						for (GNode n : getSelectedNodesGroup()) {
+							getGuiMaster().removeNode(n);
+							update();
+							log(Level.INFO, "Deleted a total of " + getSelectedNodesGroup().size() + " nodes!");
+						}
+						getSelectedNodesGroup().clear();
+					} else {
+						if (getActive() != null) {
+							getGuiMaster().removeNode(getActive());
+							update();
+						} else if (getState().equals(GState.PORTCON)) {
+							setState(GState.DEFAULT);
+						}
+						log(Level.INFO, "Node: " + getActive().getName() + " was deleted from the graph!");
 					}
-					log(Level.INFO, "Node: " + getActive().getName() + " was deleted from the graph!");
+
 				}
 
 				/**
 				 * Sets the constant
 				 */
-				if (event.isShiftDown() && event.getCode().equals(KeyCode.C)) {
+				if (event.isShiftDown() && event.getCode().equals(KeyCode.C) && !(getSelectedNodesGroup().size() > 0)) {
 					for (INodeType t : Constant.values())
 						if (getActive().getNodeType().equals(t)) {
 							((ConstantNodeClass) getActive()).setConstant();
@@ -618,7 +651,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 				/**
 				 * calculates the output
 				 */
-				if (event.isShiftDown() && event.getCode().equals(KeyCode.O)) {
+				if (event.isShiftDown() && event.getCode().equals(KeyCode.O) && !(getSelectedNodesGroup().size() > 0)) {
 					if (getActive().getNodeType().equals(Base.OUTPUT)) {
 						((OutputNodeClass) getActive()).setOutput();
 
