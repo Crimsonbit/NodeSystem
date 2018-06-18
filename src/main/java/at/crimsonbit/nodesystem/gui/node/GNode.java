@@ -125,13 +125,9 @@ public class GNode extends Pane implements IGNode {
 		addToolTip();
 		draw();
 		scaleTransform = new Scale(scaleValue, scaleValue, 0, 0);
-		
+
 	}
-	
-	
-	
-	
-	
+
 	public GNode(String name, int id, boolean draw, GNodeGraph graph, double x, double y) {
 		this(name, id, draw, graph);
 		relocate(x, y);
@@ -161,8 +157,7 @@ public class GNode extends Pane implements IGNode {
 	}
 
 	private void addToolTip() {
-		tooltip.setText(
-				"Name: " + name + "\nType: " + getNodeType().toString() + "\nConnections: " + connections.size());
+		tooltip.setText("Type: " + getNodeType().toString());
 		Tooltip.install(this, tooltip);
 	}
 

@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.gui.node.GNodeConnection;
@@ -162,9 +163,7 @@ public class GNodeMaster {
 							con.getTargetPort().getStringID());
 					succ = true;
 				} catch (NoSuchNodeException e) {
-					JFXToast.makeToast((Stage) getNodeGraph().getScene().getWindow(),
-							"Error: can't connect ports with different types!", ToastTime.TIME_SHORT,
-							ToastPosition.BOTTOM);
+
 				}
 
 			}
@@ -294,9 +293,10 @@ public class GNodeMaster {
 			allConnections.add(con);
 			addedConnections.add(con);
 
-		} catch (NoSuchNodeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (NoSuchNodeException | ClassCastException a) {
+			getNodeGraph().log(Level.SEVERE, "Error: can't connect ports " + a.getMessage());
+			JFXToast.makeToast((Stage) getNodeGraph().getScene().getWindow(), "Error: " + a.getMessage(),
+					ToastTime.TIME_LONG, ToastPosition.BOTTOM);
 		}
 
 		return true;

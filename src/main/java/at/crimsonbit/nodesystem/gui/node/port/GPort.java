@@ -46,7 +46,7 @@ public class GPort extends Group implements IGConsumable {
 	private final Tooltip tooltip = new Tooltip();
 	private final int MAGIC_OFFSET = 3;
 	private final int SNAP_SIZE_X = 14;
-	private final int SNAP_SIZE_Y = 40;
+	private final int SNAP_SIZE_Y = 10;
 	private boolean isConnected = false;
 
 	public GPort(int id, boolean input, String labels, double x, double y, GNode node) {
@@ -87,15 +87,15 @@ public class GPort extends Group implements IGConsumable {
 
 		tooltip.setText("GPort: " + this.id + "\n" + "Input: " + this.input + "\n" + "Type: "
 				+ node.getAbstractNode().get(labels));
-		Tooltip.install(this, tooltip);
 
+		// Tooltip.install(this.getNode(), tooltip);
 		// getChildren().add(line);
 
 		setOnMouseReleased(new EventHandler<MouseEvent>() {
 
 			@Override
 			public void handle(MouseEvent event) {
-
+				// TODO FIX THAT SHIT!
 				/* Add Code to connect nodes here */
 				boolean isInput = false;
 				boolean isOutput = false;
@@ -115,18 +115,30 @@ public class GPort extends Group implements IGConsumable {
 				outer: for (GNode n : allNodes) {
 					if (isInput && !isOutput) {
 						for (GPort p : n.getOutputPorts()) {
+							// System.out.println("SNAP: " + SNAP_SIZE_X);
+							// System.out.println("1/[]: " + (1 /
+							// getNode().getNodeGraph().getScaleValue()));
+							// System.out.println(
+							// "SNAP CAL: " + (SNAP_SIZE_X * (1 / getNode().getNodeGraph().getScaleValue()))
+							// * 10);
+							// System.out.println("DELTA_X: " + (Math.abs(
+							// (event.getSceneX() - (p.getNode().getLayoutX() +
+							// p.getPortRectangle().getX()))))
+							// / 10);
 
-							if (Math.abs((event.getSceneX()
-									- (p.getNode().getLayoutX() + p.getPortRectangle().getX()))) < SNAP_SIZE_X
-									&& Math.abs((event.getSceneY() - (p.getNode().getLayoutY()
-											+ p.getPortRectangle().getY()))) < SNAP_SIZE_Y) {
+							if ((Math
+									.abs((event.getSceneX() - (p.getNode().getLayoutX() + p.getPortRectangle().getX())))
+									/ 10) < ((SNAP_SIZE_X * (1 / getNode().getNodeGraph().getScaleValue())))
+									&& (Math.abs((event.getSceneY()
+											- (p.getNode().getLayoutY() + p.getPortRectangle().getY())))
+											/ 10) < (SNAP_SIZE_Y * (1 / getNode().getNodeGraph().getScaleValue()))) {
 
-								System.out.println(Math.abs((event.getSceneX()
-										- (p.getNode().getLayoutX() + p.getPortRectangle().getX()))));
+								// System.out.println(Math.abs((event.getSceneX()
+								// - (p.getNode().getLayoutX() + p.getPortRectangle().getX()))));
 
-								System.out.println(Math.abs((event.getSceneY()
-										- (p.getNode().getLayoutY() + p.getPortRectangle().getY()))));
-								System.out.println("isInput -> " + p.getStringID());
+								// System.out.println(Math.abs((event.getSceneY()
+								// - (p.getNode().getLayoutY() + p.getPortRectangle().getY()))));
+								// System.out.println("isInput -> " + p.getStringID());
 
 								master.setFirstPort(p);
 								break outer;
@@ -135,18 +147,20 @@ public class GPort extends Group implements IGConsumable {
 						}
 					} else {
 						for (GPort p : n.getInputPorts()) {
-							if (Math.abs((event.getSceneX()
-									- (p.getNode().getLayoutX() + p.getPortRectangle().getX()))) < SNAP_SIZE_X
-									&& Math.abs((event.getSceneY() - (p.getNode().getLayoutY()
-											+ p.getPortRectangle().getY()))) < SNAP_SIZE_Y) {
+							if ((Math
+									.abs((event.getSceneX() - (p.getNode().getLayoutX() + p.getPortRectangle().getX())))
+									/ 10) < ((SNAP_SIZE_X * (1 / getNode().getNodeGraph().getScaleValue())))
+									&& (Math.abs((event.getSceneY()
+											- (p.getNode().getLayoutY() + p.getPortRectangle().getY())))
+											/ 10) < (SNAP_SIZE_Y * (1 / getNode().getNodeGraph().getScaleValue()))) {
 
-								System.out.println(Math.abs((event.getSceneX()
-										- (p.getNode().getLayoutX() + p.getPortRectangle().getX()))));
+								// System.out.println(Math.abs((event.getSceneX()
+								// - (p.getNode().getLayoutX() + p.getPortRectangle().getX()))));
 
-								System.out.println(Math.abs((event.getSceneY()
-										- (p.getNode().getLayoutY() + p.getPortRectangle().getY()))));
+								// System.out.println(Math.abs((event.getSceneY()
+								// - (p.getNode().getLayoutY() + p.getPortRectangle().getY()))));
 
-								System.out.println("isOutput -> " + p.getStringID());
+								// System.out.println("isOutput -> " + p.getStringID());
 								master.setSecondPort(p);
 								break outer;
 							}
@@ -168,7 +182,7 @@ public class GPort extends Group implements IGConsumable {
 		setOnMouseDragged(new EventHandler<MouseEvent>() {
 
 			@Override
-			public void handle(MouseEvent event) { // System.out.println("hi");
+			public void handle(MouseEvent event) {
 				node.setPortPressed(true);
 				if (line == null)
 					line = new Line();
@@ -183,14 +197,12 @@ public class GPort extends Group implements IGConsumable {
 
 				line.endXProperty().bind(node.layoutXProperty().add(event.getX()));
 				line.endYProperty().bind(node.layoutYProperty().add(event.getY()));
-				Tooltip.install(line, tooltip);
+				line.toFront();
 				node.getNodeGraph().getLineLayer().getChildren().remove(line);
 				node.getNodeGraph().getLineLayer().getChildren().add(line);
 				node.getNodeGraph().update();
 			}
-
 		});
-
 	}
 
 	public boolean isConnected() {
