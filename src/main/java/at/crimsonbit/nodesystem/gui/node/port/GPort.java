@@ -5,6 +5,7 @@ import java.util.Set;
 import at.crimsonbit.nodesystem.gui.GGraphScene;
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.GNodeMaster;
+import at.crimsonbit.nodesystem.gui.GState;
 import at.crimsonbit.nodesystem.gui.dialog.GEntry;
 import at.crimsonbit.nodesystem.gui.dialog.GPopUp;
 import at.crimsonbit.nodesystem.gui.node.GNode;
@@ -176,6 +177,7 @@ public class GPort extends Group implements IGConsumable {
 				node.getNodeGraph().update();
 
 				node.setPortPressed(false);
+				node.getNodeGraph().setState(GState.DEFAULT);
 			}
 		});
 
@@ -186,7 +188,7 @@ public class GPort extends Group implements IGConsumable {
 				node.setPortPressed(true);
 				if (line == null)
 					line = new Line();
-
+				node.getNodeGraph().setState(GState.PORTCON);
 				line.setStroke(node.getNodeGraph().getColorLookup().get(node.getNodeType()));
 				line.setStrokeWidth((double) node.getNodeGraph().getSettings().get(GraphSettings.SETTING_CURVE_WIDTH));
 				line.startXProperty().bind(node.layoutXProperty().add(getPortX() + MAGIC_OFFSET));

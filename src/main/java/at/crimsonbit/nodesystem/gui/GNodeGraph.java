@@ -6,6 +6,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -96,6 +97,8 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private HashMap<INodeType, Color> colorLookup = new HashMap<INodeType, Color>();
 	private HashMap<GraphSettings, Color> nodeLookup = new HashMap<GraphSettings, Color>();
 	private HashMap<GraphSettings, Object> settings = new HashMap<GraphSettings, Object>();
+	private Set<GNode> selectedNodesGroup = new HashSet<GNode>();
+
 	private GSearchBar bar = new GSearchBar();
 	private final Map<INodeType, Class<? extends GNode>> nodeMap = new HashMap<INodeType, Class<? extends GNode>>();
 	private GClipboard clipboard;
@@ -455,25 +458,40 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		final Point anchor = new Point();
 
 		setOnMousePressed(event -> {
+			selectedNodesGroup.clear();
 			anchor.setX(event.getX());
 			anchor.setY(event.getY());
-			selection.setX(event.getX()/getScaleValue());
-			selection.setY(event.getY()/getScaleValue());
-			
+			selection.setX(event.getX() / getScaleValue());
+			selection.setY(event.getY() / getScaleValue());
 
 		});
 
 		setOnMouseDragged(event -> {
-			selection.setWidth(java.lang.Math.abs(event.getX() - anchor.getX()));
-			selection.setHeight(java.lang.Math.abs(event.getY() - anchor.getY()));
-			selection.setX(java.lang.Math.min(anchor.getX(), event.getX()));
-			selection.setY(java.lang.Math.min(anchor.getY(), event.getY()));
+			if (getState().equals(GState.DEFAULT)) {
+				selection.setWidth(java.lang.Math.abs(event.getX() - anchor.getX()));
+				selection.setHeight(java.lang.Math.abs(event.getY() - anchor.getY()));
+				selection.setX(java.lang.Math.min(anchor.getX(), event.getX()));
+				selection.setY(java.lang.Math.min(anchor.getY(), event.getY()));
+			}
 		});
 
 		setOnMouseReleased(event -> {
 			// Do what you want with selection's properties here
 			System.out.printf("X: %.2f, Y: %.2f, Width: %.2f, Height: %.2f%n", selection.getX(), selection.getY(),
 					selection.getWidth(), selection.getHeight());
+
+			/**
+			 * Check if nodes are in bounds.
+			 */
+			for (GNode n : getGuiMaster().getAllCells()) {
+				if ((n.getLayoutX() > selection.getX() && n.getLayoutX() < selection.getWidth())
+						&& (n.getLayoutY() > selection.getY() && n.getLayoutY() < selection.getHeight())) {
+					System.out.println(n);
+					n.setActive(true);
+					n.redraw();
+					selectedNodesGroup.add(n);
+				}
+			}
 
 			selection.setWidth(0);
 			selection.setHeight(0);

@@ -37,6 +37,7 @@ public class GNodeMouseHandler {
 
 		public void handle(MouseEvent event) {
 			if (event.isPrimaryButtonDown() && !node.getNodeGraph().getState().equals(GState.PORTCON)) {
+				
 				if (event.getClickCount() == 2) {
 					GNode node = (GNode) event.getSource();
 					node.toggleDraw();
@@ -45,6 +46,7 @@ public class GNodeMouseHandler {
 				} else {
 					GNode node = (GNode) event.getSource();
 					if (!(node.isPortPressed())) {
+						node.getNodeGraph().setState(GState.NODE_MOVE);
 						graph.setActive(node);
 						node.setActive(true);
 
@@ -69,6 +71,7 @@ public class GNodeMouseHandler {
 				GNode n = (GNode) event.getSource();
 				if (!n.isPortPressed()) {
 					if (event.isPrimaryButtonDown()) {
+						node.getNodeGraph().setState(GState.NODE_MOVE);
 						Node node = (Node) event.getSource();
 
 						double offsetX = event.getScreenX() + dragContext.x;
@@ -106,6 +109,7 @@ public class GNodeMouseHandler {
 					node.redraw();
 					graph.setActive(node);
 					node.setCursor(Cursor.DEFAULT);
+					node.getNodeGraph().setState(GState.DEFAULT);
 				}
 			}
 		}

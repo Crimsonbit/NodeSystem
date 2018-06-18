@@ -2,6 +2,6 @@ package at.crimsonbit.nodesystem.gui;
 
 public enum GState {
 	
-	DEFAULT, PORTCON
+	DEFAULT, PORTCON, NODE_MOVE
 	
 }
