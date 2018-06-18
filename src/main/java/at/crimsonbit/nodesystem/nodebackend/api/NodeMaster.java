@@ -645,7 +645,7 @@ public class NodeMaster {
 	 *             field could not be found in the class
 	 */
 	public boolean setConnection(AbstractNode inNode, String input, AbstractNode outNode, String out)
-			throws NoSuchNodeException {
+			throws NoSuchNodeException, ClassCastException {
 
 		Map<String, Field> regIns = inputKeyMap.get(inNode.getClass());
 		if (regIns == null) {
@@ -667,6 +667,12 @@ public class NodeMaster {
 
 		if (outField == null) {
 			throw new NoSuchNodeException("Node " + outNode.getClass().getName() + " has no input " + out);
+		}
+
+		if (!inField.getType().isAssignableFrom(outField.getType())) {
+			throw new ClassCastException("Output " + outField.getName() + " with type "
+					+ outField.getType().getCanonicalName() + " cannot be connected to Input" + inField.getName()
+					+ " of Type " + inField.getType().getCanonicalName());
 		}
 
 		inNode.connections.put(inField, new NodeConnection(outField, outNode));
