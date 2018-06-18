@@ -25,7 +25,7 @@ public class SimpleGraph extends Application {
 
 		GNodeGraph graph = new NodeSystemBuilder(1275, 800, true)
 				.registerCustomNodes("at.crimsonbit.nodesystem.examples.customnode")
-				.registerCustomNodesJar("Modules/constants.jar").registerDefaultNodes(true).build();
+				.registerAllModules("Modules/").registerDefaultNodes(true).build();
 
 		/**
 		 * Example of how to add custom node-classes to specific node types

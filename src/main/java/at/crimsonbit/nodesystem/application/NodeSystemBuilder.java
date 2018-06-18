@@ -1,15 +1,18 @@
 package at.crimsonbit.nodesystem.application;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import javax.management.RuntimeErrorException;
 
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.GNodeSystem;
 import at.crimsonbit.nodesystem.gui.GNodeView;
-import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.util.logger.SystemLogger;
 import javafx.scene.Scene;
-import javafx.scene.paint.Color;
 
 /**
  * <h1>NodeSystemBuilder</h1>
@@ -116,6 +119,19 @@ public class NodeSystemBuilder {
 		return this;
 	}
 
+	public NodeSystemBuilder registerAllModules(String path) {
+		Path p = Paths.get(path);
+		if (p != null && Files.isDirectory(p)) {
+			try {
+				Files.walk(p).filter(t -> t.getFileName().toString().endsWith(".jar")).forEach(f -> {
+					registerCustomNodesJar(f.toAbsolutePath().toString());
+				});
+			} catch (IOException e) {
+				throw new RuntimeException("Could not load Modules", e);
+			}
+		}
+		return this;
+	}
 
 	/**
 	 * <h1>attachLogger()</h1>

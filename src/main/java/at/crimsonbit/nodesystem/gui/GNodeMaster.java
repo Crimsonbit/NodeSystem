@@ -168,6 +168,7 @@ public class GNodeMaster {
 		}
 	}
 
+	
 	public void registerNodes(String packag) {
 		this.nodeMaster.registerNodes(packag);
 	}
