@@ -2,6 +2,7 @@ package at.crimsonbit.nodesystem.gui.node.port;
 
 import java.util.Set;
 
+import at.crimsonbit.nodesystem.gui.GGraphScene;
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.GNodeMaster;
 import at.crimsonbit.nodesystem.gui.dialog.GEntry;
@@ -20,6 +21,10 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.StrokeLineCap;
 
 /**
+ * <h1>GPort extends {@link Group} implements {@link IGConsumable}</h1>
+ * <p>
+ * This class represents one Port in a node.
+ * </p>
  * 
  * @author Florian Wagner
  *
@@ -40,7 +45,8 @@ public class GPort extends Group implements IGConsumable {
 	private boolean drawText = true;
 	private final Tooltip tooltip = new Tooltip();
 	private final int MAGIC_OFFSET = 3;
-	private final int SNAP_SIZE = 5;
+	private final int SNAP_SIZE_X = 14;
+	private final int SNAP_SIZE_Y = 40;
 	private boolean isConnected = false;
 
 	public GPort(int id, boolean input, String labels, double x, double y, GNode node) {
@@ -89,7 +95,6 @@ public class GPort extends Group implements IGConsumable {
 
 			@Override
 			public void handle(MouseEvent event) {
-				node.setPortPressed(false);
 
 				/* Add Code to connect nodes here */
 				boolean isInput = false;
@@ -104,31 +109,59 @@ public class GPort extends Group implements IGConsumable {
 					master.setSecondPort(GPort.this);
 					isInput = true;
 				}
+
 				Set<GNode> allNodes = node.getNodeGraph().getGuiMaster().getAllCells();
-				for (GNode n : allNodes) {
-					if (isInput) {
+
+				outer: for (GNode n : allNodes) {
+					if (isInput && !isOutput) {
 						for (GPort p : n.getOutputPorts()) {
-							if (Math.abs(event.getX() - p.getX()) > SNAP_SIZE) {
+
+							if (Math.abs((event.getSceneX()
+									- (p.getNode().getLayoutX() + p.getPortRectangle().getX()))) < SNAP_SIZE_X
+									&& Math.abs((event.getSceneY() - (p.getNode().getLayoutY()
+											+ p.getPortRectangle().getY()))) < SNAP_SIZE_Y) {
+
+								System.out.println(Math.abs((event.getSceneX()
+										- (p.getNode().getLayoutX() + p.getPortRectangle().getX()))));
+
+								System.out.println(Math.abs((event.getSceneY()
+										- (p.getNode().getLayoutY() + p.getPortRectangle().getY()))));
+								System.out.println("isInput -> " + p.getStringID());
+
 								master.setFirstPort(p);
-								master.connectPorts();
+								break outer;
 							}
+
 						}
 					} else {
 						for (GPort p : n.getInputPorts()) {
-							if (Math.abs(event.getX() - p.getX()) > SNAP_SIZE) {
+							if (Math.abs((event.getSceneX()
+									- (p.getNode().getLayoutX() + p.getPortRectangle().getX()))) < SNAP_SIZE_X
+									&& Math.abs((event.getSceneY() - (p.getNode().getLayoutY()
+											+ p.getPortRectangle().getY()))) < SNAP_SIZE_Y) {
+
+								System.out.println(Math.abs((event.getSceneX()
+										- (p.getNode().getLayoutX() + p.getPortRectangle().getX()))));
+
+								System.out.println(Math.abs((event.getSceneY()
+										- (p.getNode().getLayoutY() + p.getPortRectangle().getY()))));
+
+								System.out.println("isOutput -> " + p.getStringID());
 								master.setSecondPort(p);
-								master.connectPorts();
+								break outer;
 							}
 						}
 					}
-
 				}
 
+				master.connectPorts();
 				master.removecurConnectPorts();
 
 				/* Remove Temporary Line */
 				node.getNodeGraph().getLineLayer().getChildren().remove(line);
 				node.getNodeGraph().update();
+
+				node.setPortPressed(false);
 			}
 		});
 
@@ -150,7 +183,7 @@ public class GPort extends Group implements IGConsumable {
 
 				line.endXProperty().bind(node.layoutXProperty().add(event.getX()));
 				line.endYProperty().bind(node.layoutYProperty().add(event.getY()));
-
+				Tooltip.install(line, tooltip);
 				node.getNodeGraph().getLineLayer().getChildren().remove(line);
 				node.getNodeGraph().getLineLayer().getChildren().add(line);
 				node.getNodeGraph().update();

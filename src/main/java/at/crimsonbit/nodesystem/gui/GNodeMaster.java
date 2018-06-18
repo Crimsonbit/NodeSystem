@@ -11,17 +11,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import at.crimsonbit.nodesystem.gui.animation.Animator;
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.gui.node.GNodeConnection;
 import at.crimsonbit.nodesystem.gui.node.port.GPort;
 import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
+import at.crimsonbit.nodesystem.gui.widget.toast.JFXToast;
+import at.crimsonbit.nodesystem.gui.widget.toast.ToastPosition;
+import at.crimsonbit.nodesystem.gui.widget.toast.ToastTime;
 import at.crimsonbit.nodesystem.node.types.Base;
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeMaster;
 import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
 import at.crimsonbit.nodesystem.nodebackend.util.NodeConnection;
+import javafx.stage.Stage;
 
 /**
  * 
@@ -159,8 +162,9 @@ public class GNodeMaster {
 							con.getTargetPort().getStringID());
 					succ = true;
 				} catch (NoSuchNodeException e) {
-
-					e.printStackTrace();
+					JFXToast.makeToast((Stage) getNodeGraph().getScene().getWindow(),
+							"Error: can't connect ports with different types!", ToastTime.TIME_SHORT,
+							ToastPosition.BOTTOM);
 				}
 
 			}
@@ -286,7 +290,7 @@ public class GNodeMaster {
 			port1.redraw();
 			port1.getNode().getConnections().add(con);
 			port2.getNode().getConnections().add(con);
-			port1.setConnected(true);
+			port2.setConnected(true);
 			allConnections.add(con);
 			addedConnections.add(con);
 
