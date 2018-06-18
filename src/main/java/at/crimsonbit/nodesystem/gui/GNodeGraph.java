@@ -159,7 +159,6 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 		setDefaulSettings();
 		log(Level.INFO, "NodeGraph set-up successfully!");
-		
 
 		innerShadow = new InnerShadow();
 
@@ -221,7 +220,6 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 		setDefaulSettings();
 		log(Level.INFO, "NodeGraph set-up successfully!");
-		
 
 		innerShadow = new InnerShadow();
 
@@ -457,8 +455,8 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	/**
 	 * <h1>public void addSelectGroupSupport()</h1>
 	 * <p>
-	 * Adds support to select multiple nodes at once.
-	 * TODO: Need to fix issue when zooming
+	 * Adds support to select multiple nodes at once. TODO: Need to fix issue when
+	 * zooming
 	 * </p>
 	 */
 	protected void addSelectGroupSupport() {
@@ -466,20 +464,23 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		final Point anchor = new Point();
 
 		setOnMousePressed(event -> {
-			selectedNodesGroup.clear();
-			anchor.setX(event.getX());
-			anchor.setY(event.getY());
-			selection.setX(event.getX() / getScaleValue());
-			selection.setY(event.getY() / getScaleValue());
-
+			if (!event.isSecondaryButtonDown()) {
+				selectedNodesGroup.clear();
+				anchor.setX(event.getX());
+				anchor.setY(event.getY());
+				selection.setX(event.getX() / getScaleValue());
+				selection.setY(event.getY() / getScaleValue());
+			}
 		});
 
 		setOnMouseDragged(event -> {
 			if (getState().equals(GState.DEFAULT)) {
-				selection.setWidth(java.lang.Math.abs(event.getX() - anchor.getX()));
-				selection.setHeight(java.lang.Math.abs(event.getY() - anchor.getY()));
-				selection.setX(java.lang.Math.min(anchor.getX(), event.getX()));
-				selection.setY(java.lang.Math.min(anchor.getY(), event.getY()));
+				if (!event.isSecondaryButtonDown()) {
+					selection.setWidth(java.lang.Math.abs(event.getX() - anchor.getX()));
+					selection.setHeight(java.lang.Math.abs(event.getY() - anchor.getY()));
+					selection.setX(java.lang.Math.min(anchor.getX(), event.getX()));
+					selection.setY(java.lang.Math.min(anchor.getY(), event.getY()));
+				}
 			}
 		});
 
