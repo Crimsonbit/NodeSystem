@@ -46,8 +46,8 @@ public class GPort extends Group implements IGConsumable {
 	private boolean drawText = true;
 	private final Tooltip tooltip = new Tooltip();
 	private final int MAGIC_OFFSET = 3;
-	private final int SNAP_SIZE_X = 14;
-	private final int SNAP_SIZE_Y = 10;
+	private final int SNAP_SIZE_X = 15;
+	private final int SNAP_SIZE_Y = 5;
 	private boolean isConnected = false;
 
 	public GPort(int id, boolean input, String labels, double x, double y, GNode node) {
@@ -96,88 +96,92 @@ public class GPort extends Group implements IGConsumable {
 
 			@Override
 			public void handle(MouseEvent event) {
-				// TODO FIX THAT SHIT!
-				/* Add Code to connect nodes here */
-				boolean isInput = false;
-				boolean isOutput = false;
-				GNodeMaster master = node.getNodeGraph().getGuiMaster();
-				master.removecurConnectPorts();
+				if (node.isPortPressed()) {
+					// TODO FIX THAT SHIT!
+					/* Add Code to connect nodes here */
+					boolean isInput = false;
+					boolean isOutput = false;
+					GNodeMaster master = node.getNodeGraph().getGuiMaster();
+					master.removecurConnectPorts();
 
-				if (!input) {
-					master.setFirstPort(GPort.this);
-					isOutput = true;
-				} else {
-					master.setSecondPort(GPort.this);
-					isInput = true;
-				}
-
-				Set<GNode> allNodes = node.getNodeGraph().getGuiMaster().getAllCells();
-
-				outer: for (GNode n : allNodes) {
-					if (isInput && !isOutput) {
-						for (GPort p : n.getOutputPorts()) {
-							// System.out.println("SNAP: " + SNAP_SIZE_X);
-							// System.out.println("1/[]: " + (1 /
-							// getNode().getNodeGraph().getScaleValue()));
-							// System.out.println(
-							// "SNAP CAL: " + (SNAP_SIZE_X * (1 / getNode().getNodeGraph().getScaleValue()))
-							// * 10);
-							// System.out.println("DELTA_X: " + (Math.abs(
-							// (event.getSceneX() - (p.getNode().getLayoutX() +
-							// p.getPortRectangle().getX()))))
-							// / 10);
-
-							if ((Math
-									.abs((event.getSceneX() - (p.getNode().getLayoutX() + p.getPortRectangle().getX())))
-									/ 10) < ((SNAP_SIZE_X * (1 / getNode().getNodeGraph().getScaleValue())))
-									&& (Math.abs((event.getSceneY()
-											- (p.getNode().getLayoutY() + p.getPortRectangle().getY())))
-											/ 10) < (SNAP_SIZE_Y * (1 / getNode().getNodeGraph().getScaleValue()))) {
-
-								// System.out.println(Math.abs((event.getSceneX()
-								// - (p.getNode().getLayoutX() + p.getPortRectangle().getX()))));
-
-								// System.out.println(Math.abs((event.getSceneY()
-								// - (p.getNode().getLayoutY() + p.getPortRectangle().getY()))));
-								// System.out.println("isInput -> " + p.getStringID());
-
-								master.setFirstPort(p);
-								break outer;
-							}
-
-						}
+					if (!input) {
+						master.setFirstPort(GPort.this);
+						isOutput = true;
 					} else {
-						for (GPort p : n.getInputPorts()) {
-							if ((Math
-									.abs((event.getSceneX() - (p.getNode().getLayoutX() + p.getPortRectangle().getX())))
-									/ 10) < ((SNAP_SIZE_X * (1 / getNode().getNodeGraph().getScaleValue())))
-									&& (Math.abs((event.getSceneY()
-											- (p.getNode().getLayoutY() + p.getPortRectangle().getY())))
-											/ 10) < (SNAP_SIZE_Y * (1 / getNode().getNodeGraph().getScaleValue()))) {
+						master.setSecondPort(GPort.this);
+						isInput = true;
+					}
 
-								// System.out.println(Math.abs((event.getSceneX()
-								// - (p.getNode().getLayoutX() + p.getPortRectangle().getX()))));
+					Set<GNode> allNodes = node.getNodeGraph().getGuiMaster().getAllCells();
 
-								// System.out.println(Math.abs((event.getSceneY()
-								// - (p.getNode().getLayoutY() + p.getPortRectangle().getY()))));
+					outer: for (GNode n : allNodes) {
+						if (isInput && !isOutput) {
+							for (GPort p : n.getOutputPorts()) {
+								// System.out.println("SNAP: " + SNAP_SIZE_X);
+								// System.out.println("1/[]: " + (1 /
+								// getNode().getNodeGraph().getScaleValue()));
+								// System.out.println(
+								// "SNAP CAL: " + (SNAP_SIZE_X * (1 / getNode().getNodeGraph().getScaleValue()))
+								// * 10);
+								// System.out.println("DELTA_X: " + (Math.abs(
+								// (event.getSceneX() - (p.getNode().getLayoutX() +
+								// p.getPortRectangle().getX()))))
+								// / 10);
 
-								// System.out.println("isOutput -> " + p.getStringID());
-								master.setSecondPort(p);
-								break outer;
+								if ((Math.abs(
+										(event.getSceneX() - (p.getNode().getLayoutX() + p.getPortRectangle().getX())))
+										/ 10) < ((SNAP_SIZE_X * (1 / getNode().getNodeGraph().getScaleValue())))
+										&& (Math.abs((event.getSceneY()
+												- (p.getNode().getLayoutY() + p.getPortRectangle().getY())))
+												/ 10) < (SNAP_SIZE_Y
+														* (1 / getNode().getNodeGraph().getScaleValue()))) {
+
+									// System.out.println(Math.abs((event.getSceneX()
+									// - (p.getNode().getLayoutX() + p.getPortRectangle().getX()))));
+
+									// System.out.println(Math.abs((event.getSceneY()
+									// - (p.getNode().getLayoutY() + p.getPortRectangle().getY()))));
+									// System.out.println("isInput -> " + p.getStringID());
+
+									master.setFirstPort(p);
+									break outer;
+								}
+
+							}
+						} else {
+							for (GPort p : n.getInputPorts()) {
+								if ((Math.abs(
+										(event.getSceneX() - (p.getNode().getLayoutX() + p.getPortRectangle().getX())))
+										/ 10) < ((SNAP_SIZE_X * (1 / getNode().getNodeGraph().getScaleValue())))
+										&& (Math.abs((event.getSceneY()
+												- (p.getNode().getLayoutY() + p.getPortRectangle().getY())))
+												/ 10) < (SNAP_SIZE_Y
+														* (1 / getNode().getNodeGraph().getScaleValue()))) {
+
+									// System.out.println(Math.abs((event.getSceneX()
+									// - (p.getNode().getLayoutX() + p.getPortRectangle().getX()))));
+
+									// System.out.println(Math.abs((event.getSceneY()
+									// - (p.getNode().getLayoutY() + p.getPortRectangle().getY()))));
+
+									// System.out.println("isOutput -> " + p.getStringID());
+									master.setSecondPort(p);
+									break outer;
+								}
 							}
 						}
 					}
+
+					master.connectPorts();
+					master.removecurConnectPorts();
+
+					/* Remove Temporary Line */
+					node.getNodeGraph().getLineLayer().getChildren().remove(line);
+					node.getNodeGraph().update();
+
+					node.setPortPressed(false);
+					node.getNodeGraph().setState(GState.DEFAULT);
 				}
-
-				master.connectPorts();
-				master.removecurConnectPorts();
-
-				/* Remove Temporary Line */
-				node.getNodeGraph().getLineLayer().getChildren().remove(line);
-				node.getNodeGraph().update();
-
-				node.setPortPressed(false);
-				node.getNodeGraph().setState(GState.DEFAULT);
 			}
 		});
 
@@ -185,24 +189,27 @@ public class GPort extends Group implements IGConsumable {
 
 			@Override
 			public void handle(MouseEvent event) {
-				node.setPortPressed(true);
-				if (line == null)
-					line = new Line();
-				node.getNodeGraph().setState(GState.PORTCON);
-				line.setStroke(node.getNodeGraph().getColorLookup().get(node.getNodeType()));
-				line.setStrokeWidth((double) node.getNodeGraph().getSettings().get(GraphSettings.SETTING_CURVE_WIDTH));
-				line.startXProperty().bind(node.layoutXProperty().add(getPortX() + MAGIC_OFFSET));
-				line.startYProperty().bind(node.layoutYProperty().add(getY() + MAGIC_OFFSET));
+				if (event.isPrimaryButtonDown() && !event.isSecondaryButtonDown()) {
+					node.setPortPressed(true);
+					if (line == null)
+						line = new Line();
+					node.getNodeGraph().setState(GState.PORTCON);
+					line.setStroke(node.getNodeGraph().getColorLookup().get(node.getNodeType()));
+					line.setStrokeWidth(
+							(double) node.getNodeGraph().getSettings().get(GraphSettings.SETTING_CURVE_WIDTH));
+					line.startXProperty().bind(node.layoutXProperty().add(getPortX() + MAGIC_OFFSET));
+					line.startYProperty().bind(node.layoutYProperty().add(getY() + MAGIC_OFFSET));
 
-				line.setStrokeLineCap(StrokeLineCap.ROUND);
-				line.setFill(Color.TRANSPARENT);
+					line.setStrokeLineCap(StrokeLineCap.ROUND);
+					line.setFill(Color.TRANSPARENT);
 
-				line.endXProperty().bind(node.layoutXProperty().add(event.getX()));
-				line.endYProperty().bind(node.layoutYProperty().add(event.getY()));
-				line.toFront();
-				node.getNodeGraph().getLineLayer().getChildren().remove(line);
-				node.getNodeGraph().getLineLayer().getChildren().add(line);
-				node.getNodeGraph().update();
+					line.endXProperty().bind(node.layoutXProperty().add(event.getX()));
+					line.endYProperty().bind(node.layoutYProperty().add(event.getY()));
+					line.toFront();
+					node.getNodeGraph().getLineLayer().getChildren().remove(line);
+					node.getNodeGraph().getLineLayer().getChildren().add(line);
+					node.getNodeGraph().update();
+				}
 			}
 		});
 	}

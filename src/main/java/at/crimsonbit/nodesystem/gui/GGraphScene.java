@@ -3,14 +3,12 @@ package at.crimsonbit.nodesystem.gui;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import at.crimsonbit.nodesystem.application.ApplicationContext;
 import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
 import javafx.event.EventHandler;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.effect.BlurType;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
@@ -233,14 +231,14 @@ public class GGraphScene extends AnchorPane implements ILogging {
 		return ((int) y) + HALF_PIXEL_OFFSET;
 	}
 
-	public void zoomTo(double scaleValue) {
+	public void zoomTo(double scaleValue, double x, double y) {
 
 		this.scaleValue = scaleValue;
 		needsLayout = true;
 		layoutChildren();
 
-		scaleTransform.setPivotX(localMouseX);
-		scaleTransform.setPivotY(localMouseY);
+		scaleTransform.setPivotX(x);
+		scaleTransform.setPivotY(y);
 		scaleTransform.setX(scaleValue);
 		scaleTransform.setY(scaleValue);
 
@@ -337,7 +335,7 @@ public class GGraphScene extends AnchorPane implements ILogging {
 					strokeWidth(strokeValue);
 
 			} else {
-
+				double oldScale = scaleValue;
 				if (scrollEvent.getDeltaY() < 0) {
 					scaleValue *= DELTA_MINUS;
 					lineSpacing *= DELTA_MINUS;
@@ -345,6 +343,13 @@ public class GGraphScene extends AnchorPane implements ILogging {
 					scaleValue *= DELTA_PLUS;
 					lineSpacing *= DELTA_PLUS;
 				}
+				double f = (scaleValue / oldScale) - 1;
+				//f *= 10;
+				Bounds bounds = localToScene(getBoundsInLocal());
+				double dx = (scrollEvent.getSceneX() - (bounds.getWidth() / 2 + bounds.getMinX()));
+		        double dy = (scrollEvent.getSceneY() - (bounds.getHeight() / 2 + bounds.getMinY()));
+
+				// note: pivot value must be untransformed, i. e. without scaling
 
 				// System.out.println(scaleValue);
 				// System.out.println(lineSpacing);
@@ -352,7 +357,7 @@ public class GGraphScene extends AnchorPane implements ILogging {
 				lineSpacing = clamp(lineSpacing, MIN_SPACING, MAX_SPACING);
 
 				if (scaleValue != MIN_SCALE)
-					zoomTo(scaleValue);
+					zoomTo(scaleValue, f * dx, f * dy);
 
 			}
 			scrollEvent.consume();
