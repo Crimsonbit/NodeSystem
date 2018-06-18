@@ -20,8 +20,11 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 /**
- * 
- * A SearchBar to access the nodes easier.
+ * <h1>GSearchBar</h1>
+ * <p>
+ * This class represents a searchbar. Through the searchbar one can add any node
+ * to the current graph.
+ * </p>
  * 
  * @author Florian Wagner
  *
@@ -41,18 +44,20 @@ public class GSearchBar {
 
 	}
 
-	public GSearchBar(GNodeGraph graph) {
-		this.graph = graph;
-	}
-
+	/**
+	 * returns the search result
+	 * 
+	 * @return the search result
+	 */
 	public String getSearch() {
 		return search;
 	}
 
-	public void setGraph(GNodeGraph graph) {
-		this.graph = graph;
-	}
-
+	/**
+	 * 
+	 * @param sc
+	 * @param graph
+	 */
 	public void search(Stage sc, GNodeGraph graph) {
 		open = true;
 		graph.doBlur();
@@ -90,6 +95,7 @@ public class GSearchBar {
 		stage.setY((sc.getY() + sc.getHeight() / 1.1) - stage.getHeight() / 2);
 		idd_search_res.relocate(300, 0);
 		idd_search_text.setOnKeyPressed(onKeyPressedEventHandler);
+		// idd_search_res.setOnKeyPressed(onKeyPressedEventHandler);
 		idd_search_res.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 				idd_search_text.setText(newValue);
@@ -131,8 +137,6 @@ public class GSearchBar {
 				stage.close();
 				open = false;
 				if (graph != null) {
-					// graph.getGuiMaster().addNode();
-
 					INodeType type = graph.getGuiMaster().getNodeMaster().getTypeByName(search);
 					if (type != null) {
 						Class<? extends GNode> clazz = graph.getNodeMap().get(type);
@@ -158,6 +162,11 @@ public class GSearchBar {
 
 	};
 
+	/**
+	 * Checks if the searchbar is open s
+	 * 
+	 * @return
+	 */
 	public boolean isOpen() {
 		return open;
 	}

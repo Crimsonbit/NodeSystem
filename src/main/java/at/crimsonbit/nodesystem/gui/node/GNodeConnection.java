@@ -11,6 +11,10 @@ import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.StrokeLineCap;
 
 /**
+ * <h1>GNodeConnection extends {@link Group}</h1>
+ * <p>
+ * This class represents a connection between two ports.
+ * </p>
  * 
  * @author Florian Wagner
  *
@@ -26,6 +30,14 @@ public class GNodeConnection extends Group {
 	private double width;
 	private final int MAGIC_OFFSET = 3;
 
+	/**
+	 * Initializes a new connecten
+	 * 
+	 * @param sourcePort
+	 *            should be the ouput of a node
+	 * @param targetPort
+	 *            should be the input of a node
+	 */
 	public GNodeConnection(GPort sourcePort, GPort targetPort) {
 
 		this.sourcePort = sourcePort;
@@ -44,6 +56,9 @@ public class GNodeConnection extends Group {
 		this.sourcePort = source;
 	}
 
+	/**
+	 * Draws the connection to the graph
+	 */
 	public void draw() {
 		line = new CubicCurve();
 		line.startXProperty().bind(source.layoutXProperty().add(sourcePort.getPortX() + MAGIC_OFFSET));
@@ -79,6 +94,13 @@ public class GNodeConnection extends Group {
 		line.setEffect(e);
 	}
 
+	/**
+	 * Draws the connection on a specific y position. This is needed for the node
+	 * toggling.
+	 * 
+	 * @param y
+	 *            the y position
+	 */
 	public void draw(double y) {
 		getChildren().remove(line);
 		line = new CubicCurve();
@@ -123,6 +145,14 @@ public class GNodeConnection extends Group {
 		System.out.println(getChildren());
 	}
 
+	/**
+	 * Updates the connection ports
+	 * 
+	 * @param p1
+	 *            output port
+	 * @param p2
+	 *            input port
+	 */
 	public void update(GPort p1, GPort p2) {
 		this.sourcePort = p1;
 		this.targetPort = p2;
@@ -139,18 +169,37 @@ public class GNodeConnection extends Group {
 		this.width = width;
 	}
 
+	/**
+	 * Returns the source node of the connection (output)
+	 * 
+	 * @return the source node
+	 */
 	public GNode getSource() {
 		return source;
 	}
 
+	/**
+	 * Returns the target node of the connection (input)
+	 * 
+	 * @return the target node
+	 */
 	public GNode getTarget() {
 		return target;
 	}
-
+	/**
+	 * Returns the source port of the connections source node (output)
+	 * 
+	 * @return the source port
+	 */
 	public GPort getSourcePort() {
 		return sourcePort;
 	}
 
+	/**
+	 * Returns the target port of the connections target node (input)
+	 * 
+	 * @return the target port
+	 */
 	public GPort getTargetPort() {
 		return targetPort;
 	}

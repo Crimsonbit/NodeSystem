@@ -650,7 +650,7 @@ public class GNode extends Pane implements IGNode {
 		}
 	}
 
-	protected void setName(String string) {
+	public void setName(String string) {
 		this.name = string;
 	}
 

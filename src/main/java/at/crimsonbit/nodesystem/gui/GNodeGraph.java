@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.logging.Level;
@@ -19,7 +20,6 @@ import at.crimsonbit.nodesystem.gui.layer.GLineLayer;
 import at.crimsonbit.nodesystem.gui.layer.GNodeLayer;
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.gui.node.IGConsumable;
-import at.crimsonbit.nodesystem.gui.settings.GSettingsPane;
 import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
 import at.crimsonbit.nodesystem.gui.widget.searchbar.GSearchBar;
 import at.crimsonbit.nodesystem.gui.widget.toast.JFXToast;
@@ -49,13 +49,14 @@ import at.crimsonbit.nodesystem.util.DragContext;
 import at.crimsonbit.nodesystem.util.SystemUsage;
 import at.crimsonbit.nodesystem.util.logger.SystemLogger;
 import javafx.event.EventHandler;
-import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.effect.InnerShadow;
+import javafx.scene.effect.Light.Point;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -89,7 +90,6 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private int subMenuCount = 0;
 	private int idCount = 100;
 	private GPopUp graphDialog;
-	private GSettingsPane settingsPane;
 	private Scene sc;
 	private GNodeLayer nodeLayer;
 	private GLineLayer lineLayer;
@@ -128,7 +128,8 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		this.selection.setArcWidth(21.0);
 		this.selection.setArcHeight(21.0);
 		this.selection.setStrokeWidth(1);
-
+		this.selection.setFill(Color.TRANSPARENT);
+		this.selection.getStrokeDashArray().add(10.0);
 		this.nodeMaster = new GNodeMaster(this);
 
 		this.canvas = new Group();
@@ -173,6 +174,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		innerShadow.setRadius((double) getSettings().get(GraphSettings.SETTING_SHADOW_RADIUS));
 
 		setEffect(innerShadow);
+		addSelectGroupSupport();
 	}
 
 	public GNodeGraph(GLogPane logPane) {
@@ -193,6 +195,8 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		this.selection.setArcWidth(21.0);
 		this.selection.setArcHeight(21.0);
 		this.selection.setStrokeWidth(1);
+		this.selection.setFill(Color.TRANSPARENT);
+		this.selection.getStrokeDashArray().add(10.0);
 		this.nodeMaster = new GNodeMaster(this);
 		this.canvas = new Group();
 		this.nodeLayer = new GNodeLayer();
@@ -232,6 +236,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		innerShadow.setRadius((double) getSettings().get(GraphSettings.SETTING_SHADOW_RADIUS));
 
 		setEffect(innerShadow);
+		addSelectGroupSupport();
 	}
 
 	public GLogPane getLogPane() {
@@ -446,43 +451,71 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	 * </p>
 	 */
 	protected void addSelectGroupSupport() {
-		setOnMousePressed(new EventHandler<MouseEvent>() {
 
-			@Override
-			public void handle(MouseEvent event) {
-				if (getActive() == null) {
-					double scale = getScaleValue();
-					dragContext.x = getBoundsInParent().getMinX() * scale - event.getScreenX();
-					dragContext.y = getBoundsInParent().getMinY() * scale - event.getScreenY();
-					setCursor(Cursor.MOVE);
+		final Point anchor = new Point();
 
-					selection.setX(event.getSceneX());
-					selection.setY(event.getSceneY());
-				}
-			}
+		setOnMousePressed(event -> {
+			anchor.setX(event.getX());
+			anchor.setY(event.getY());
+			selection.setX(event.getX()/getScaleValue());
+			selection.setY(event.getY()/getScaleValue());
+			
 
 		});
 
-		setOnMouseDragged(new EventHandler<MouseEvent>() {
-
-			@Override
-			public void handle(MouseEvent event) {
-				// TODO Auto-generated method stub
-				if (getActive() == null) {
-					double offsetX = event.getScreenX() + dragContext.x;
-					double offsetY = event.getScreenY() + dragContext.y;
-
-					// adjust the offset in case we are zoomed
-					double scale = getScaleValue();
-
-					offsetX /= scale;
-					offsetY /= scale;
-					selection.setWidth(offsetX);
-					selection.setHeight(offsetY);
-				}
-			}
-
+		setOnMouseDragged(event -> {
+			selection.setWidth(java.lang.Math.abs(event.getX() - anchor.getX()));
+			selection.setHeight(java.lang.Math.abs(event.getY() - anchor.getY()));
+			selection.setX(java.lang.Math.min(anchor.getX(), event.getX()));
+			selection.setY(java.lang.Math.min(anchor.getY(), event.getY()));
 		});
+
+		setOnMouseReleased(event -> {
+			// Do what you want with selection's properties here
+			System.out.printf("X: %.2f, Y: %.2f, Width: %.2f, Height: %.2f%n", selection.getX(), selection.getY(),
+					selection.getWidth(), selection.getHeight());
+
+			selection.setWidth(0);
+			selection.setHeight(0);
+		});
+		/*
+		 * setOnMouseClicked(new EventHandler<MouseEvent>() {
+		 * 
+		 * @Override public void handle(MouseEvent event) { if (getActive() == null) {
+		 * selection.setWidth(0); selection.setHeight(0); selection.setArcWidth(0.0);
+		 * selection.setArcHeight(0.0); selection.setStrokeWidth(0); } }
+		 * 
+		 * });
+		 * 
+		 * setOnMousePressed(new EventHandler<MouseEvent>() {
+		 * 
+		 * @Override public void handle(MouseEvent event) { // if (getActive() == null)
+		 * { selection.setArcWidth(21.0); selection.setArcHeight(21.0);
+		 * selection.setStrokeWidth(1); double scale = getScaleValue(); dragContext.x =
+		 * getBoundsInParent().getMinX() * scale - event.getScreenX(); dragContext.y =
+		 * getBoundsInParent().getMinY() * scale - event.getScreenY();
+		 * setCursor(Cursor.MOVE); double x = event.getSceneX() / getScaleValue();
+		 * double y = event.getSceneY() / getScaleValue();
+		 * 
+		 * selection.setX(x); selection.setY(y); // } }
+		 * 
+		 * });
+		 * 
+		 * setOnMouseDragged(new EventHandler<MouseEvent>() {
+		 * 
+		 * @Override public void handle(MouseEvent event) { // TODO Auto-generated
+		 * method stub // if (getActive() == null) { double offsetX =
+		 * (event.getScreenX() + dragContext.x); double offsetY = (event.getScreenY() +
+		 * dragContext.y);
+		 * 
+		 * // adjust the offset in case we are zoomed double scale = getScaleValue();
+		 * 
+		 * offsetX /= scale; offsetY /= scale;
+		 * 
+		 * selection.setWidth(offsetX); selection.setHeight(offsetY); // } }
+		 * 
+		 * });
+		 */
 	}
 
 	private void addKeySupport() {
@@ -510,6 +543,27 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 				if (event.isControlDown() && event.getCode().equals(KeyCode.C)) {
 					clipboard.copy(getActive());
 					log(Level.INFO, "Node: " + getActive().getName() + " copied to clipboard!");
+				}
+
+				/**
+				 * Rename node
+				 */
+
+				if (event.getCode().equals(KeyCode.F2)) {
+					doBlur();
+					TextInputDialog dialog = new TextInputDialog(getActive().getName());
+					dialog.setTitle("Name");
+					dialog.setHeaderText("Set a new name for the node.");
+					dialog.setContentText("Name: ");
+					Optional<String> result = dialog.showAndWait();
+					if (result.isPresent()) {
+						getActive().setName(result.get());
+						removeBlur();
+					} else {
+						removeBlur();
+					}
+
+					getActive().redraw();
 				}
 
 				/**
@@ -555,16 +609,24 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 				}
 			}
 
-			/*
+			/**
 			 * Save the graph
 			 */
 			if (event.isControlDown() && event.getCode().equals(KeyCode.S)) {
 				onSave();
 
-			} else if (event.isControlDown() && event.getCode().equals(KeyCode.L)) {
+			}
+			/**
+			 * Load the graph
+			 */
+			if (event.isControlDown() && event.getCode().equals(KeyCode.L)) {
 				onLoad();
 
-			} else if (event.isControlDown() && event.getCode().equals(KeyCode.X)) {
+			}
+			/**
+			 * Show the pop up menu
+			 */
+			if (event.isControlDown() && event.getCode().equals(KeyCode.X)) {
 				popUpDialog.show(nodeMaster.getNodeGraph(), getpX(), getpY());
 			}
 		}
@@ -979,7 +1041,6 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		for (INodeType t : Arduino.values())
 			getColorLookup().put(t, new Color(0, (double) 152 / 255d, (double) 157 / 255d, 1));
 
-
 		for (INodeType t : ArduinoPinMode.values())
 
 			getColorLookup().put(t, new Color(0, (double) 152 / 255d, (double) 157 / 255d, 1));
@@ -1048,17 +1109,6 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 	public HashMap<INodeType, Color> getColorLookup() {
 		return colorLookup;
-	}
-
-	@SuppressWarnings("unused")
-	private void setSettingsPane(GSettingsPane settingsPane2) {
-		this.settingsPane = settingsPane2;
-
-	}
-
-	@SuppressWarnings("unused")
-	private GSettingsPane getSettingsPane() {
-		return this.settingsPane;
 	}
 
 	/**
