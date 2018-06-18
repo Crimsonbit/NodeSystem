@@ -632,6 +632,12 @@ public class NodeMaster {
 		if (outField == null) {
 			throw new NoSuchNodeException("Node " + outNode.getClass().getName() + " has no input " + out);
 		}
+		
+		if (!inField.getType().isAssignableFrom(outField.getType())) {
+			throw new ClassCastException("Output " + outField.getName() + " with type "
+					+ outField.getType().getCanonicalName() + " cannot be connected to Input" + inField.getName()
+					+ " of Type " + inField.getType().getCanonicalName());
+		}
 
 		inNode.connections.put(inField, new NodeConnection(outField, outNode));
 
