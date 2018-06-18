@@ -159,7 +159,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 		setDefaulSettings();
 		log(Level.INFO, "NodeGraph set-up successfully!");
-		clipboard = new GClipboard(this);
+		
 
 		innerShadow = new InnerShadow();
 
@@ -175,7 +175,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		innerShadow.setOffsetX((double) getSettings().get(GraphSettings.SETTING_SHADOW_WIDTH));
 		innerShadow.setOffsetY((double) getSettings().get(GraphSettings.SETTING_SHADOW_HEIGHT));
 		innerShadow.setRadius((double) getSettings().get(GraphSettings.SETTING_SHADOW_RADIUS));
-
+		clipboard = GClipboard.getClipboard(this);
 		setEffect(innerShadow);
 		addSelectGroupSupport();
 	}
@@ -221,7 +221,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 		setDefaulSettings();
 		log(Level.INFO, "NodeGraph set-up successfully!");
-		clipboard = new GClipboard(this);
+		
 
 		innerShadow = new InnerShadow();
 
@@ -237,7 +237,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		innerShadow.setOffsetX((double) getSettings().get(GraphSettings.SETTING_SHADOW_WIDTH));
 		innerShadow.setOffsetY((double) getSettings().get(GraphSettings.SETTING_SHADOW_HEIGHT));
 		innerShadow.setRadius((double) getSettings().get(GraphSettings.SETTING_SHADOW_RADIUS));
-
+		clipboard = GClipboard.getClipboard(this);
 		setEffect(innerShadow);
 		addSelectGroupSupport();
 	}
@@ -455,10 +455,10 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	}
 
 	/**
-	 * <h1>CURRENTLY NOT WORKING - DO NOT USE</h1>
 	 * <h1>public void addSelectGroupSupport()</h1>
 	 * <p>
-	 * Adds support to select multiple nodes at once. This is a TODO!
+	 * Adds support to select multiple nodes at once.
+	 * TODO: Need to fix issue when zooming
 	 * </p>
 	 */
 	protected void addSelectGroupSupport() {
@@ -495,7 +495,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 			for (GNode n : getGuiMaster().getAllCells()) {
 				if ((n.getLayoutX() > selection.getX() && n.getLayoutX() < selection.getWidth())
 						&& (n.getLayoutY() > selection.getY() && n.getLayoutY() < selection.getHeight())) {
-					//System.out.println(n);
+					// System.out.println(n);
 					n.setActive(true);
 					n.redraw();
 					selectedNodesGroup.add(n);
@@ -505,6 +505,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 			selection.setWidth(0);
 			selection.setHeight(0);
 		});
+
 		/*
 		 * setOnMouseClicked(new EventHandler<MouseEvent>() {
 		 * 

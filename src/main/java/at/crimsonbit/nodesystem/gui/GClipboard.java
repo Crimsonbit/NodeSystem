@@ -7,14 +7,31 @@ import java.util.Set;
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 
+/**
+ * <h1>GClipboard</h1>
+ * <p>
+ * This class is a simple clipboard.
+ * </p>
+ * 
+ * @author Florian Wagner
+ *
+ */
 public class GClipboard {
 
 	private GNode toCopy;
 	private GNodeGraph graph;
 	private Object objToCopy;
 	private Set<GNode> toCopySet;
+	private static GClipboard instance;
 
-	public GClipboard(GNodeGraph graph) {
+	public static GClipboard getClipboard(GNodeGraph graph) {
+		if (instance == null) {
+			instance = new GClipboard(graph);
+		}
+		return instance;
+	}
+
+	private GClipboard(GNodeGraph graph) {
 		this.graph = graph;
 	}
 
