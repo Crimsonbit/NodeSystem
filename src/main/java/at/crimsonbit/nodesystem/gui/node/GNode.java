@@ -340,15 +340,24 @@ public class GNode extends Pane implements IGNode {
 		addView(base);
 	}
 
-	public void drawNodeOutline(double width, double height, boolean active) {
+	public void drawNodeOutline(double width, double height, boolean active, boolean toggled) {
 
 		outline = new Rectangle(width, height - 5);
 		outline.setTranslateY(5);
 		outline.setFill(Color.TRANSPARENT);
-		outline.setStroke(nodeGraph.getGeneralColorLookup().get(GraphSettings.COLOR_NODE_ACTIVE));
+		
+		if (toggled) {
+			outline = new Rectangle(width, height);
+			outline.setFill(Color.TRANSPARENT);
+			outline.setStroke(nodeGraph.getGeneralColorLookup().get(GraphSettings.COLOR_ACTIVE_TOGGLED));
+			outline.setStrokeWidth(3);
+		} else {
+			outline.setStroke(nodeGraph.getGeneralColorLookup().get(GraphSettings.COLOR_NODE_ACTIVE));
+			outline.setStrokeWidth(1);
+		}
 		outline.setArcWidth(21.0);
 		outline.setArcHeight(21.0);
-		outline.setStrokeWidth(1);
+		
 		if (active) {
 			addView(outline);
 		} else {
@@ -403,7 +412,7 @@ public class GNode extends Pane implements IGNode {
 				// addAllNodes();
 
 				drawNodeBase(width, h);
-				drawNodeOutline(width, h, active);
+				drawNodeOutline(width, h, active, toggledDraw);
 				drawNodeTop(width);
 				drawNodeShadow();
 				// text.setTranslateX(35);
@@ -446,7 +455,7 @@ public class GNode extends Pane implements IGNode {
 
 				// drawNodeBase(width, h);
 				drawNodeTopArc(width, 15.0);
-
+				drawNodeOutline(width, 50 / 3, active, toggledDraw);
 				// drawNodeOutline(width, h, active);
 				// drawNodeShadow();
 				// text.setTranslateX(35);
