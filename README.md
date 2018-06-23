@@ -1,7 +1,7 @@
 # NodeSystem
 <p> NodeSystem is a JavaFX based Node-Graph </p>
 <h1 align="center">
-    <img src="http://www.neonartworks.at/images/github/nodesystem1.png">
+    <img src="http://www.neonartworks.at/images/github/nodesystem2.jpg">
 </h1>
 <p align="center">
 <sup>
