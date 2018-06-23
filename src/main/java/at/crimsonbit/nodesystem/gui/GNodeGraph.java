@@ -131,7 +131,8 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		this.selection.setArcWidth(21.0);
 		this.selection.setArcHeight(21.0);
 		this.selection.setStrokeWidth(1);
-		this.selection.setFill(Color.TRANSPARENT);
+		Color c = Color.LIGHTSKYBLUE;
+		this.selection.setFill(new Color(c.getRed(), c.getGreen(), c.getBlue(), 0.2d));
 		this.selection.getStrokeDashArray().add(10.0);
 		this.nodeMaster = new GNodeMaster(this);
 
@@ -197,7 +198,8 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		this.selection.setArcWidth(21.0);
 		this.selection.setArcHeight(21.0);
 		this.selection.setStrokeWidth(1);
-		this.selection.setFill(Color.TRANSPARENT);
+		Color c = Color.LIGHTSKYBLUE;
+		this.selection.setFill(new Color(c.getRed(), c.getGreen(), c.getBlue(), 0.2d));
 		this.selection.getStrokeDashArray().add(10.0);
 		this.nodeMaster = new GNodeMaster(this);
 		this.canvas = new Group();
@@ -464,22 +466,24 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		final Point anchor = new Point();
 
 		setOnMousePressed(event -> {
-			if (!event.isSecondaryButtonDown()) {
+			if (!event.isSecondaryButtonDown() && !event.isMiddleButtonDown()) {
 				selectedNodesGroup.clear();
 				anchor.setX(event.getX());
 				anchor.setY(event.getY());
 				selection.setX(event.getX() / getScaleValue());
 				selection.setY(event.getY() / getScaleValue());
+				selection.toFront();
 			}
 		});
 
 		setOnMouseDragged(event -> {
 			if (getState().equals(GState.DEFAULT)) {
-				if (!event.isSecondaryButtonDown()) {
+				if (!event.isSecondaryButtonDown() && !event.isMiddleButtonDown()) {
 					selection.setWidth(java.lang.Math.abs(event.getX() - anchor.getX()));
 					selection.setHeight(java.lang.Math.abs(event.getY() - anchor.getY()));
 					selection.setX(java.lang.Math.min(anchor.getX(), event.getX()));
 					selection.setY(java.lang.Math.min(anchor.getY(), event.getY()));
+					selection.toFront();
 				}
 			}
 		});
@@ -494,8 +498,10 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 			 * Check if nodes are in bounds.
 			 */
 			for (GNode n : getGuiMaster().getAllCells()) {
-				if ((n.getLayoutX() > selection.getX() && n.getLayoutX() < selection.getWidth())
-						&& (n.getLayoutY() > selection.getY() && n.getLayoutY() < selection.getHeight())) {
+				if ((n.getTranslateX() + n.getLayoutX() > selection.getX()
+						&& n.getTranslateX() + n.getLayoutX() < selection.getWidth())
+						&& (n.getTranslateY() + n.getLayoutY() > selection.getY()
+								&& n.getTranslateY() + n.getLayoutY() < selection.getHeight())) {
 					// System.out.println(n);
 					n.setActive(true);
 					n.redraw();
@@ -1042,6 +1048,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		// getLineLayer().toFront();
 		for (GNode cell : nodeMaster.getAddedCells()) {
 			handler.addMouseHandler(cell);
+
 		}
 
 		getGuiMaster().attachOrphansToGraphParent(nodeMaster.getAddedCells());

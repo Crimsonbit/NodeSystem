@@ -3,7 +3,9 @@ package at.crimsonbit.nodesystem.gui;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
+import at.crimsonbit.nodesystem.util.DragContext;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
@@ -42,7 +44,7 @@ public class GGraphScene extends AnchorPane implements ILogging {
 	private double xOffset = 0;
 	private double yOffset = 0;
 	private Color lineColor;
-
+	private final DragContext dragContext = new DragContext();
 	private double localMouseX = getWidth() / 2;
 	private double localMouseY = getHeight() / 2;
 	private double curX;
@@ -85,6 +87,7 @@ public class GGraphScene extends AnchorPane implements ILogging {
 
 			@Override
 			public void handle(MouseEvent event) {
+
 				if (graph.getActive() != null) {
 					graph.getActive().setActive(false);
 					graph.getActive().redraw();
@@ -235,19 +238,27 @@ public class GGraphScene extends AnchorPane implements ILogging {
 
 		this.scaleValue = scaleValue;
 		needsLayout = true;
-		layoutChildren();
 
 		scaleTransform.setPivotX(x);
 		scaleTransform.setPivotY(y);
 		scaleTransform.setX(scaleValue);
 		scaleTransform.setY(scaleValue);
-
+		// for (GNode n : graph.getGuiMaster().getAllCells()) {
+		// n.setScaleX(scaleValue);
+		// n.setScaleY(scaleValue);
+		// n.redraw(true);
+		// }
+		layoutChildren();
 	}
 
 	public void moveTo(double x, double y) {
 		needsLayout = true;
-		scaleTransform.setPivotX(x);
-		scaleTransform.setPivotY(y);
+
+		// scaleTransform.setPivotX(x);
+		// scaleTransform.setPivotY(y);
+		for (GNode n : graph.getGuiMaster().getAllCells()) {
+			n.relocate(x, y);
+		}
 		layoutChildren();
 	}
 
@@ -278,10 +289,17 @@ public class GGraphScene extends AnchorPane implements ILogging {
 		public void handle(MouseEvent event) {
 
 			if (event.isMiddleButtonDown()) {
-				xOffset = event.getSceneX() - event.getScreenX();
-				yOffset = event.getSceneY() - event.getScreenY();
 
-				moveTo(event.getSceneX() + xOffset, event.getSceneY() + yOffset);
+				double offsetX = event.getScreenX() + dragContext.x;
+				double offsetY = event.getScreenY() + dragContext.y;
+
+				// adjust the offset in case we are zoomed
+				double scale = getScaleValue();
+
+				offsetX /= scale;
+				offsetY /= scale;
+
+				moveTo(offsetX, offsetY);
 			}
 
 		}
@@ -337,27 +355,27 @@ public class GGraphScene extends AnchorPane implements ILogging {
 			} else {
 				double oldScale = scaleValue;
 				if (scrollEvent.getDeltaY() < 0) {
-					scaleValue *= DELTA_MINUS;
-					lineSpacing *= DELTA_MINUS;
+					// scaleValue *= DELTA_MINUS;
+					// lineSpacing *= DELTA_MINUS;
 				} else {
-					scaleValue *= DELTA_PLUS;
-					lineSpacing *= DELTA_PLUS;
+					// scaleValue *= DELTA_PLUS;
+					// lineSpacing *= DELTA_PLUS;
 				}
 				double f = (scaleValue / oldScale) - 1;
-				//f *= 10;
+				// f *= 10;
 				Bounds bounds = localToScene(getBoundsInLocal());
 				double dx = (scrollEvent.getSceneX() - (bounds.getWidth() / 2 + bounds.getMinX()));
-		        double dy = (scrollEvent.getSceneY() - (bounds.getHeight() / 2 + bounds.getMinY()));
+				double dy = (scrollEvent.getSceneY() - (bounds.getHeight() / 2 + bounds.getMinY()));
 
 				// note: pivot value must be untransformed, i. e. without scaling
 
 				// System.out.println(scaleValue);
 				// System.out.println(lineSpacing);
 				scaleValue = clamp(scaleValue, MIN_SCALE, MAX_SCALE);
-				lineSpacing = clamp(lineSpacing, MIN_SPACING, MAX_SPACING);
+				// lineSpacing = clamp(lineSpacing, MIN_SPACING, MAX_SPACING);
 
-				if (scaleValue != MIN_SCALE)
-					zoomTo(scaleValue, f * dx, f * dy);
+				// if (scaleValue != MIN_SCALE)
+				// zoomTo(scaleValue, f * dx, f * dy);
 
 			}
 			scrollEvent.consume();

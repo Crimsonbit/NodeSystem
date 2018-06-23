@@ -50,7 +50,10 @@ public class SimpleGraph extends Application {
 		primaryStage.show();
 
 	}
-
+	/**
+	 * This is only needed for arduino nodes.
+	 * The Serial connection works on a different thread than the JavaFX Main thread.
+	 */
 	@Override
 	public void stop() throws Exception {
 		super.stop();

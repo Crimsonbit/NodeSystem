@@ -23,6 +23,7 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
@@ -302,7 +303,8 @@ public class GNode extends Pane implements IGNode {
 	}
 
 	public void drawNodeTop(double width) {
-		top = new Rectangle(width, 50 / 3);
+		double height = 50d / 3d;
+		top = new Rectangle(width, height);
 
 		top.setStroke(topColor);
 		top.setFill(topColor);
@@ -313,9 +315,29 @@ public class GNode extends Pane implements IGNode {
 		top.setFill(nodeGraph.getColorLookup().get(type));
 
 		addView(top);
+		Polygon poly = new Polygon();
+		poly.setFill(Color.WHITE);
+		poly.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
+			poly.setFill(Color.LIGHTGOLDENRODYELLOW);
+		});
+		poly.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
+			poly.setFill(Color.WHITE);
+		});
+		poly.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
+			toggleDraw();
+		});
+		poly.addEventFilter(MouseEvent.MOUSE_RELEASED, event -> {
+			redraw(true);
+		});
+
+		if (!this.toggledDraw) {
+			poly.getPoints().addAll(new Double[] { width - 10d, 5d, width - 2d, 5d, width - 6d, height / 1.2d });
+			addView(poly);
+		}
 	}
 
 	public void drawNodeTopArc(double width, double arc) {
+		double height = 50d / 3d;
 		top = new Rectangle(width, 50 / 3);
 
 		top.setStroke(topColor);
@@ -327,7 +349,30 @@ public class GNode extends Pane implements IGNode {
 		top.setFill(nodeGraph.getColorLookup().get(type));
 		top.setArcWidth(arc);
 		top.setArcHeight(arc);
+
 		addView(top);
+		Polygon poly = new Polygon();
+		poly.setFill(Color.WHITE);
+		poly.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
+			poly.setFill(Color.LIGHTGOLDENRODYELLOW);
+		});
+		poly.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
+			poly.setFill(Color.WHITE);
+		});
+		poly.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
+			toggleDraw();
+		});
+		poly.addEventFilter(MouseEvent.MOUSE_RELEASED, event -> {
+			redraw(true);
+		});
+
+		if (this.toggledDraw) {
+			double h1 = height / (1.2d);
+			h1 /= 2;
+			h1 += 1;
+			poly.getPoints().addAll(new Double[] { width - 2d, 3d, width - 2d, (height / 1.2d) - 2, width - 10d, h1 });
+			addView(poly);
+		}
 	}
 
 	public void drawNodeBase(double width, double height) {

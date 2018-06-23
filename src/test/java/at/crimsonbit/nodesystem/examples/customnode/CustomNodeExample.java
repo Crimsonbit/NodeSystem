@@ -48,7 +48,7 @@ import at.crimsonbit.nodesystem.nodebackend.api.NodeType;
  *
  */
 public class CustomNodeExample extends AbstractNode {
-
+	
 	@NodeType
 	private static final CustomNodes type = CustomNodes.EXAMPLE;
 

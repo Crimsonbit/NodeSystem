@@ -53,9 +53,11 @@ public class CustomNodeClassExample extends GNode {
 	@Override
 	public void consumeCustomMessage(int id) {
 		if (id == 5) {
+			//Creates a new Toast Message.
 			JFXToast.makeToast((Stage) getScene().getWindow(), "Sample Text!", ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
 		}
 		if (id == 6) {
+			//Animates the opacity property of this node.
 			Animator.animateProperty(opacityProperty(), 500, 200, 200, 0, 1);
 		}
 		if (id == 7) {
