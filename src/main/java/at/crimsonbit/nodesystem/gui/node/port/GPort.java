@@ -176,7 +176,8 @@ public class GPort extends Group implements IGConsumable {
 					master.removecurConnectPorts();
 
 					/* Remove Temporary Line */
-					node.getNodeGraph().getLineLayer().getChildren().remove(line);
+					node.getNodeGraph().getTempLineLayer().getChildren().remove(line);
+					node.getNodeGraph().getNodeLayer().toFront();
 					node.getNodeGraph().update();
 
 					node.setPortPressed(false);
@@ -193,6 +194,7 @@ public class GPort extends Group implements IGConsumable {
 					node.setPortPressed(true);
 					if (line == null)
 						line = new Line();
+					
 					node.getNodeGraph().setState(GState.PORTCON);
 					line.setStroke(node.getNodeGraph().getColorLookup().get(node.getNodeType()));
 					line.setStrokeWidth(
@@ -205,9 +207,11 @@ public class GPort extends Group implements IGConsumable {
 
 					line.endXProperty().bind(node.layoutXProperty().add(event.getX()));
 					line.endYProperty().bind(node.layoutYProperty().add(event.getY()));
-					line.toFront();
-					node.getNodeGraph().getLineLayer().getChildren().remove(line);
-					node.getNodeGraph().getLineLayer().getChildren().add(line);
+					// line.toFront();
+
+					node.getNodeGraph().getTempLineLayer().getChildren().remove(line);
+					node.getNodeGraph().getTempLineLayer().getChildren().add(line);
+					node.getNodeGraph().getTempLineLayer().toFront();
 					node.getNodeGraph().update();
 				}
 			}

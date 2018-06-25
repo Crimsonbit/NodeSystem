@@ -354,6 +354,7 @@ public class GGraphScene extends AnchorPane implements ILogging {
 
 			} else {
 				double oldScale = scaleValue;
+
 				if (scrollEvent.getDeltaY() < 0) {
 					// scaleValue *= DELTA_MINUS;
 					// lineSpacing *= DELTA_MINUS;
@@ -361,11 +362,15 @@ public class GGraphScene extends AnchorPane implements ILogging {
 					// scaleValue *= DELTA_PLUS;
 					// lineSpacing *= DELTA_PLUS;
 				}
+
 				double f = (scaleValue / oldScale) - 1;
 				// f *= 10;
 				Bounds bounds = localToScene(getBoundsInLocal());
 				double dx = (scrollEvent.getSceneX() - (bounds.getWidth() / 2 + bounds.getMinX()));
 				double dy = (scrollEvent.getSceneY() - (bounds.getHeight() / 2 + bounds.getMinY()));
+
+				// dx /= scaleValue;
+				// dy /= scaleValue;
 
 				// note: pivot value must be untransformed, i. e. without scaling
 
@@ -376,6 +381,9 @@ public class GGraphScene extends AnchorPane implements ILogging {
 
 				// if (scaleValue != MIN_SCALE)
 				// zoomTo(scaleValue, f * dx, f * dy);
+
+				if (scaleValue != MIN_SCALE)
+					zoomTo(scaleValue, dx / scaleValue, dy / scaleValue);
 
 			}
 			scrollEvent.consume();
