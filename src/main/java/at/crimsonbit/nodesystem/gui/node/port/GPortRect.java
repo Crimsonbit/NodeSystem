@@ -43,8 +43,8 @@ public class GPortRect extends Rectangle {
 		this.x = x;
 		this.y = y;
 		this.input = input;
-		this.inputColor = node.getNodeGraph().getGeneralColorLookup().get(GraphSettings.COLOR_PORT_INPUT);
-		this.outputColor = node.getNodeGraph().getGeneralColorLookup().get(GraphSettings.COLOR_PORT_OUTPUT);
+		this.inputColor = (Color) node.getNodeGraph().getGeneralColorLookup().get(GraphSettings.COLOR_PORT_INPUT);
+		this.outputColor = (Color) node.getNodeGraph().getGeneralColorLookup().get(GraphSettings.COLOR_PORT_OUTPUT);
 		redraw();
 	}
 

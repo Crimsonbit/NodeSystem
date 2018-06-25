@@ -346,9 +346,6 @@ public class GNode extends AnchorPane implements IGNode {
 
 		}
 
-		// top.setStroke(topColor);
-		// top.setFill(topColor);
-
 		top.setAccessibleText("node_top"); // top.setArcWidth(20.0); //
 		top.setArcHeight(20.0);
 

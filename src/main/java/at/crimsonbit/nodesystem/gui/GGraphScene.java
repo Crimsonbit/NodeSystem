@@ -110,7 +110,7 @@ public class GGraphScene extends AnchorPane implements ILogging {
 	protected void init() {
 		setBackground(new Background(new BackgroundFill(
 				graph.getGeneralColorLookup().get(GraphSettings.COLOR_BACKGROUND), CornerRadii.EMPTY, Insets.EMPTY)));
-		this.lineColor = graph.getGeneralColorLookup().get(GraphSettings.COLOR_BACKGROUND_LINES);
+		this.lineColor = (Color) graph.getGeneralColorLookup().get(GraphSettings.COLOR_BACKGROUND_LINES);
 		layoutChildren();
 	}
 

@@ -25,6 +25,7 @@ import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeMaster;
 import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
 import at.crimsonbit.nodesystem.nodebackend.util.NodeConnection;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 /**
@@ -155,7 +156,7 @@ public class GNodeMaster {
 				c = con;
 				try {
 					con.getTargetPort().getPortRectangle()
-							.setInputColor(graph.getGeneralColorLookup().get(GraphSettings.COLOR_PORT_INPUT));
+							.setInputColor((Color) graph.getGeneralColorLookup().get(GraphSettings.COLOR_PORT_INPUT));
 					con.getTargetPort().getPortRectangle().redraw();
 					con.getTargetPort().redraw();
 					con.getTargetPort().setConnected(false);
