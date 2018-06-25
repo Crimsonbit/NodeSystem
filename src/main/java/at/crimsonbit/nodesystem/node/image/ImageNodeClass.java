@@ -63,9 +63,9 @@ public class ImageNodeClass extends GNode {
 				PORT_OUTPUT_START_X = (int) width;
 
 				drawNodeBase(width, h);
-				drawNodeOutline(width, h, active);
+				drawNodeOutline(width, h, active, toggledDraw);
 				drawNodeTop(width);
-				drawNodeShadow();
+				//drawNodeShadow();
 
 				addView(text);
 

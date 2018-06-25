@@ -47,6 +47,7 @@ import at.crimsonbit.nodesystem.nodebackend.api.NodeMaster;
 import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
 import at.crimsonbit.nodesystem.nodebackend.util.Tuple;
 import at.crimsonbit.nodesystem.util.DragContext;
+import at.crimsonbit.nodesystem.util.DragResizerXY;
 import at.crimsonbit.nodesystem.util.SystemUsage;
 import at.crimsonbit.nodesystem.util.logger.SystemLogger;
 import javafx.event.EventHandler;
@@ -1055,13 +1056,13 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		getLineLayer().getChildren().addAll(nodeMaster.getAddedEdges());
 		getNodeLayer().getChildren().removeAll(nodeMaster.getRemovedCells());
 		getLineLayer().getChildren().removeAll(nodeMaster.getRemovedEdges());
-
+		getNodeLayer().toFront();
 		// getLineLayer().toFront();
 		for (GNode cell : nodeMaster.getAddedCells()) {
 			handler.addMouseHandler(cell);
-
+			//DragResizerXY.makeResizable(cell);
 		}
-
+		
 		getGuiMaster().attachOrphansToGraphParent(nodeMaster.getAddedCells());
 		getGuiMaster().disconnectFromGraphParent(nodeMaster.getRemovedCells());
 
@@ -1140,8 +1141,8 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		for (INodeType t : ImageFilter.values())
 			getColorLookup().put(t, Color.SADDLEBROWN);
 
-		getGeneralColorLookup().put(GraphSettings.COLOR_NODE_ACTIVE, new Color(0.992, 0.647, 0.305, 1));
-		getGeneralColorLookup().put(GraphSettings.COLOR_ACTIVE_TOGGLED, Color.GAINSBORO);
+		getGeneralColorLookup().put(GraphSettings.COLOR_NODE_ACTIVE, Color.LIGHTSKYBLUE); // new Color(0.992, 0.647, 0.305, 1)
+		getGeneralColorLookup().put(GraphSettings.COLOR_ACTIVE_TOGGLED, Color.LIGHTSKYBLUE);
 		getGeneralColorLookup().put(GraphSettings.COLOR_PORT_INPUT, Color.CORNFLOWERBLUE);
 		getGeneralColorLookup().put(GraphSettings.COLOR_PORT_OUTPUT, Color.ORANGERED);
 		getGeneralColorLookup().put(GraphSettings.COLOR_CURVE_DEFAULT, Color.CRIMSON);

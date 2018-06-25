@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
+import at.crimsonbit.nodesystem.gui.GStyle;
 import at.crimsonbit.nodesystem.gui.dialog.GPopUp;
 import at.crimsonbit.nodesystem.gui.node.port.GPort;
 import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
@@ -21,8 +22,12 @@ import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
@@ -41,7 +46,7 @@ import javafx.stage.FileChooser;
  * @author Florian Wagner
  *
  */
-public class GNode extends Pane implements IGNode {
+public class GNode extends AnchorPane implements IGNode {
 
 	private GNodeGraph nodeGraph;
 	private List<Shape> shapes = new ArrayList<Shape>();
@@ -52,11 +57,12 @@ public class GNode extends Pane implements IGNode {
 	protected List<GNodeConnection> connections = new ArrayList<GNodeConnection>();
 	private Scale scaleTransform;
 	private GPopUp popUpDialog;
-
 	private Color topColor;
 	private Color backColor;
 	private String typeName;
+	private Pane canvas = new Pane();
 
+	private GStyle drawStyle = GStyle.GRADIENT;
 	protected boolean doDraw = false;
 	protected boolean active = false;
 	private boolean portPressed = false;
@@ -92,16 +98,20 @@ public class GNode extends Pane implements IGNode {
 
 	public GNode() {
 		this("", false);
+
 	}
 
 	public GNode(String name, boolean draw) {
 		this.nodeID = -1;
 		this.name = name;
 		this.doDraw = draw;
+		getChildren().add(canvas);
 		defaultTopColor();
 		defaultBackColor();
 		defaultPopUpDialog();
 		scaleTransform = new Scale(scaleValue, scaleValue, 0, 0);
+		addCanvasAnchors();
+
 	}
 
 	public GNode(String name, INodeType type, boolean draw, GNodeGraph graph) {
@@ -119,6 +129,7 @@ public class GNode extends Pane implements IGNode {
 		this.type = graph.getGuiMaster().getNodeMaster().getTypeOfNode(id);
 		this.typeName = this.type.toString();
 		this.doDraw = draw;
+		getChildren().add(canvas);
 		defaultTopColor();
 		defaultBackColor();
 		defaultPopUpDialog();
@@ -126,6 +137,7 @@ public class GNode extends Pane implements IGNode {
 		addToolTip();
 		draw();
 		scaleTransform = new Scale(scaleValue, scaleValue, 0, 0);
+		addCanvasAnchors();
 
 	}
 
@@ -136,6 +148,22 @@ public class GNode extends Pane implements IGNode {
 
 	public GNode(GNode gNode) {
 		this(gNode.name, gNode.getNodeMaster().copyOfNode(gNode.nodeID), gNode.doDraw, gNode.nodeGraph);
+	}
+
+	private void addCanvasAnchors() {
+		setTopAnchor(canvas, 0d);
+		setBottomAnchor(canvas, 0d);
+		setLeftAnchor(canvas, 0d);
+		setRightAnchor(canvas, 0d);
+	}
+
+	public void setDrawStyle(GStyle style) {
+		this.drawStyle = style;
+	}
+
+	public void getDrawStyle(GStyle style) {
+		this.drawStyle = style;
+
 	}
 
 	public List<GNodeConnection> getConnections() {
@@ -219,9 +247,9 @@ public class GNode extends Pane implements IGNode {
 	}
 
 	private void defaultBackColor() {
-		double br = RangeMapper.mapValue(38, 0, 255, 0, 1);
-		double bg = RangeMapper.mapValue(43, 0, 255, 0, 1);
-		double bb = RangeMapper.mapValue(47, 0, 255, 0, 1);
+		double br = RangeMapper.mapValue(32, 0, 255, 0, 1);
+		double bg = RangeMapper.mapValue(32, 0, 255, 0, 1);
+		double bb = RangeMapper.mapValue(32, 0, 255, 0, 1);
 		this.backColor = new Color(br, bg, bb, 1);
 
 	}
@@ -305,14 +333,24 @@ public class GNode extends Pane implements IGNode {
 	public void drawNodeTop(double width) {
 		double height = 50d / 3d;
 		top = new Rectangle(width, height);
+		if (drawStyle.equals(GStyle.GRADIENT)) {
+			Stop[] stops = new Stop[] { new Stop(0, nodeGraph.getColorLookup().get(type)),
+					new Stop(1, Color.TRANSPARENT) };
+			LinearGradient lg1 = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
+			top.setStroke(lg1);
+			top.setFill(lg1);
+		} else if (drawStyle.equals(GStyle.DEFAULT)) {
+			top.setStroke(nodeGraph.getColorLookup().get(type));
+			top.setFill(nodeGraph.getColorLookup().get(type));
+		} else if (drawStyle.equals(GStyle.NO_COLOR)) {
 
-		top.setStroke(topColor);
-		top.setFill(topColor);
+		}
+
+		// top.setStroke(topColor);
+		// top.setFill(topColor);
+
 		top.setAccessibleText("node_top"); // top.setArcWidth(20.0); //
 		top.setArcHeight(20.0);
-
-		top.setStroke(nodeGraph.getColorLookup().get(type));
-		top.setFill(nodeGraph.getColorLookup().get(type));
 
 		addView(top);
 		Polygon poly = new Polygon();
@@ -340,13 +378,22 @@ public class GNode extends Pane implements IGNode {
 		double height = 50d / 3d;
 		top = new Rectangle(width, 50 / 3);
 
-		top.setStroke(topColor);
-		top.setFill(topColor);
 		top.setAccessibleText("node_top"); // top.setArcWidth(20.0); //
-		top.setArcHeight(20.0);
+		top.setArcHeight(arc);
 
-		top.setStroke(nodeGraph.getColorLookup().get(type));
-		top.setFill(nodeGraph.getColorLookup().get(type));
+		if (drawStyle.equals(GStyle.GRADIENT)) {
+			Stop[] stops = new Stop[] { new Stop(0, nodeGraph.getColorLookup().get(type)),
+					new Stop(1, Color.TRANSPARENT) };
+			LinearGradient lg1 = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
+
+			top.setStroke(lg1);
+			top.setFill(lg1);
+		} else if (drawStyle.equals(GStyle.DEFAULT)) {
+			top.setStroke(nodeGraph.getColorLookup().get(type));
+			top.setFill(nodeGraph.getColorLookup().get(type));
+		} else if (drawStyle.equals(GStyle.NO_COLOR)) {
+
+		}
 		top.setArcWidth(arc);
 		top.setArcHeight(arc);
 
@@ -377,6 +424,7 @@ public class GNode extends Pane implements IGNode {
 
 	public void drawNodeBase(double width, double height) {
 		base = new Rectangle(width, height);
+
 		base.setStroke(backColor);
 		base.setFill(backColor);
 		base.setAccessibleText("node_base");
@@ -385,24 +433,28 @@ public class GNode extends Pane implements IGNode {
 		addView(base);
 	}
 
+	public Pane getDrawPane() {
+		return canvas;
+	}
+
 	public void drawNodeOutline(double width, double height, boolean active, boolean toggled) {
 
-		outline = new Rectangle(width, height - 5);
-		outline.setTranslateY(5);
+		outline = new Rectangle(width, height);
+		// outline.setTranslateY(5);
 		outline.setFill(Color.TRANSPARENT);
-		
+
 		if (toggled) {
 			outline = new Rectangle(width, height);
 			outline.setFill(Color.TRANSPARENT);
 			outline.setStroke(nodeGraph.getGeneralColorLookup().get(GraphSettings.COLOR_ACTIVE_TOGGLED));
-			outline.setStrokeWidth(3);
+			outline.setStrokeWidth(1);
 		} else {
 			outline.setStroke(nodeGraph.getGeneralColorLookup().get(GraphSettings.COLOR_NODE_ACTIVE));
 			outline.setStrokeWidth(1);
 		}
 		outline.setArcWidth(21.0);
 		outline.setArcHeight(21.0);
-		
+
 		if (active) {
 			addView(outline);
 		} else {
@@ -459,7 +511,7 @@ public class GNode extends Pane implements IGNode {
 				drawNodeBase(width, h);
 				drawNodeOutline(width, h, active, toggledDraw);
 				drawNodeTop(width);
-				drawNodeShadow();
+				// drawNodeShadow();
 				// text.setTranslateX(35);
 
 				addView(text);
@@ -525,7 +577,7 @@ public class GNode extends Pane implements IGNode {
 		} else
 
 		{
-			getChildren().clear();
+			canvas.getChildren().clear();
 		}
 	}
 
@@ -737,11 +789,12 @@ public class GNode extends Pane implements IGNode {
 	}
 
 	public void addView(Node view) {
-		getChildren().add(view);
+		canvas.getChildren().add(view);
+
 	}
 
 	public void removeView(Node view) {
-		getChildren().remove(view);
+		canvas.getChildren().remove(view);
 	}
 
 	public String getName() {
