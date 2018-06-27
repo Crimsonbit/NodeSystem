@@ -10,7 +10,7 @@ import at.crimsonbit.nodesystem.gui.dialog.GEntry;
 import at.crimsonbit.nodesystem.gui.dialog.GPopUp;
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.gui.node.IGConsumable;
-import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
+import at.crimsonbit.nodesystem.gui.settings.GSettings;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.control.MenuItem;
@@ -57,8 +57,8 @@ public class GPort extends Group implements IGConsumable {
 		this.input = input;
 		this.x = x;
 		this.y = y;
-		label = new GPortLabel(x, y, labels, input);
-		rect = new GPortRect(x, y, input, node);
+		this.label = new GPortLabel(x, y, labels, input);
+		this.rect = new GPortRect(x, y, input, node);
 
 		GPopUp pop = new GPopUp();
 		pop.addItem(-1, labels, true);
@@ -97,8 +97,7 @@ public class GPort extends Group implements IGConsumable {
 			@Override
 			public void handle(MouseEvent event) {
 				if (node.isPortPressed()) {
-					// TODO FIX THAT SHIT!
-					/* Add Code to connect nodes here */
+
 					boolean isInput = false;
 					boolean isOutput = false;
 					GNodeMaster master = node.getNodeGraph().getGuiMaster();
@@ -185,7 +184,7 @@ public class GPort extends Group implements IGConsumable {
 				}
 			}
 		});
-
+		
 		setOnMouseDragged(new EventHandler<MouseEvent>() {
 
 			@Override
@@ -198,7 +197,7 @@ public class GPort extends Group implements IGConsumable {
 					node.getNodeGraph().setState(GState.PORTCON);
 					line.setStroke(node.getNodeGraph().getColorLookup().get(node.getNodeType()));
 					line.setStrokeWidth(
-							(double) node.getNodeGraph().getSettings().get(GraphSettings.SETTING_CURVE_WIDTH));
+							(double) node.getNodeGraph().getSettings().get(GSettings.SETTING_CURVE_WIDTH));
 					line.startXProperty().bind(node.layoutXProperty().add(getPortX() + MAGIC_OFFSET));
 					line.startYProperty().bind(node.layoutYProperty().add(getY() + MAGIC_OFFSET));
 

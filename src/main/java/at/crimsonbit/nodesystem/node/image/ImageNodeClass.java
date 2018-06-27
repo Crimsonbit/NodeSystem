@@ -12,8 +12,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class ImageNodeClass extends GNode {
-	
-	
+
 	public ImageNodeClass() {
 		super();
 	}
@@ -29,13 +28,13 @@ public class ImageNodeClass extends GNode {
 	private ImageView drawNodeImage(BufferedImage image, double width) {
 		// BufferedImage image = new BufferedImage((int) width, (int) width,
 		// BufferedImage.TYPE_INT_ARGB);
-		image = ImageUtils.resize(image, (int)width/2, (int)width/2, true);
-		//for (int x = 0; x < width; x++)
-		//	for (int y = 0; y < width; y++)
-		//		image.setRGB(x, y, 0xFF0000);
+		image = ImageUtils.resize(image, (int) width / 2, (int) width / 2, true);
+		// for (int x = 0; x < width; x++)
+		// for (int y = 0; y < width; y++)
+		// image.setRGB(x, y, 0xFF0000);
 		Image img = SwingFXUtils.toFXImage(image, null);
 		ImageView view = new ImageView(img);
-		view.relocate((width/2)-(width/4), 96);
+		view.relocate((width / 2) - (width / 4), 96);
 		view.setImage(img);
 		return view;
 
@@ -46,7 +45,7 @@ public class ImageNodeClass extends GNode {
 		if (this.doDraw) {
 			if (!toggledDraw) {
 				BufferedImage image = (BufferedImage) getAbstractNode().get("output");
-				
+
 				double h = height * inPortCount;
 				if (inPortCount < outPortcount) {
 					h = height * outPortcount;
@@ -65,7 +64,7 @@ public class ImageNodeClass extends GNode {
 				drawNodeBase(width, h);
 				drawNodeOutline(width, h, active, toggledDraw);
 				drawNodeTop(width);
-				//drawNodeShadow();
+				// drawNodeShadow();
 
 				addView(text);
 
@@ -95,7 +94,7 @@ public class ImageNodeClass extends GNode {
 
 				drawNodeTopArc(width, 15.0);
 				addView(text);
-				drawToggledConnections((12.5d/2d)-1d);
+				drawToggledConnections((12.5d / 2d) - 1d);
 			}
 		} else {
 			getChildren().clear();

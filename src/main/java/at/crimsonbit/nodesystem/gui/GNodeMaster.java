@@ -12,10 +12,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
+import at.crimsonbit.nodesystem.gui.color.GColors;
+import at.crimsonbit.nodesystem.gui.color.GTheme;
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.gui.node.GNodeConnection;
 import at.crimsonbit.nodesystem.gui.node.port.GPort;
-import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
 import at.crimsonbit.nodesystem.gui.widget.toast.JFXToast;
 import at.crimsonbit.nodesystem.gui.widget.toast.ToastPosition;
 import at.crimsonbit.nodesystem.gui.widget.toast.ToastTime;
@@ -156,7 +157,7 @@ public class GNodeMaster {
 				c = con;
 				try {
 					con.getTargetPort().getPortRectangle()
-							.setInputColor((Color) graph.getGeneralColorLookup().get(GraphSettings.COLOR_PORT_INPUT));
+							.setInputColor(GTheme.getInstance().getColor(GColors.COLOR_PORT_INPUT));
 					con.getTargetPort().getPortRectangle().redraw();
 					con.getTargetPort().redraw();
 					con.getTargetPort().setConnected(false);

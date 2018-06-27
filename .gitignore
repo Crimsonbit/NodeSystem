@@ -6,3 +6,4 @@ NodeSystemV*.jar
 logFile.*
 hs_err_pid*.log
 /bin/
+src/main/java/at/crimsonbit/nodesystem/util/DragResizerXY.java

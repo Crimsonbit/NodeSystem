@@ -3,8 +3,10 @@ package at.crimsonbit.nodesystem.gui;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import at.crimsonbit.nodesystem.gui.color.GColors;
+import at.crimsonbit.nodesystem.gui.color.GTheme;
 import at.crimsonbit.nodesystem.gui.node.GNode;
-import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
+import at.crimsonbit.nodesystem.gui.settings.GSettings;
 import at.crimsonbit.nodesystem.util.DragContext;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
@@ -108,9 +110,10 @@ public class GGraphScene extends AnchorPane implements ILogging {
 	}
 
 	protected void init() {
-		setBackground(new Background(new BackgroundFill(
-				graph.getGeneralColorLookup().get(GraphSettings.COLOR_BACKGROUND), CornerRadii.EMPTY, Insets.EMPTY)));
-		this.lineColor = (Color) graph.getGeneralColorLookup().get(GraphSettings.COLOR_BACKGROUND_LINES);
+
+		setBackground(new Background(new BackgroundFill(GTheme.getInstance().getColor(GColors.COLOR_BACKGROUND),
+				CornerRadii.EMPTY, Insets.EMPTY)));
+		this.lineColor = GTheme.getInstance().getColor(GColors.COLOR_BACKGROUND_LINES);
 		layoutChildren();
 	}
 

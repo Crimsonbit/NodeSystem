@@ -19,13 +19,6 @@ public class GNodeMouseHandler {
 	private final DragContext dragContext = new DragContext();
 	private GNodeGraph graph;
 	private GNode node;
-	private double y;
-	private double x;
-	private boolean initMinHeight;
-	private boolean initMinWidth;
-	private boolean draggableZoneX, draggableZoneY;
-	private boolean dragging;
-	private static final int RESIZE_MARGIN = 10;
 
 	public GNodeMouseHandler(GNodeGraph g) {
 		this.graph = g;
@@ -34,121 +27,50 @@ public class GNodeMouseHandler {
 	public void addMouseHandler(final Node node) {
 		this.node = (GNode) node;
 
-		node.setOnMouseMoved(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				mouseOver(event);
-			}
-		});
-
 		node.setOnMousePressed(onMousePressedEventHandler);
 		node.setOnMouseDragged(onMouseDraggedEventHandler);
 		node.setOnMouseReleased(onMouseReleasedEventHandler);
 
 	}
 
-	protected boolean isInDraggableZone(MouseEvent event) {
-		draggableZoneY = (boolean) (event.getY() > (node.getHeight() - RESIZE_MARGIN));
-		draggableZoneX = (boolean) (event.getX() > (node.getWidth() - RESIZE_MARGIN));
-		return (draggableZoneY || draggableZoneX);
-	}
-
 	EventHandler<MouseEvent> onMousePressedEventHandler = new EventHandler<MouseEvent>() {
 
 		public void handle(MouseEvent event) {
-			if (isInDraggableZone(event) || dragging) {
-				dragging = true;
 
-				graph.setState(GState.RESIZE);
-				GNode node = (GNode) event.getSource();
-				// make sure that the minimum height is set to the current height once,
-				// setting a min height that is smaller than the current height will
-				// have no effect
-				if (!initMinHeight) {
-					node.getDrawPane().setMinHeight(node.getHeight());
-					initMinHeight = true;
-				}
+			if (event.isPrimaryButtonDown() && !node.getNodeGraph().getState().equals(GState.PORTCON)) {
+				if (event.getClickCount() == 2) {
+					GNode node = (GNode) event.getSource();
+					node.toggleDraw();
+					node.redraw(true);
 
-				y = event.getY();
+				} else {
+					GNode node = (GNode) event.getSource();
+					if (!(node.isPortPressed())) {
+						node.getNodeGraph().setState(GState.NODE_MOVE);
+						graph.setActive(node);
+						node.setActive(true);
 
-				if (!initMinWidth) {
-					node.getDrawPane().setMinWidth(node.getWidth());
-					initMinWidth = true;
-				}
-
-				x = event.getX();
-
-			} else {
-
-				if (event.isPrimaryButtonDown() && !node.getNodeGraph().getState().equals(GState.PORTCON)) {
-					if (event.getClickCount() == 2) {
-						GNode node = (GNode) event.getSource();
-						node.toggleDraw();
 						node.redraw(true);
+						node.toFront();
 
-					} else {
-						GNode node = (GNode) event.getSource();
-						if (!(node.isPortPressed())) {
-							node.getNodeGraph().setState(GState.NODE_MOVE);
-							graph.setActive(node);
-							node.setActive(true);
+						double scale = graph.getScaleValue();
+						dragContext.x = node.getBoundsInParent().getMinX() * scale - event.getScreenX();
+						dragContext.y = node.getBoundsInParent().getMinY() * scale - event.getScreenY();
 
-							node.redraw(true);
-							node.toFront();
-
-							double scale = graph.getScaleValue();
-							dragContext.x = node.getBoundsInParent().getMinX() * scale - event.getScreenX();
-							dragContext.y = node.getBoundsInParent().getMinY() * scale - event.getScreenY();
-
-							node.setCursor(Cursor.HAND);
-						}
+						node.setCursor(Cursor.HAND);
 					}
 				}
+
 			}
 
 		}
 	};
 
-	protected void mouseOver(MouseEvent event) {
-		if (isInDraggableZone(event) || dragging) {
-			if (draggableZoneY) {
-				node.setCursor(Cursor.S_RESIZE);
-			}
-
-			if (draggableZoneX) {
-				node.setCursor(Cursor.E_RESIZE);
-			}
-
-		} else {
-			node.setCursor(Cursor.DEFAULT);
-		}
-	}
-
 	EventHandler<MouseEvent> onMouseDraggedEventHandler = new EventHandler<MouseEvent>() {
 
 		public void handle(MouseEvent event) {
-			if (dragging) {
-				if (draggableZoneY) {
-					GNode node = (GNode) event.getSource();
-					double mousey = event.getY();
 
-					double newHeight = node.getDrawPane().getMinHeight() + (mousey - y);
-
-					node.getDrawPane().setMinHeight(newHeight);
-					// node.setPrefHeight(newHeight);
-					y = mousey;
-				}
-
-				if (draggableZoneX) {
-					double mousex = event.getX();
-
-					double newWidth = node.getDrawPane().getMinWidth() + (mousex - x);
-
-					node.getDrawPane().setMinWidth(newWidth);
-					// node.setPrefWidth(newWidth);
-					x = mousex;
-				}
-			} else if (!node.getNodeGraph().getState().equals(GState.PORTCON)) {
+			if (!node.getNodeGraph().getState().equals(GState.PORTCON)) {
 				GNode n = (GNode) event.getSource();
 				if (!n.isPortPressed()) {
 					if (event.isPrimaryButtonDown()) {
@@ -166,39 +88,36 @@ public class GNodeMouseHandler {
 
 						node.relocate(offsetX, offsetY);
 						node.setCursor(Cursor.MOVE);
+						n.redraw(true);
 						n.getNodeGraph().update();
 					}
 				}
 			}
-			GNode node = (GNode) event.getSource();
-			node.redraw(true);
+
 		}
 	};
 
 	EventHandler<MouseEvent> onMouseReleasedEventHandler = new EventHandler<MouseEvent>() {
 
 		public void handle(MouseEvent event) {
-			dragging = false;
-			node.setCursor(Cursor.DEFAULT);
-			GNode node = (GNode) event.getSource();
-			node.redraw(true);
-			if (!node.getNodeGraph().getState().equals(GState.PORTCON)) {
-				// makeDraggable(node);
 
+			if (!node.getNodeGraph().getState().equals(GState.PORTCON)) {
 				if (!(node.isPortPressed())) {
 					for (GNode n : graph.getGuiMaster().getAllCells()) {
-						n.setActive(false);
-						n.redraw();
-						addMouseHandler(n);
+						if (!n.equals(node)) {
+							n.setActive(false);
+							n.redraw();
+						}
 					}
-					node.setActive(true);
-					node.redraw();
+
 					graph.setActive(node);
 					node.setCursor(Cursor.DEFAULT);
-					node.getNodeGraph().setState(GState.DEFAULT);
+					node.redraw();
+					graph.setState(GState.DEFAULT);
 				}
+
 			}
-			graph.setState(GState.DEFAULT);
+
 		}
 	};
 

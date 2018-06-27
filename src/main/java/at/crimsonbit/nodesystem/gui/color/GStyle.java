@@ -1,4 +1,4 @@
-package at.crimsonbit.nodesystem.gui;
+package at.crimsonbit.nodesystem.gui.color;
 
 public enum GStyle {
 	

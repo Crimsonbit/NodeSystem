@@ -4,7 +4,9 @@ import at.crimsonbit.nodesystem.application.NodeSystemBuilder;
 import at.crimsonbit.nodesystem.examples.customnode.CustomNodeClassExample;
 import at.crimsonbit.nodesystem.examples.customnode.CustomNodes;
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
-import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
+import at.crimsonbit.nodesystem.gui.color.GColors;
+import at.crimsonbit.nodesystem.gui.color.GTheme;
+import at.crimsonbit.nodesystem.gui.settings.GSettings;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
@@ -39,9 +41,9 @@ public class SimpleGraph extends Application {
 		 * 
 		 */
 
-		graph.addSetting(GraphSettings.SETTING_CURVE_WIDTH, 6d);
-		graph.addSetting(GraphSettings.SETTING_CURVE_CURVE, 100d);
-		graph.getGeneralColorLookup().put(GraphSettings.COLOR_BACKGROUND_LINES, Color.WHITE);
+		graph.addSetting(GSettings.SETTING_CURVE_WIDTH, 6d);
+		graph.addSetting(GSettings.SETTING_CURVE_CURVE, 100d);
+		GTheme.getInstance().putColor(GColors.COLOR_BACKGROUND_LINES, Color.WHITE);
 		graph.updateColors();
 
 		Scene scene = graph.getNodeScene();

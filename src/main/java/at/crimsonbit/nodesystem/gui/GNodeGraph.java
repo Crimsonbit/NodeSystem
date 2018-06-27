@@ -13,6 +13,8 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.logging.Level;
 
+import at.crimsonbit.nodesystem.gui.color.GColors;
+import at.crimsonbit.nodesystem.gui.color.GTheme;
 import at.crimsonbit.nodesystem.gui.dialog.GEntry;
 import at.crimsonbit.nodesystem.gui.dialog.GPopUp;
 import at.crimsonbit.nodesystem.gui.dialog.GSubMenu;
@@ -21,7 +23,7 @@ import at.crimsonbit.nodesystem.gui.layer.GLineLayer;
 import at.crimsonbit.nodesystem.gui.layer.GNodeLayer;
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.gui.node.IGConsumable;
-import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
+import at.crimsonbit.nodesystem.gui.settings.GSettings;
 import at.crimsonbit.nodesystem.gui.widget.searchbar.GSearchBar;
 import at.crimsonbit.nodesystem.gui.widget.toast.JFXToast;
 import at.crimsonbit.nodesystem.gui.widget.toast.ToastPosition;
@@ -47,7 +49,6 @@ import at.crimsonbit.nodesystem.nodebackend.api.NodeMaster;
 import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
 import at.crimsonbit.nodesystem.nodebackend.util.Tuple;
 import at.crimsonbit.nodesystem.util.DragContext;
-import at.crimsonbit.nodesystem.util.DragResizerXY;
 import at.crimsonbit.nodesystem.util.SystemUsage;
 import at.crimsonbit.nodesystem.util.logger.SystemLogger;
 import javafx.event.EventHandler;
@@ -96,16 +97,16 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private GNodeLayer nodeLayer;
 	private GLineLayer lineLayer;
 	private GLineLayer tempLineLayer;
-
+	private GNodePanel nodePanel;
 	private HashMap<INodeType, Color> colorLookup = new HashMap<INodeType, Color>();
-	private HashMap<GraphSettings, Color> nodeLookup = new HashMap<GraphSettings, Color>();
-	private HashMap<GraphSettings, Object> settings = new HashMap<GraphSettings, Object>();
+
+	private HashMap<GSettings, Object> settings = new HashMap<GSettings, Object>();
 	private Set<GNode> selectedNodesGroup = new HashSet<GNode>();
 
 	private GSearchBar bar = new GSearchBar();
 	private final Map<INodeType, Class<? extends GNode>> nodeMap = new HashMap<INodeType, Class<? extends GNode>>();
 	private GClipboard clipboard;
-	private final DragContext dragContext = new DragContext();
+	private DragContext dragContext = new DragContext();
 	private FileChooser fileChooser = new FileChooser();
 	private FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("NodeSystem files (*.nsys)",
 			"*.nsys");
@@ -130,14 +131,17 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		setNodeGraph(this);
 
 		this.selection = new Rectangle();
-		this.selection.setStroke(Color.LIGHTSKYBLUE);
+		this.selection.setStroke(GTheme.getInstance().getColor(GColors.COLOR_SELECTION));
 		this.selection.setArcWidth(21.0);
 		this.selection.setArcHeight(21.0);
 		this.selection.setStrokeWidth(1);
-		Color c = Color.LIGHTSKYBLUE;
-		this.selection.setFill(new Color(c.getRed(), c.getGreen(), c.getBlue(), 0.2d));
+
+		this.selection.setFill(GTheme.getInstance().getColorWithOpacity(GColors.COLOR_SELECTION, 0.2d));
 		this.selection.getStrokeDashArray().add(10.0);
 		this.nodeMaster = new GNodeMaster(this);
+
+		this.nodePanel = new GNodePanel(this);
+		// this.getChildren().add(this.nodePanel);
 
 		this.canvas = new Group();
 		this.nodeLayer = new GNodeLayer();
@@ -194,6 +198,9 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 		this.nodeMaster = new GNodeMaster(this);
 
+		this.nodePanel = new GNodePanel(this);
+		// this.getChildren().add(this.nodePanel);
+
 		this.canvas = new Group();
 		this.nodeLayer = new GNodeLayer();
 		this.lineLayer = new GLineLayer();
@@ -230,13 +237,13 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		innerShadow.setOffsetY(4);
 
 		innerShadow.setBlurType(BlurType.GAUSSIAN);
-		double col = (double) getSettings().get(GraphSettings.COLOR_SHADOW_COLOR);
-		innerShadow.setColor(new Color(col, col, col, 1));
-		innerShadow.setWidth((double) getSettings().get(GraphSettings.SETTING_SHADOW_WIDTH));
-		innerShadow.setHeight((double) getSettings().get(GraphSettings.SETTING_SHADOW_HEIGHT));
-		innerShadow.setOffsetX((double) getSettings().get(GraphSettings.SETTING_SHADOW_WIDTH));
-		innerShadow.setOffsetY((double) getSettings().get(GraphSettings.SETTING_SHADOW_HEIGHT));
-		innerShadow.setRadius((double) getSettings().get(GraphSettings.SETTING_SHADOW_RADIUS));
+
+		innerShadow.setColor(GTheme.getInstance().getColor(GColors.COLOR_SHADOW_COLOR));
+		innerShadow.setWidth((double) getSettings().get(GSettings.SETTING_SHADOW_WIDTH));
+		innerShadow.setHeight((double) getSettings().get(GSettings.SETTING_SHADOW_HEIGHT));
+		innerShadow.setOffsetX((double) getSettings().get(GSettings.SETTING_SHADOW_WIDTH));
+		innerShadow.setOffsetY((double) getSettings().get(GSettings.SETTING_SHADOW_HEIGHT));
+		innerShadow.setRadius((double) getSettings().get(GSettings.SETTING_SHADOW_RADIUS));
 		clipboard = GClipboard.getClipboard(this);
 		setEffect(innerShadow);
 	}
@@ -420,12 +427,12 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	}
 
 	/**
-	 * <h1>public void addSetting({@link GraphSettings}, {@link Object})</h1>
+	 * <h1>public void addSetting({@link GSettings}, {@link Object})</h1>
 	 * <hr>
 	 * <p>
 	 * Using this method you can change a almost every setting, which is not
 	 * hardcoded into the nodesystem. To see all settings please have a look at
-	 * {@link GraphSettings}.
+	 * {@link GSettings}.
 	 * </p>
 	 * 
 	 * @param s
@@ -434,13 +441,13 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	 *            the value, please keep in mind, that setting settings to random
 	 *            stuff can break the nodesystem and it can throw unexpected errors.
 	 */
-	public void addSetting(GraphSettings s, Object r) {
+	public void addSetting(GSettings s, Object r) {
 		this.settings.put(s, r);
 		init();
 	}
 
 	/**
-	 * <h1>public {@link HashMap}<{@link GraphSettings}, {@link Object}>
+	 * <h1>public {@link HashMap}<{@link GSettings}, {@link Object}>
 	 * getSettings()</h1>
 	 * <p>
 	 * Returns the HashMap containing all the settings for the graph and their
@@ -449,7 +456,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	 * 
 	 * @return the settings of the graph
 	 */
-	public HashMap<GraphSettings, Object> getSettings() {
+	public HashMap<GSettings, Object> getSettings() {
 		return this.settings;
 	}
 
@@ -465,13 +472,15 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		final Point anchor = new Point();
 
 		setOnMousePressed(event -> {
-			if (!event.isSecondaryButtonDown() && !event.isMiddleButtonDown()) {
-				selectedNodesGroup.clear();
-				anchor.setX(event.getX());
-				anchor.setY(event.getY());
-				selection.setX(event.getX() / getScaleValue());
-				selection.setY(event.getY() / getScaleValue());
-				selection.toFront();
+			if (getState().equals(GState.DEFAULT)) {
+				if (!event.isSecondaryButtonDown() && !event.isMiddleButtonDown()) {
+					selectedNodesGroup.clear();
+					anchor.setX(event.getX());
+					anchor.setY(event.getY());
+					selection.setX(event.getX() / getScaleValue());
+					selection.setY(event.getY() / getScaleValue());
+					selection.toFront();
+				}
 			}
 		});
 
@@ -496,25 +505,27 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 			/**
 			 * Check if nodes are in bounds.
 			 */
-			for (GNode n : getGuiMaster().getAllCells()) {
+			if (getState().equals(GState.DEFAULT)) {
+				for (GNode n : getGuiMaster().getAllCells()) {
 
-				if ((n.getTranslateX() + n.getLayoutX() > selection.getX()
-						&& n.getTranslateX() + n.getLayoutX() < selection.getWidth())
-						&& (n.getTranslateY() + n.getLayoutY() > selection.getY()
-								&& n.getTranslateY() + n.getLayoutY() < selection.getHeight())) {
-					// System.out.println(n);
+					if ((n.getTranslateX() + n.getLayoutX() > selection.getX()
+							&& n.getTranslateX() + n.getLayoutX() < selection.getWidth())
+							&& (n.getTranslateY() + n.getLayoutY() > selection.getY()
+									&& n.getTranslateY() + n.getLayoutY() < selection.getHeight())) {
+						// System.out.println(n);
 
-					if ((n.getLayoutX() > selection.getX() && n.getLayoutX() < selection.getWidth())
-							&& (n.getLayoutY() > selection.getY() && n.getLayoutY() < selection.getHeight())) {
+						if ((n.getLayoutX() > selection.getX() && n.getLayoutX() < selection.getWidth())
+								&& (n.getLayoutY() > selection.getY() && n.getLayoutY() < selection.getHeight())) {
 
-						n.setActive(true);
-						n.redraw();
-						selectedNodesGroup.add(n);
+							n.setActive(true);
+							n.redraw();
+							selectedNodesGroup.add(n);
+						}
 					}
 				}
+				selection.setWidth(0);
+				selection.setHeight(0);
 			}
-			selection.setWidth(0);
-			selection.setHeight(0);
 		});
 
 		/*
@@ -1057,12 +1068,12 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		getNodeLayer().getChildren().removeAll(nodeMaster.getRemovedCells());
 		getLineLayer().getChildren().removeAll(nodeMaster.getRemovedEdges());
 		getNodeLayer().toFront();
+
 		// getLineLayer().toFront();
 		for (GNode cell : nodeMaster.getAddedCells()) {
 			handler.addMouseHandler(cell);
-			//DragResizerXY.makeResizable(cell);
 		}
-		
+
 		getGuiMaster().attachOrphansToGraphParent(nodeMaster.getAddedCells());
 		getGuiMaster().disconnectFromGraphParent(nodeMaster.getRemovedCells());
 
@@ -1096,12 +1107,11 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 	private void setDefaulSettings() {
 		log(Level.INFO, "Setting defaults...");
-		addSetting(GraphSettings.SETTING_CURVE_WIDTH, 4d);
-		addSetting(GraphSettings.SETTING_CURVE_CURVE, 50d);
-		addSetting(GraphSettings.COLOR_SHADOW_COLOR, 0.1d);
-		addSetting(GraphSettings.SETTING_SHADOW_WIDTH, 5d);
-		addSetting(GraphSettings.SETTING_SHADOW_HEIGHT, 5d);
-		addSetting(GraphSettings.SETTING_SHADOW_RADIUS, 20d);
+		addSetting(GSettings.SETTING_CURVE_WIDTH, 4d);
+		addSetting(GSettings.SETTING_CURVE_CURVE, 50d);
+		addSetting(GSettings.SETTING_SHADOW_WIDTH, 5d);
+		addSetting(GSettings.SETTING_SHADOW_HEIGHT, 5d);
+		addSetting(GSettings.SETTING_SHADOW_RADIUS, 20d);
 
 	}
 
@@ -1141,27 +1151,6 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		for (INodeType t : ImageFilter.values())
 			getColorLookup().put(t, Color.SADDLEBROWN);
 
-		getGeneralColorLookup().put(GraphSettings.COLOR_NODE_ACTIVE, Color.LIGHTSKYBLUE); // new Color(0.992, 0.647, 0.305, 1)
-		getGeneralColorLookup().put(GraphSettings.COLOR_ACTIVE_TOGGLED, Color.LIGHTSKYBLUE);
-		getGeneralColorLookup().put(GraphSettings.COLOR_PORT_INPUT, Color.CORNFLOWERBLUE);
-		getGeneralColorLookup().put(GraphSettings.COLOR_PORT_OUTPUT, Color.ORANGERED);
-		getGeneralColorLookup().put(GraphSettings.COLOR_CURVE_DEFAULT, Color.CRIMSON);
-		getGeneralColorLookup().put(GraphSettings.COLOR_TEXT_COLOR, Color.WHITE);
-		getGeneralColorLookup().put(GraphSettings.COLOR_BACKGROUND, new Color(0.16, 0.16, 0.16, 1));
-		getGeneralColorLookup().put(GraphSettings.COLOR_BACKGROUND_LINES, new Color(0.098, 0.098, 0.098, 1));
-	}
-
-	/**
-	 * 
-	 * @param string
-	 * @param c
-	 */
-	public void addNodeColorLookup(GraphSettings string, Color c) {
-		this.nodeLookup.put(string, c);
-	}
-
-	public HashMap<GraphSettings, Color> getGeneralColorLookup() {
-		return this.nodeLookup;
 	}
 
 	/**

@@ -1,7 +1,9 @@
 package at.crimsonbit.nodesystem.gui.node.port;
 
+import at.crimsonbit.nodesystem.gui.color.GColors;
+import at.crimsonbit.nodesystem.gui.color.GTheme;
 import at.crimsonbit.nodesystem.gui.node.GNode;
-import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
+import at.crimsonbit.nodesystem.gui.settings.GSettings;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -43,8 +45,8 @@ public class GPortRect extends Rectangle {
 		this.x = x;
 		this.y = y;
 		this.input = input;
-		this.inputColor = (Color) node.getNodeGraph().getGeneralColorLookup().get(GraphSettings.COLOR_PORT_INPUT);
-		this.outputColor = (Color) node.getNodeGraph().getGeneralColorLookup().get(GraphSettings.COLOR_PORT_OUTPUT);
+		this.inputColor = GTheme.getInstance().getColor(GColors.COLOR_PORT_INPUT);
+		this.outputColor = GTheme.getInstance().getColor(GColors.COLOR_PORT_OUTPUT);
 		redraw();
 	}
 

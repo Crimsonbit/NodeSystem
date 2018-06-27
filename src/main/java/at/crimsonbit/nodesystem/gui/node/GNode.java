@@ -6,10 +6,12 @@ import java.util.List;
 import java.util.Optional;
 
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
-import at.crimsonbit.nodesystem.gui.GStyle;
+import at.crimsonbit.nodesystem.gui.color.GColors;
+import at.crimsonbit.nodesystem.gui.color.GStyle;
+import at.crimsonbit.nodesystem.gui.color.GTheme;
 import at.crimsonbit.nodesystem.gui.dialog.GPopUp;
 import at.crimsonbit.nodesystem.gui.node.port.GPort;
-import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
+import at.crimsonbit.nodesystem.gui.settings.GSettings;
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeMaster;
@@ -58,11 +60,7 @@ public class GNode extends AnchorPane implements IGNode {
 	private Scale scaleTransform;
 	private GPopUp popUpDialog;
 	private Color topColor;
-	private Color backColor;
 	private String typeName;
-	private Pane canvas = new Pane();
-
-	private GStyle drawStyle = GStyle.GRADIENT;
 	protected boolean doDraw = false;
 	protected boolean active = false;
 	private boolean portPressed = false;
@@ -105,12 +103,9 @@ public class GNode extends AnchorPane implements IGNode {
 		this.nodeID = -1;
 		this.name = name;
 		this.doDraw = draw;
-		getChildren().add(canvas);
 		defaultTopColor();
-		defaultBackColor();
 		defaultPopUpDialog();
 		scaleTransform = new Scale(scaleValue, scaleValue, 0, 0);
-		addCanvasAnchors();
 
 	}
 
@@ -129,15 +124,12 @@ public class GNode extends AnchorPane implements IGNode {
 		this.type = graph.getGuiMaster().getNodeMaster().getTypeOfNode(id);
 		this.typeName = this.type.toString();
 		this.doDraw = draw;
-		getChildren().add(canvas);
 		defaultTopColor();
-		defaultBackColor();
 		defaultPopUpDialog();
 		addAllPorts();
 		addToolTip();
 		draw();
 		scaleTransform = new Scale(scaleValue, scaleValue, 0, 0);
-		addCanvasAnchors();
 
 	}
 
@@ -148,22 +140,6 @@ public class GNode extends AnchorPane implements IGNode {
 
 	public GNode(GNode gNode) {
 		this(gNode.name, gNode.getNodeMaster().copyOfNode(gNode.nodeID), gNode.doDraw, gNode.nodeGraph);
-	}
-
-	private void addCanvasAnchors() {
-		setTopAnchor(canvas, 0d);
-		setBottomAnchor(canvas, 0d);
-		setLeftAnchor(canvas, 0d);
-		setRightAnchor(canvas, 0d);
-	}
-
-	public void setDrawStyle(GStyle style) {
-		this.drawStyle = style;
-	}
-
-	public void getDrawStyle(GStyle style) {
-		this.drawStyle = style;
-
 	}
 
 	public List<GNodeConnection> getConnections() {
@@ -234,24 +210,6 @@ public class GNode extends AnchorPane implements IGNode {
 
 	public AbstractNode getAbstractNode() {
 		return getNodeMaster().getNodeByID(nodeID);
-	}
-
-	public void setBackColor(Color c) {
-		this.backColor = c;
-		redraw();
-	}
-
-	public void setBackColor(double r, double g, double b) {
-		this.backColor = new Color(r, g, b, 1);
-		redraw();
-	}
-
-	private void defaultBackColor() {
-		double br = RangeMapper.mapValue(32, 0, 255, 0, 1);
-		double bg = RangeMapper.mapValue(32, 0, 255, 0, 1);
-		double bb = RangeMapper.mapValue(32, 0, 255, 0, 1);
-		this.backColor = new Color(br, bg, bb, 1);
-
 	}
 
 	public void setTopColor(Color c) {
@@ -333,16 +291,14 @@ public class GNode extends AnchorPane implements IGNode {
 	public void drawNodeTop(double width) {
 		double height = 50d / 3d;
 		top = new Rectangle(width, height);
-		if (drawStyle.equals(GStyle.GRADIENT)) {
-			Stop[] stops = new Stop[] { new Stop(0, nodeGraph.getColorLookup().get(type)),
-					new Stop(1, Color.TRANSPARENT) };
-			LinearGradient lg1 = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
-			top.setStroke(lg1);
-			top.setFill(lg1);
-		} else if (drawStyle.equals(GStyle.DEFAULT)) {
+		if (GTheme.getInstance().getStyle().equals(GStyle.GRADIENT)) {
+			LinearGradient lg = GTheme.getInstance().getGradient(nodeGraph.getColorLookup().get(type));
+			top.setStroke(lg);
+			top.setFill(lg);
+		} else if (GTheme.getInstance().getStyle().equals(GStyle.DEFAULT)) {
 			top.setStroke(nodeGraph.getColorLookup().get(type));
 			top.setFill(nodeGraph.getColorLookup().get(type));
-		} else if (drawStyle.equals(GStyle.NO_COLOR)) {
+		} else if (GTheme.getInstance().getStyle().equals(GStyle.NO_COLOR)) {
 
 		}
 
@@ -366,7 +322,7 @@ public class GNode extends AnchorPane implements IGNode {
 		});
 
 		if (!this.toggledDraw) {
-			poly.getPoints().addAll(new Double[] { width - 10d, 5d, width - 2d, 5d, width - 6d, height / 1.2d });
+			poly.getPoints().addAll(new Double[] { 10d, 5d, 2d, 5d, 6d, height / 1.2d });
 			addView(poly);
 		}
 	}
@@ -378,23 +334,22 @@ public class GNode extends AnchorPane implements IGNode {
 		top.setAccessibleText("node_top"); // top.setArcWidth(20.0); //
 		top.setArcHeight(arc);
 
-		if (drawStyle.equals(GStyle.GRADIENT)) {
-			Stop[] stops = new Stop[] { new Stop(0, nodeGraph.getColorLookup().get(type)),
-					new Stop(1, Color.TRANSPARENT) };
-			LinearGradient lg1 = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
-
-			top.setStroke(lg1);
-			top.setFill(lg1);
-		} else if (drawStyle.equals(GStyle.DEFAULT)) {
+		if (GTheme.getInstance().getStyle().equals(GStyle.GRADIENT)) {
+			LinearGradient lg = GTheme.getInstance().getGradient(nodeGraph.getColorLookup().get(type));
+			top.setStroke(lg);
+			top.setFill(lg);
+		} else if (GTheme.getInstance().getStyle().equals(GStyle.DEFAULT)) {
 			top.setStroke(nodeGraph.getColorLookup().get(type));
 			top.setFill(nodeGraph.getColorLookup().get(type));
-		} else if (drawStyle.equals(GStyle.NO_COLOR)) {
+		} else if (GTheme.getInstance().getStyle().equals(GStyle.NO_COLOR)) {
 
 		}
+
 		top.setArcWidth(arc);
 		top.setArcHeight(arc);
 
 		addView(top);
+
 		Polygon poly = new Polygon();
 		poly.setFill(Color.WHITE);
 		poly.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
@@ -409,29 +364,25 @@ public class GNode extends AnchorPane implements IGNode {
 		poly.addEventFilter(MouseEvent.MOUSE_RELEASED, event -> {
 			redraw(true);
 		});
-
 		if (this.toggledDraw) {
 			double h1 = height / (1.2d);
 			h1 /= 2;
 			h1 += 1;
-			poly.getPoints().addAll(new Double[] { width - 2d, 3d, width - 2d, (height / 1.2d) - 2, width - 10d, h1 });
+			poly.getPoints().addAll(new Double[] { 2d, 3d, 2d, (height / 1.2d) - 2, 10d, h1 });
 			addView(poly);
 		}
+
 	}
 
 	public void drawNodeBase(double width, double height) {
 		base = new Rectangle(width, height);
-
-		base.setStroke(backColor);
-		base.setFill(backColor);
+		Color c = GTheme.getInstance().getColor(GColors.COLOR_NODE);
+		base.setStroke(c);
+		base.setFill(c);
 		base.setAccessibleText("node_base");
 		base.setArcWidth(20.0);
 		base.setArcHeight(20.0);
 		addView(base);
-	}
-
-	public Pane getDrawPane() {
-		return canvas;
 	}
 
 	public void drawNodeOutline(double width, double height, boolean active, boolean toggled) {
@@ -443,10 +394,10 @@ public class GNode extends AnchorPane implements IGNode {
 		if (toggled) {
 			outline = new Rectangle(width, height);
 			outline.setFill(Color.TRANSPARENT);
-			outline.setStroke(nodeGraph.getGeneralColorLookup().get(GraphSettings.COLOR_ACTIVE_TOGGLED));
+			outline.setStroke(GTheme.getInstance().getColor(GColors.COLOR_ACTIVE_TOGGLED));
 			outline.setStrokeWidth(1);
 		} else {
-			outline.setStroke(nodeGraph.getGeneralColorLookup().get(GraphSettings.COLOR_NODE_ACTIVE));
+			outline.setStroke(GTheme.getInstance().getColor(GColors.COLOR_NODE_ACTIVE));
 			outline.setStrokeWidth(1);
 		}
 		outline.setArcWidth(21.0);
@@ -462,22 +413,21 @@ public class GNode extends AnchorPane implements IGNode {
 
 	public double drawNodeText(String name) {
 		text = new Text(name);
-		text.setFill(nodeGraph.getGeneralColorLookup().get(GraphSettings.COLOR_TEXT_COLOR));
+		text.setFill(GTheme.getInstance().getColor(GColors.COLOR_TEXT_COLOR));
 		text.setTranslateY(12.5);
-
+		text.setTranslateX(15);
 		return text.getBoundsInLocal().getWidth();
 	}
 
 	public void drawNodeShadow() {
 		e = new DropShadow();
 		e.setBlurType(BlurType.GAUSSIAN);
-		double col = (double) getNodeGraph().getSettings().get(GraphSettings.COLOR_SHADOW_COLOR);
-		e.setColor(new Color(col, col, col, 1));
-		e.setWidth((double) getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_WIDTH));
-		e.setHeight((double) getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_HEIGHT));
-		e.setOffsetX((double) getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_WIDTH));
-		e.setOffsetY((double) getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_HEIGHT));
-		e.setRadius((double) getNodeGraph().getSettings().get(GraphSettings.SETTING_SHADOW_RADIUS));
+		e.setColor(GTheme.getInstance().getColor(GColors.COLOR_SHADOW_COLOR));
+		e.setWidth((double) getNodeGraph().getSettings().get(GSettings.SETTING_SHADOW_WIDTH));
+		e.setHeight((double) getNodeGraph().getSettings().get(GSettings.SETTING_SHADOW_HEIGHT));
+		e.setOffsetX((double) getNodeGraph().getSettings().get(GSettings.SETTING_SHADOW_WIDTH));
+		e.setOffsetY((double) getNodeGraph().getSettings().get(GSettings.SETTING_SHADOW_HEIGHT));
+		e.setRadius((double) getNodeGraph().getSettings().get(GSettings.SETTING_SHADOW_RADIUS));
 		base.setEffect(e);
 	}
 
@@ -574,7 +524,7 @@ public class GNode extends AnchorPane implements IGNode {
 		} else
 
 		{
-			canvas.getChildren().clear();
+			getChildren().clear();
 		}
 	}
 
@@ -786,12 +736,12 @@ public class GNode extends AnchorPane implements IGNode {
 	}
 
 	public void addView(Node view) {
-		canvas.getChildren().add(view);
+		getChildren().add(view);
 
 	}
 
 	public void removeView(Node view) {
-		canvas.getChildren().remove(view);
+		getChildren().remove(view);
 	}
 
 	public String getName() {

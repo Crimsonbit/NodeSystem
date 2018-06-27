@@ -7,7 +7,7 @@ import at.crimsonbit.nodesystem.application.NodeSystemBuilder;
 import at.crimsonbit.nodesystem.examples.customnode.CustomNodeClassExample;
 import at.crimsonbit.nodesystem.examples.customnode.CustomNodes;
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
-import at.crimsonbit.nodesystem.gui.settings.GraphSettings;
+import at.crimsonbit.nodesystem.gui.settings.GSettings;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
@@ -38,8 +38,8 @@ public class LoadExistingGraph extends Application {
 		 * Example of how to change settings used in the node-system
 		 * 
 		 */
-		graph.addSetting(GraphSettings.SETTING_CURVE_WIDTH, 6d);
-		graph.addSetting(GraphSettings.SETTING_CURVE_CURVE, 100d);
+		graph.addSetting(GSettings.SETTING_CURVE_WIDTH, 6d);
+		graph.addSetting(GSettings.SETTING_CURVE_CURVE, 100d);
 
 		Scene scene = graph.getNodeScene();
 		scene.getStylesheets().add(getClass().getResource("node-menu.css").toExternalForm());
