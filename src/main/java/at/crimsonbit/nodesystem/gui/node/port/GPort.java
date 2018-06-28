@@ -64,7 +64,7 @@ public class GPort extends Group implements IGConsumable {
 		this.conHelper = new GPortConHelper(x, y, input, this);
 		GPopUp pop = new GPopUp();
 		pop.addItem(-1, labels, true);
-		pop.addItem(0, "Connect");
+		// pop.addItem(0, "Connect");
 		pop.addItem(1, "Disconnect");
 		this.dialog = pop;
 
@@ -168,30 +168,31 @@ public class GPort extends Group implements IGConsumable {
 
 			@Override
 			public void handle(MouseEvent event) {
+				if (!conHelper.isDoDisconnect())
+					if (event.isPrimaryButtonDown() && !event.isSecondaryButtonDown()) {
+						node.setPortPressed(true);
+						if (line == null)
+							line = new Line();
 
-				if (event.isPrimaryButtonDown() && !event.isSecondaryButtonDown()) {
-					node.setPortPressed(true);
-					if (line == null)
-						line = new Line();
+						node.getNodeGraph().setState(GState.PORTCON);
+						line.setStroke(node.getNodeType().getColor());
+						line.setStrokeWidth(
+								(double) GGraphSettings.getInstance().getSetting(GSettings.SETTING_CURVE_WIDTH));
+						line.startXProperty().bind(node.layoutXProperty().add(getPortX() + MAGIC_OFFSET));
+						line.startYProperty().bind(node.layoutYProperty().add(getY() + MAGIC_OFFSET));
 
-					node.getNodeGraph().setState(GState.PORTCON);
-					line.setStroke(node.getNodeType().getColor());
-					line.setStrokeWidth((double) GGraphSettings.getInstance().getSetting(GSettings.SETTING_CURVE_WIDTH));
-					line.startXProperty().bind(node.layoutXProperty().add(getPortX() + MAGIC_OFFSET));
-					line.startYProperty().bind(node.layoutYProperty().add(getY() + MAGIC_OFFSET));
+						line.setStrokeLineCap(StrokeLineCap.ROUND);
+						line.setFill(Color.TRANSPARENT);
 
-					line.setStrokeLineCap(StrokeLineCap.ROUND);
-					line.setFill(Color.TRANSPARENT);
+						line.endXProperty().bind(node.layoutXProperty().add(event.getX()));
+						line.endYProperty().bind(node.layoutYProperty().add(event.getY()));
+						line.toFront();
 
-					line.endXProperty().bind(node.layoutXProperty().add(event.getX()));
-					line.endYProperty().bind(node.layoutYProperty().add(event.getY()));
-					line.toFront();
-
-					node.getNodeGraph().getTempLineLayer().getChildren().remove(line);
-					node.getNodeGraph().getTempLineLayer().getChildren().add(line);
-					node.getNodeGraph().getTempLineLayer().toFront();
-					node.getNodeGraph().update();
-				}
+						node.getNodeGraph().getTempLineLayer().getChildren().remove(line);
+						node.getNodeGraph().getTempLineLayer().getChildren().add(line);
+						node.getNodeGraph().getTempLineLayer().toFront();
+						node.getNodeGraph().update();
+					}
 			}
 		});
 	}

@@ -1,5 +1,6 @@
 package at.crimsonbit.nodesystem.gui.node.port;
 
+import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.GNodeMaster;
 import at.crimsonbit.nodesystem.gui.settings.GGraphSettings;
 import at.crimsonbit.nodesystem.gui.settings.GSettings;
@@ -29,6 +30,8 @@ public class GPortConHelper extends Rectangle {
 	private final double DRAW_OFFSET_OUTPUT = 5d;
 	private boolean isInput = false;
 	private boolean isMarked = false;
+	private boolean doDisconnect = false;
+
 	private boolean doShow = (boolean) GGraphSettings.getInstance().getSetting(GSettings.SETTING_SHOW_CONNECTION_HELP);;
 	private GPort source;
 
@@ -106,6 +109,33 @@ public class GPortConHelper extends Rectangle {
 
 		});
 
+		setOnMouseEntered(event -> {
+			if (event.isPrimaryButtonDown()) {
+				setFill(new Color(0.8d, 0.2d, 0.2d, 0.4d));
+				doDisconnect = true;
+			}
+		});
+
+		setOnMouseExited(event -> {
+			if (event.isPrimaryButtonDown()) {
+				if (doDisconnect) {
+					setFill(Color.TRANSPARENT);
+					GNodeGraph graph = this.source.getNode().getNodeGraph();
+					graph.getGuiMaster().removeConnection(this.source);
+					graph.update();
+					doDisconnect = false;
+				}
+			}
+		});
+
+	}
+
+	public boolean isDoDisconnect() {
+		return doDisconnect;
+	}
+
+	public void setDoDisconnect(boolean doDisconnect) {
+		this.doDisconnect = doDisconnect;
 	}
 
 	public boolean isInput() {
