@@ -639,6 +639,35 @@ public class NodeMaster {
 		nodePool.put(id, node);
 	}
 
+	public boolean checkConnectionPossible(AbstractNode inNode, String input, AbstractNode outNode, String out) {
+		Map<String, Field> regIns = inputKeyMap.get(inNode.getClass());
+		if (regIns == null) {
+			return false;
+		}
+		Map<String, Field> regOuts = outputKeyMap.get(outNode.getClass());
+		if (regOuts == null) {
+			return false;
+		}
+
+		Field inField = regIns.get(input);
+		Field outField = regOuts.get(out);
+
+		if (inField == null) {
+			return false;
+		}
+
+		if (outField == null) {
+			return false;
+		}
+
+		if (!inField.getType().isAssignableFrom(outField.getType()) && !(outField.getType().isPrimitive())) {
+			return false;
+		}
+
+		return true;
+
+	}
+
 	/**
 	 * Connect an output of a Node with an input of another Node. This connection
 	 * can later be removed by using
@@ -684,7 +713,7 @@ public class NodeMaster {
 		if (outField == null) {
 			throw new NoSuchNodeException("Node " + outNode.getClass().getName() + " has no input " + out);
 		}
-		
+
 		if (!inField.getType().isAssignableFrom(outField.getType()) && !(outField.getType().isPrimitive())) {
 			throw new ClassCastException("Output " + outField.getName() + " with type "
 					+ outField.getType().getCanonicalName() + " cannot be connected to Input" + inField.getName()
