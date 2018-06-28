@@ -180,10 +180,9 @@ public class GNodeMaster {
 	public void registerNodesInJar(String[] jarfile) {
 		try {
 			this.nodeMaster.registerNodesFromJar(jarfile);
-		} catch (ClassNotFoundException e) {
+		} catch (ClassNotFoundException | IOException e) {
 			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 	}
 
