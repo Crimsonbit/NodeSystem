@@ -104,7 +104,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 	public GNodeGraph() {
 		this(null);
-		
+
 	}
 
 	public GNodeGraph(GLogPane logPane) {
@@ -294,7 +294,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	public Text getNodeInfoObject() {
 		return this.nodeInfo;
 	}
-	
+
 	/**
 	 * <h1>public void addInfo().</h1>
 	 * <hr>
@@ -361,8 +361,8 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 					selectedNodesGroup.clear();
 					anchor.setX(event.getX());
 					anchor.setY(event.getY());
-					selection.setX(event.getX() / getScaleValue());
-					selection.setY(event.getY() / getScaleValue());
+					selection.setX(event.getX());
+					selection.setY(event.getY());
 					selection.toFront();
 				}
 			}
@@ -390,7 +390,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 			 * Check if nodes are in bounds.
 			 */
 			if (getState().equals(GState.DEFAULT)) {
-				for (GNode n : getGuiMaster().getAllCells()) {
+				for (GNode n : getGuiMaster().getAllNodes()) {
 
 					if ((n.getTranslateX() + n.getLayoutX() > selection.getX()
 							&& n.getTranslateX() + n.getLayoutX() < selection.getWidth())
@@ -506,7 +506,12 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 						log(Level.INFO, "Node: " + getActive().getName() + " copied to clipboard!");
 					}
 				}
-
+				
+				if(event.isControlDown() && event.getCode().equals(KeyCode.R)) {
+					setScaleValue(1d);
+					
+				}
+				
 				/**
 				 * Pastes from the clipboard
 				 */
@@ -768,13 +773,14 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 				log(Level.SEVERE, "Error while saving!");
 			}
 		else {
-			
-			//If file is null => aborted, so do nothing
-			
-//			JFXToast.makeToast((Stage) getScene().getWindow(), "Error file is null!", ToastTime.TIME_SHORT,
-//					ToastPosition.BOTTOM);
-//
-//			log(Level.SEVERE, "Error file is null!");
+
+			// If file is null => aborted, so do nothing
+
+			// JFXToast.makeToast((Stage) getScene().getWindow(), "Error file is null!",
+			// ToastTime.TIME_SHORT,
+			// ToastPosition.BOTTOM);
+			//
+			// log(Level.SEVERE, "Error file is null!");
 		}
 	}
 
@@ -872,9 +878,10 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	 *            the node that should be set to active.
 	 */
 	public void setActive(GNode n) {
-		if (!(n == null))
+		if (!(n == null)) {
 			activeCell = (GNode) n;
-		else
+			n.setActive(true);
+		} else
 			activeCell = null;
 		update();
 		// getSettingsPane().setNode((GNode) n);
@@ -949,19 +956,19 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	 * </p>
 	 */
 	public void update() {
-		getNodeLayer().getChildren().addAll(nodeMaster.getAddedCells());
-		getLineLayer().getChildren().addAll(nodeMaster.getAddedEdges());
-		getNodeLayer().getChildren().removeAll(nodeMaster.getRemovedCells());
-		getLineLayer().getChildren().removeAll(nodeMaster.getRemovedEdges());
+		getNodeLayer().getChildren().addAll(nodeMaster.getAddedNodes());
+		getLineLayer().getChildren().addAll(nodeMaster.getAddedConnections());
+		getNodeLayer().getChildren().removeAll(nodeMaster.getRemovedNodes());
+		getLineLayer().getChildren().removeAll(nodeMaster.getRemovedConnections());
 		getNodeLayer().toFront();
 
 		// getLineLayer().toFront();
-		for (GNode cell : nodeMaster.getAddedCells()) {
-			handler.addMouseHandler(cell);
+		for (GNode cell : nodeMaster.getAddedNodes()) {
+			handler.makeMoveable(cell);
 		}
 
-		getGuiMaster().attachOrphansToGraphParent(nodeMaster.getAddedCells());
-		getGuiMaster().disconnectFromGraphParent(nodeMaster.getRemovedCells());
+		getGuiMaster().attachOrphansToGraphParent(nodeMaster.getAddedNodes());
+		getGuiMaster().disconnectFromGraphParent(nodeMaster.getRemovedNodes());
 
 		if (getActive() != null) {
 			String baseNode = "";
@@ -971,10 +978,10 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		} else
 			nodeInfo.setText(SystemUsage.getRamInfo());
 
-		nodeMaster.getAddedCells().clear();
-		nodeMaster.getAddedEdges().clear();
-		nodeMaster.getRemovedCells().clear();
-		nodeMaster.getRemovedEdges().clear();
+		nodeMaster.getAddedNodes().clear();
+		nodeMaster.getAddedConnections().clear();
+		nodeMaster.getRemovedNodes().clear();
+		nodeMaster.getRemovedConnections().clear();
 
 	}
 

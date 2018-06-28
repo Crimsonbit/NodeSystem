@@ -10,6 +10,11 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 /**
+ * <h1>GNodeMouseHandler</h1>
+ * <p>
+ * This class is responsible for Node Handling. Especially the moving inside of
+ * the NodeGraph
+ * </p>
  * 
  * @author Florian Wagner
  *
@@ -24,8 +29,8 @@ public class GNodeMouseHandler {
 		this.graph = g;
 	}
 
-	public void addMouseHandler(final Node node) {
-		this.node = (GNode) node;
+	public void makeMoveable(final Node n) {
+		this.node = (GNode) n;
 
 		node.setOnMousePressed(onMousePressedEventHandler);
 		node.setOnMouseDragged(onMouseDraggedEventHandler);
@@ -36,22 +41,24 @@ public class GNodeMouseHandler {
 	EventHandler<MouseEvent> onMousePressedEventHandler = new EventHandler<MouseEvent>() {
 
 		public void handle(MouseEvent event) {
-
+			GNode node = (GNode) event.getSource();
 			if (event.isPrimaryButtonDown() && !node.getNodeGraph().getState().equals(GState.PORTCON)) {
+
 				if (event.getClickCount() == 2) {
-					GNode node = (GNode) event.getSource();
 					node.toggleDraw();
 					node.redraw(true);
-
 				} else {
-					GNode node = (GNode) event.getSource();
 					if (!(node.isPortPressed())) {
 						node.getNodeGraph().setState(GState.NODE_MOVE);
+						for (GNode n : graph.getGuiMaster().getAllNodes()) {
+							if (!n.equals(node)) {
+								n.setActive(false);
+								n.redraw();
+							}
+						}
 						graph.setActive(node);
-						node.setActive(true);
-
-						node.redraw(true);
 						node.toFront();
+						node.redraw(true);
 
 						double scale = graph.getScaleValue();
 						dragContext.x = node.getBoundsInParent().getMinX() * scale - event.getScreenX();
@@ -69,13 +76,12 @@ public class GNodeMouseHandler {
 	EventHandler<MouseEvent> onMouseDraggedEventHandler = new EventHandler<MouseEvent>() {
 
 		public void handle(MouseEvent event) {
-
+			GNode node = (GNode) event.getSource();
 			if (!node.getNodeGraph().getState().equals(GState.PORTCON)) {
-				GNode n = (GNode) event.getSource();
-				if (!n.isPortPressed()) {
+				if (!node.isPortPressed()) {
 					if (event.isPrimaryButtonDown()) {
 						node.getNodeGraph().setState(GState.NODE_MOVE);
-						Node node = (Node) event.getSource();
+						node.setCursor(Cursor.MOVE);
 
 						double offsetX = event.getScreenX() + dragContext.x;
 						double offsetY = event.getScreenY() + dragContext.y;
@@ -87,9 +93,8 @@ public class GNodeMouseHandler {
 						offsetY /= scale;
 
 						node.relocate(offsetX, offsetY);
-						node.setCursor(Cursor.MOVE);
-						n.redraw(true);
-						n.getNodeGraph().update();
+						// node.redraw(true);
+						node.getNodeGraph().update();
 					}
 				}
 			}
@@ -100,20 +105,19 @@ public class GNodeMouseHandler {
 	EventHandler<MouseEvent> onMouseReleasedEventHandler = new EventHandler<MouseEvent>() {
 
 		public void handle(MouseEvent event) {
-
+			GNode node = (GNode) event.getSource();
 			if (!node.getNodeGraph().getState().equals(GState.PORTCON)) {
 				if (!(node.isPortPressed())) {
-					for (GNode n : graph.getGuiMaster().getAllCells()) {
-						if (!n.equals(node)) {
-							n.setActive(false);
-							n.redraw();
-						}
-					}
-
-					graph.setActive(node);
-					node.setCursor(Cursor.DEFAULT);
+					// for (GNode n : graph.getGuiMaster().getAllCells()) {
+					// if (!n.equals(node)) {
+					// n.setActive(false);
+					// n.redraw();
+					// }
+					// }
+					// graph.setActive(node);
 					node.redraw();
 					graph.setState(GState.DEFAULT);
+					node.setCursor(Cursor.DEFAULT);
 				}
 
 			}

@@ -302,12 +302,12 @@ public class GNode extends AnchorPane implements IGNode {
 
 		addView(top);
 		Polygon poly = new Polygon();
-		poly.setFill(Color.WHITE);
+		poly.setFill(GTheme.getInstance().getColor(GColors.COLOR_NODE_TRIANGLE_HOVERED));
 		poly.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
-			poly.setFill(Color.LIGHTGOLDENRODYELLOW);
+			poly.setFill(GTheme.getInstance().getColor(GColors.COLOR_NODE_TRIANGLE_DEFAULT));
 		});
 		poly.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
-			poly.setFill(Color.WHITE);
+			poly.setFill(GTheme.getInstance().getColor(GColors.COLOR_NODE_TRIANGLE_HOVERED));
 		});
 		poly.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
 			toggleDraw();
@@ -316,10 +316,10 @@ public class GNode extends AnchorPane implements IGNode {
 			redraw(true);
 		});
 
-		if (!this.toggledDraw) {
-			poly.getPoints().addAll(new Double[] { 10d, 5d, 2d, 5d, 6d, height / 1.2d });
-			addView(poly);
-		}
+		// if (!this.toggledDraw) {
+		poly.getPoints().addAll(new Double[] { 10d, 5d, 2d, 5d, 6d, height / 1.2d });
+		addView(poly);
+		// }
 	}
 
 	public void drawNodeTopArc(double width, double arc) {
@@ -346,12 +346,12 @@ public class GNode extends AnchorPane implements IGNode {
 		addView(top);
 
 		Polygon poly = new Polygon();
-		poly.setFill(Color.WHITE);
+		poly.setFill(GTheme.getInstance().getColor(GColors.COLOR_NODE_TRIANGLE_HOVERED));
 		poly.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
-			poly.setFill(Color.LIGHTGOLDENRODYELLOW);
+			poly.setFill(GTheme.getInstance().getColor(GColors.COLOR_NODE_TRIANGLE_DEFAULT));
 		});
 		poly.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
-			poly.setFill(Color.WHITE);
+			poly.setFill(GTheme.getInstance().getColor(GColors.COLOR_NODE_TRIANGLE_HOVERED));
 		});
 		poly.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
 			toggleDraw();
@@ -359,13 +359,13 @@ public class GNode extends AnchorPane implements IGNode {
 		poly.addEventFilter(MouseEvent.MOUSE_RELEASED, event -> {
 			redraw(true);
 		});
-		if (this.toggledDraw) {
-			double h1 = height / (1.2d);
-			h1 /= 2;
-			h1 += 1;
-			poly.getPoints().addAll(new Double[] { 2d, 3d, 2d, (height / 1.2d) - 2, 10d, h1 });
-			addView(poly);
-		}
+		// if (this.toggledDraw) {
+		double h1 = height / (1.2d);
+		h1 /= 2;
+		h1 += 1;
+		poly.getPoints().addAll(new Double[] { 2d, 3d, 2d, (height / 1.2d) - 2, 10d, h1 });
+		addView(poly);
+		// }
 
 	}
 

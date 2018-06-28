@@ -37,7 +37,7 @@ public class GTheme {
 
 	private void initColorTheme() {
 		if (theme == 0) {
-			getThemeColorMap().put(GColors.COLOR_NODE_ACTIVE, getColor(140d, 162d, 196d)); // new Color(0.992, 0.647,
+			getThemeColorMap().put(GColors.COLOR_NODE_ACTIVE, getColor(140d, 162d, 196d));
 			getThemeColorMap().put(GColors.COLOR_SELECTION, Color.LIGHTSKYBLUE);
 			getThemeColorMap().put(GColors.COLOR_ACTIVE_TOGGLED, getColor(140d, 162d, 196d));
 			getThemeColorMap().put(GColors.COLOR_PORT_INPUT, Color.CORNFLOWERBLUE);
@@ -48,6 +48,8 @@ public class GTheme {
 			getThemeColorMap().put(GColors.COLOR_BACKGROUND, getColor(32d));
 			getThemeColorMap().put(GColors.COLOR_BACKGROUND_LINES, getColor(49d));
 			getThemeColorMap().put(GColors.COLOR_NODE, getColor(10d));
+			getThemeColorMap().put(GColors.COLOR_NODE_TRIANGLE_DEFAULT, Color.WHITE);
+			getThemeColorMap().put(GColors.COLOR_NODE_TRIANGLE_HOVERED, Color.CORNFLOWERBLUE);
 
 		} else if (theme == 1) {
 			getThemeColorMap().put(GColors.COLOR_NODE_ACTIVE, Color.LIGHTSKYBLUE); // new Color(0.992, 0.647, 0.305, 1)
@@ -60,6 +62,8 @@ public class GTheme {
 			getThemeColorMap().put(GColors.COLOR_BACKGROUND_LINES, getColor(105d));
 			getThemeColorMap().put(GColors.COLOR_SHADOW_COLOR, getColor(0.1d));
 			getThemeColorMap().put(GColors.COLOR_NODE, getColor(72d));
+			getThemeColorMap().put(GColors.COLOR_NODE_TRIANGLE_DEFAULT, Color.WHITE);
+			getThemeColorMap().put(GColors.COLOR_NODE_TRIANGLE_HOVERED, Color.CORNFLOWERBLUE);
 		}
 	}
 

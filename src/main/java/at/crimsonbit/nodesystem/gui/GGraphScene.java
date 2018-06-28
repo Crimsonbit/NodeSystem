@@ -233,6 +233,11 @@ public class GGraphScene extends AnchorPane implements ILogging {
 		return scaleValue;
 	}
 
+	protected void setScaleValue(double sca) {
+		scaleValue = sca;
+		zoomTo(scaleValue, localMouseX, localMouseY);
+	}
+
 	private static double snap(double y) {
 		return ((int) y) + HALF_PIXEL_OFFSET;
 	}
@@ -241,7 +246,7 @@ public class GGraphScene extends AnchorPane implements ILogging {
 
 		this.scaleValue = scaleValue;
 		needsLayout = true;
-
+		
 		scaleTransform.setPivotX(x);
 		scaleTransform.setPivotY(y);
 		scaleTransform.setX(scaleValue);
@@ -259,7 +264,7 @@ public class GGraphScene extends AnchorPane implements ILogging {
 
 		// scaleTransform.setPivotX(x);
 		// scaleTransform.setPivotY(y);
-		for (GNode n : graph.getGuiMaster().getAllCells()) {
+		for (GNode n : graph.getGuiMaster().getAllNodes()) {
 			n.relocate(x, y);
 		}
 		layoutChildren();
@@ -359,34 +364,18 @@ public class GGraphScene extends AnchorPane implements ILogging {
 				double oldScale = scaleValue;
 
 				if (scrollEvent.getDeltaY() < 0) {
-					// scaleValue *= DELTA_MINUS;
-					// lineSpacing *= DELTA_MINUS;
+					scaleValue *= DELTA_MINUS;
+					lineSpacing *= DELTA_MINUS;
 				} else {
-					// scaleValue *= DELTA_PLUS;
-					// lineSpacing *= DELTA_PLUS;
+					scaleValue *= DELTA_PLUS;
+					lineSpacing *= DELTA_PLUS;
 				}
 
-				double f = (scaleValue / oldScale) - 1;
-				// f *= 10;
-				Bounds bounds = localToScene(getBoundsInLocal());
-				double dx = (scrollEvent.getSceneX() - (bounds.getWidth() / 2 + bounds.getMinX()));
-				double dy = (scrollEvent.getSceneY() - (bounds.getHeight() / 2 + bounds.getMinY()));
 
-				// dx /= scaleValue;
-				// dy /= scaleValue;
-
-				// note: pivot value must be untransformed, i. e. without scaling
-
-				// System.out.println(scaleValue);
-				// System.out.println(lineSpacing);
 				scaleValue = clamp(scaleValue, MIN_SCALE, MAX_SCALE);
-				// lineSpacing = clamp(lineSpacing, MIN_SPACING, MAX_SPACING);
-
-				// if (scaleValue != MIN_SCALE)
-				// zoomTo(scaleValue, f * dx, f * dy);
-
+		
 				if (scaleValue != MIN_SCALE)
-					zoomTo(scaleValue, dx / scaleValue, dy / scaleValue);
+					zoomTo(scaleValue, localMouseX, localMouseY);
 
 			}
 			scrollEvent.consume();

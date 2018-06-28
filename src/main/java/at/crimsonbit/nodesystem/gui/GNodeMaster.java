@@ -40,13 +40,9 @@ public class GNodeMaster {
 	private GNode graphParent;
 	private NodeMaster nodeMaster;
 	private Set<GNode> allNodes;
-
 	private Set<GNode> addedNodes, removedNodes;
-
 	private Set<GNodeConnection> allConnections;
-
 	private Set<GNodeConnection> addedConnections, removedConnections;
-
 	private Map<String, GNode> nodeMap; // <id, node>
 	private GNodeGraph graph;
 	private GPort outPort;
@@ -153,7 +149,7 @@ public class GNodeMaster {
 	public void removeConnection(GPort port) {
 		GNodeConnection c = null;
 		boolean succ = false;
-		for (GNodeConnection con : getAllEdges()) {
+		for (GNodeConnection con : getAllConnections()) {
 			if (con.getSourcePort() == port || con.getTargetPort() == port) {
 				c = con;
 				try {
@@ -211,7 +207,7 @@ public class GNodeMaster {
 	}
 
 	public void removeNode(GNode node) {
-		Iterator<GNodeConnection> iter = getAllEdges().iterator();
+		Iterator<GNodeConnection> iter = getAllConnections().iterator();
 		while (iter.hasNext()) {
 			GNodeConnection c = iter.next();
 			if (c.getSource() == node || c.getTarget() == node) {
@@ -233,11 +229,11 @@ public class GNodeMaster {
 		getNodeGraph().update();
 	}
 
-	public Set<GNode> getAllCells() {
+	public Set<GNode> getAllNodes() {
 		return allNodes;
 	}
 
-	public Set<GNodeConnection> getAllEdges() {
+	public Set<GNodeConnection> getAllConnections() {
 		return allConnections;
 	}
 
@@ -283,7 +279,7 @@ public class GNodeMaster {
 
 		GNodeConnection con = new GNodeConnection(port2, port1);
 
-		if (getAllEdges().contains(con)) {
+		if (getAllConnections().contains(con)) {
 			this.outPort = null;
 			this.inPort = null;
 			return false;
@@ -386,19 +382,19 @@ public class GNodeMaster {
 		graph.update();
 	}
 
-	public Set<GNode> getAddedCells() {
+	public Set<GNode> getAddedNodes() {
 		return addedNodes;
 	}
 
-	public Set<GNodeConnection> getAddedEdges() {
+	public Set<GNodeConnection> getAddedConnections() {
 		return addedConnections;
 	}
 
-	public Set<GNode> getRemovedCells() {
+	public Set<GNode> getRemovedNodes() {
 		return removedNodes;
 	}
 
-	public Set<GNodeConnection> getRemovedEdges() {
+	public Set<GNodeConnection> getRemovedConnections() {
 		return removedConnections;
 	}
 
