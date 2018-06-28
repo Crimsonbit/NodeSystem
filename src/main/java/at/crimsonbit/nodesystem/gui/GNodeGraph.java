@@ -103,58 +103,8 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private InnerShadow innerShadow;
 
 	public GNodeGraph() {
-		try {
-			log = SystemLogger.getLogger(logPane);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		log(Level.INFO, "Setting up NodeGraph...");
-
-		setNodeGraph(this);
-
-		this.selection = new Rectangle();
-		this.selection.setStroke(GTheme.getInstance().getColor(GColors.COLOR_SELECTION));
-		this.selection.setArcWidth(21.0);
-		this.selection.setArcHeight(21.0);
-		this.selection.setStrokeWidth(1);
-
-		this.selection.setFill(GTheme.getInstance().getColorWithOpacity(GColors.COLOR_SELECTION, 0.2d));
-		this.selection.getStrokeDashArray().add(10.0);
-		this.nodeMaster = new GNodeMaster(this);
-
-		this.nodePanel = new GNodePanel(this);
-		// this.getChildren().add(this.nodePanel);
-
-		this.canvas = new Group();
-		this.nodeLayer = new GNodeLayer();
-		this.lineLayer = new GLineLayer();
-		this.tempLineLayer = new GLineLayer();
-
-		this.canvas.getChildren().add(nodeLayer);
-		this.canvas.getChildren().add(lineLayer);
-		this.canvas.getChildren().add(tempLineLayer);
-		this.canvas.getChildren().add(this.selection);
-		this.getChildren().add(canvas);
-
-		this.handler = new GNodeMouseHandler(this);
-		// this.getChildren().add(this.settingsPane);
-
-		this.canvas.getTransforms().add(getScaleTransform());
-
-		graphDialog = new GPopUp();
-		graphDialog.addItem(-1, "Node Editor", true);
-		graphDialog.addSeparator(-2);
-		graphDialog.addItem(nodeMenu);
-		graphDialog.addItem(fileMenu);
-
-		this.setPopUpDialog(graphDialog);
-
-		setDefaulSettings();
-		log(Level.INFO, "NodeGraph set-up successfully!");
-
-		addInnerLayer();
-		addSelectGroupSupport();
+		this(null);
+		
 	}
 
 	public GNodeGraph(GLogPane logPane) {
@@ -344,7 +294,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	public Text getNodeInfoObject() {
 		return this.nodeInfo;
 	}
-
+	
 	/**
 	 * <h1>public void addInfo().</h1>
 	 * <hr>
@@ -818,10 +768,13 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 				log(Level.SEVERE, "Error while saving!");
 			}
 		else {
-			JFXToast.makeToast((Stage) getScene().getWindow(), "Error file is null!", ToastTime.TIME_SHORT,
-					ToastPosition.BOTTOM);
-
-			log(Level.SEVERE, "Error file is null!");
+			
+			//If file is null => aborted, so do nothing
+			
+//			JFXToast.makeToast((Stage) getScene().getWindow(), "Error file is null!", ToastTime.TIME_SHORT,
+//					ToastPosition.BOTTOM);
+//
+//			log(Level.SEVERE, "Error file is null!");
 		}
 	}
 
