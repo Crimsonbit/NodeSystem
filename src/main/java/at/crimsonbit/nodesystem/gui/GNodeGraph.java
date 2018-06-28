@@ -23,6 +23,7 @@ import at.crimsonbit.nodesystem.gui.layer.GLineLayer;
 import at.crimsonbit.nodesystem.gui.layer.GNodeLayer;
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.gui.node.IGConsumable;
+import at.crimsonbit.nodesystem.gui.settings.GGraphSettings;
 import at.crimsonbit.nodesystem.gui.settings.GSettings;
 import at.crimsonbit.nodesystem.gui.widget.searchbar.GSearchBar;
 import at.crimsonbit.nodesystem.gui.widget.toast.JFXToast;
@@ -85,7 +86,6 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private GNodePanel nodePanel;
 	private HashMap<INodeType, Color> colorLookup = new HashMap<INodeType, Color>();
 
-	private HashMap<GSettings, Object> settings = new HashMap<GSettings, Object>();
 	private Set<GNode> selectedNodesGroup = new HashSet<GNode>();
 
 	private GSearchBar bar = new GSearchBar();
@@ -153,8 +153,6 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		graphDialog.addItem(fileMenu);
 
 		this.setPopUpDialog(graphDialog);
-
-		setDefaulSettings();
 		log(Level.INFO, "NodeGraph set-up successfully!");
 		addInnerLayer();
 
@@ -169,13 +167,13 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		innerShadow.setOffsetY(4);
 
 		innerShadow.setBlurType(BlurType.GAUSSIAN);
-
+		GGraphSettings inst = GGraphSettings.getInstance();
 		innerShadow.setColor(GTheme.getInstance().getColor(GColors.COLOR_SHADOW_COLOR));
-		innerShadow.setWidth((double) getSettings().get(GSettings.SETTING_SHADOW_WIDTH));
-		innerShadow.setHeight((double) getSettings().get(GSettings.SETTING_SHADOW_HEIGHT));
-		innerShadow.setOffsetX((double) getSettings().get(GSettings.SETTING_SHADOW_WIDTH));
-		innerShadow.setOffsetY((double) getSettings().get(GSettings.SETTING_SHADOW_HEIGHT));
-		innerShadow.setRadius((double) getSettings().get(GSettings.SETTING_SHADOW_RADIUS));
+		innerShadow.setWidth((double) inst.getSetting(GSettings.SETTING_SHADOW_WIDTH));
+		innerShadow.setHeight((double) inst.getSetting(GSettings.SETTING_SHADOW_HEIGHT));
+		innerShadow.setOffsetX((double) inst.getSetting(GSettings.SETTING_SHADOW_WIDTH));
+		innerShadow.setOffsetY((double) inst.getSetting(GSettings.SETTING_SHADOW_HEIGHT));
+		innerShadow.setRadius((double) inst.getSetting(GSettings.SETTING_SHADOW_RADIUS));
 		clipboard = GClipboard.getClipboard(this);
 		setEffect(innerShadow);
 	}
@@ -308,40 +306,6 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		nodeInfo.relocate(getWidth() / 2, getHeight() / 2);
 		getChildren().add(nodeInfo);
 		update();
-	}
-
-	/**
-	 * <h1>public void addSetting({@link GSettings}, {@link Object})</h1>
-	 * <hr>
-	 * <p>
-	 * Using this method you can change a almost every setting, which is not
-	 * hardcoded into the nodesystem. To see all settings please have a look at
-	 * {@link GSettings}.
-	 * </p>
-	 * 
-	 * @param s
-	 *            the setting you want to change
-	 * @param r
-	 *            the value, please keep in mind, that setting settings to random
-	 *            stuff can break the nodesystem and it can throw unexpected errors.
-	 */
-	public void addSetting(GSettings s, Object r) {
-		this.settings.put(s, r);
-		init();
-	}
-
-	/**
-	 * <h1>public {@link HashMap}<{@link GSettings}, {@link Object}>
-	 * getSettings()</h1>
-	 * <p>
-	 * Returns the HashMap containing all the settings for the graph and their
-	 * corresponding values.
-	 * </p>
-	 * 
-	 * @return the settings of the graph
-	 */
-	public HashMap<GSettings, Object> getSettings() {
-		return this.settings;
 	}
 
 	/**
@@ -506,12 +470,12 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 						log(Level.INFO, "Node: " + getActive().getName() + " copied to clipboard!");
 					}
 				}
-				
-				if(event.isControlDown() && event.getCode().equals(KeyCode.R)) {
+
+				if (event.isControlDown() && event.getCode().equals(KeyCode.R)) {
 					setScaleValue(1d);
-					
+
 				}
-				
+
 				/**
 				 * Pastes from the clipboard
 				 */
@@ -996,16 +960,6 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	 */
 	public double getScale() {
 		return this.getScaleValue();
-	}
-
-	private void setDefaulSettings() {
-		log(Level.INFO, "Setting defaults...");
-		addSetting(GSettings.SETTING_CURVE_WIDTH, 4d);
-		addSetting(GSettings.SETTING_CURVE_CURVE, 50d);
-		addSetting(GSettings.SETTING_SHADOW_WIDTH, 5d);
-		addSetting(GSettings.SETTING_SHADOW_HEIGHT, 5d);
-		addSetting(GSettings.SETTING_SHADOW_RADIUS, 20d);
-
 	}
 
 	/**

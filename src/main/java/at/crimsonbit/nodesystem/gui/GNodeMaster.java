@@ -47,6 +47,7 @@ public class GNodeMaster {
 	private GNodeGraph graph;
 	private GPort outPort;
 	private GPort inPort;
+	private GPort tempconport;
 
 	protected void setNodeMaster(NodeMaster nm) {
 		this.nodeMaster = nm;
@@ -93,6 +94,22 @@ public class GNodeMaster {
 			}
 		}
 		return null;
+	}
+
+	public void setSourceConPort(GPort p) {
+		this.tempconport = p;
+	}
+
+	public GPort getSourceConPort() {
+		return this.tempconport;
+	}
+
+	public GPort getFirstPort() {
+		return this.outPort;
+	}
+
+	public GPort getSecondPort() {
+		return this.inPort;
 	}
 
 	public void setFirstPort(GPort port) {

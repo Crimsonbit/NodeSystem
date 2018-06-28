@@ -4,6 +4,7 @@ import at.crimsonbit.nodesystem.application.NodeSystemBuilder;
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.color.GColors;
 import at.crimsonbit.nodesystem.gui.color.GTheme;
+import at.crimsonbit.nodesystem.gui.settings.GGraphSettings;
 import at.crimsonbit.nodesystem.gui.settings.GSettings;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -25,16 +26,15 @@ public class SimpleGraph extends Application {
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("Node Editor");
 
-		GNodeGraph graph = new NodeSystemBuilder(1275, 800, true).registerAllModules("Modules/")
-				.registerDefaultNodes(true).build();
+		GNodeGraph graph = new NodeSystemBuilder(1275, 800, true).registerAllModules("Modules/").build();
 
 		/**
 		 * Example of how to change settings used in the node-system
 		 * 
 		 */
 
-		graph.addSetting(GSettings.SETTING_CURVE_WIDTH, 6d);
-		graph.addSetting(GSettings.SETTING_CURVE_CURVE, 100d);
+		GGraphSettings.getInstance().set(GSettings.SETTING_CURVE_WIDTH, 6d);
+		GGraphSettings.getInstance().set(GSettings.SETTING_CURVE_CURVE, 100d);
 		GTheme.getInstance().putColor(GColors.COLOR_BACKGROUND_LINES, Color.WHITE);
 		graph.updateColors();
 

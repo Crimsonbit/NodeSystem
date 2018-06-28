@@ -10,6 +10,7 @@ import at.crimsonbit.nodesystem.gui.dialog.GEntry;
 import at.crimsonbit.nodesystem.gui.dialog.GPopUp;
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.gui.node.IGConsumable;
+import at.crimsonbit.nodesystem.gui.settings.GGraphSettings;
 import at.crimsonbit.nodesystem.gui.settings.GSettings;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -60,7 +61,7 @@ public class GPort extends Group implements IGConsumable {
 		this.y = y;
 		this.label = new GPortLabel(x, y, labels, input);
 		this.rect = new GPortRect(x, y, input, node);
-		this.conHelper = new GPortConHelper(x, y, input);
+		this.conHelper = new GPortConHelper(x, y, input, this);
 		GPopUp pop = new GPopUp();
 		pop.addItem(-1, labels, true);
 		pop.addItem(0, "Connect");
@@ -157,8 +158,10 @@ public class GPort extends Group implements IGConsumable {
 					p.getConHelper().setMarked(false);
 				}
 			}
+
 		});
 		setOnDragDetected(evt -> {
+			node.getNodeGraph().getGuiMaster().setSourceConPort(this);
 			startFullDrag();
 		});
 		setOnMouseDragged(new EventHandler<MouseEvent>() {
@@ -173,7 +176,7 @@ public class GPort extends Group implements IGConsumable {
 
 					node.getNodeGraph().setState(GState.PORTCON);
 					line.setStroke(node.getNodeType().getColor());
-					line.setStrokeWidth((double) node.getNodeGraph().getSettings().get(GSettings.SETTING_CURVE_WIDTH));
+					line.setStrokeWidth((double) GGraphSettings.getInstance().getSetting(GSettings.SETTING_CURVE_WIDTH));
 					line.startXProperty().bind(node.layoutXProperty().add(getPortX() + MAGIC_OFFSET));
 					line.startYProperty().bind(node.layoutYProperty().add(getY() + MAGIC_OFFSET));
 
@@ -182,7 +185,7 @@ public class GPort extends Group implements IGConsumable {
 
 					line.endXProperty().bind(node.layoutXProperty().add(event.getX()));
 					line.endYProperty().bind(node.layoutYProperty().add(event.getY()));
-					// line.toFront();
+					line.toFront();
 
 					node.getNodeGraph().getTempLineLayer().getChildren().remove(line);
 					node.getNodeGraph().getTempLineLayer().getChildren().add(line);

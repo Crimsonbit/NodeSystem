@@ -3,6 +3,7 @@ package at.crimsonbit.nodesystem.gui.node;
 import at.crimsonbit.nodesystem.gui.color.GColors;
 import at.crimsonbit.nodesystem.gui.color.GTheme;
 import at.crimsonbit.nodesystem.gui.node.port.GPort;
+import at.crimsonbit.nodesystem.gui.settings.GGraphSettings;
 import at.crimsonbit.nodesystem.gui.settings.GSettings;
 import javafx.scene.Group;
 import javafx.scene.control.Tooltip;
@@ -31,7 +32,7 @@ public class GNodeConnection extends Group {
 	private Tooltip tTip = new Tooltip();
 	private double width;
 	private final int MAGIC_OFFSET = 3;
-
+	private GGraphSettings inst = GGraphSettings.getInstance();
 	/**
 	 * Initializes a new connecten
 	 * 
@@ -70,16 +71,16 @@ public class GNodeConnection extends Group {
 		line.setControlX2(targetPort.getPortX() - 50);
 		line.setControlY2(targetPort.getY());
 		line.controlX1Property().bind(source.layoutXProperty().add(sourcePort.getPortX()
-				+ (double) source.getNodeGraph().getSettings().get(GSettings.SETTING_CURVE_CURVE)));
+				+ (double) inst.getSetting(GSettings.SETTING_CURVE_CURVE)));
 		line.controlY1Property().bind(source.layoutYProperty().add(sourcePort.getY()));
 		line.controlX2Property().bind(target.layoutXProperty().add(targetPort.getPortX()
-				- (double) source.getNodeGraph().getSettings().get(GSettings.SETTING_CURVE_CURVE)));
+				- (double) inst.getSetting(GSettings.SETTING_CURVE_CURVE)));
 		line.controlY2Property().bind(target.layoutYProperty().add(targetPort.getY()));
 
 		line.endXProperty().bind(target.layoutXProperty().add(targetPort.getPortX() + MAGIC_OFFSET));
 		line.endYProperty().bind(target.layoutYProperty().add(targetPort.getY() + MAGIC_OFFSET));
 		line.setStroke(source.getNodeType().getColor());
-		line.setStrokeWidth((double) source.getNodeGraph().getSettings().get(GSettings.SETTING_CURVE_WIDTH));
+		line.setStrokeWidth((double) inst.getSetting(GSettings.SETTING_CURVE_WIDTH));
 		line.setStrokeLineCap(StrokeLineCap.ROUND);
 		line.setFill(Color.TRANSPARENT);
 
@@ -88,11 +89,11 @@ public class GNodeConnection extends Group {
 		e.setBlurType(BlurType.GAUSSIAN);
 	
 		e.setColor(GTheme.getInstance().getColor(GColors.COLOR_SHADOW_COLOR));
-		e.setWidth((double) source.getNodeGraph().getSettings().get(GSettings.SETTING_SHADOW_WIDTH));
-		e.setHeight((double) source.getNodeGraph().getSettings().get(GSettings.SETTING_SHADOW_HEIGHT));
-		e.setOffsetX((double) source.getNodeGraph().getSettings().get(GSettings.SETTING_SHADOW_WIDTH));
-		e.setOffsetY((double) source.getNodeGraph().getSettings().get(GSettings.SETTING_SHADOW_HEIGHT));
-		e.setRadius((double) source.getNodeGraph().getSettings().get(GSettings.SETTING_SHADOW_RADIUS));
+		e.setWidth((double) inst.getSetting(GSettings.SETTING_SHADOW_WIDTH));
+		e.setHeight((double) inst.getSetting(GSettings.SETTING_SHADOW_HEIGHT));
+		e.setOffsetX((double) inst.getSetting(GSettings.SETTING_SHADOW_WIDTH));
+		e.setOffsetY((double) inst.getSetting(GSettings.SETTING_SHADOW_HEIGHT));
+		e.setRadius((double) inst.getSetting(GSettings.SETTING_SHADOW_RADIUS));
 		line.setEffect(e);
 	}
 
@@ -117,18 +118,18 @@ public class GNodeConnection extends Group {
 		line.setControlY2(targetPort.getY());
 
 		line.controlX1Property().bind(source.layoutXProperty().add(sourcePort.getPortX()
-				+ (double) source.getNodeGraph().getSettings().get(GSettings.SETTING_CURVE_CURVE)));
+				+ (double) inst.getSetting(GSettings.SETTING_CURVE_CURVE)));
 		line.controlY1Property().set(y);
 
 		line.controlX2Property().bind(target.layoutXProperty().add(targetPort.getPortX()
-				- (double) source.getNodeGraph().getSettings().get(GSettings.SETTING_CURVE_CURVE)));
+				- (double) inst.getSetting(GSettings.SETTING_CURVE_CURVE)));
 		line.controlY2Property().bind(target.layoutYProperty().add(targetPort.getY()));
 
 		line.endXProperty().bind(target.layoutXProperty().add(targetPort.getPortX() + MAGIC_OFFSET));
 		line.endYProperty().bind(target.layoutYProperty().add(targetPort.getY() + MAGIC_OFFSET));
 
 		line.setStroke(source.getNodeType().getColor());
-		line.setStrokeWidth((double) source.getNodeGraph().getSettings().get(GSettings.SETTING_CURVE_WIDTH));
+		line.setStrokeWidth((double) inst.getSetting(GSettings.SETTING_CURVE_WIDTH));
 		line.setStrokeLineCap(StrokeLineCap.ROUND);
 		line.setFill(Color.TRANSPARENT);
 
@@ -136,11 +137,11 @@ public class GNodeConnection extends Group {
 		e.setBlurType(BlurType.GAUSSIAN);
 		e.setBlurType(BlurType.GAUSSIAN);
 		e.setColor(GTheme.getInstance().getColor(GColors.COLOR_SHADOW_COLOR));
-		e.setWidth((double) source.getNodeGraph().getSettings().get(GSettings.SETTING_SHADOW_WIDTH));
-		e.setHeight((double) source.getNodeGraph().getSettings().get(GSettings.SETTING_SHADOW_HEIGHT));
-		e.setOffsetX((double) source.getNodeGraph().getSettings().get(GSettings.SETTING_SHADOW_WIDTH));
-		e.setOffsetY((double) source.getNodeGraph().getSettings().get(GSettings.SETTING_SHADOW_HEIGHT));
-		e.setRadius((double) source.getNodeGraph().getSettings().get(GSettings.SETTING_SHADOW_RADIUS));
+		e.setWidth((double) inst.getSetting(GSettings.SETTING_SHADOW_WIDTH));
+		e.setHeight((double) inst.getSetting(GSettings.SETTING_SHADOW_HEIGHT));
+		e.setOffsetX((double) inst.getSetting(GSettings.SETTING_SHADOW_WIDTH));
+		e.setOffsetY((double) inst.getSetting(GSettings.SETTING_SHADOW_HEIGHT));
+		e.setRadius((double) inst.getSetting(GSettings.SETTING_SHADOW_RADIUS));
 		line.setEffect(e);
 		// getChildren().add(line);
 		//System.out.println(getChildren());

@@ -1,5 +1,8 @@
 package at.crimsonbit.nodesystem.gui.node.port;
 
+import at.crimsonbit.nodesystem.gui.GNodeMaster;
+import at.crimsonbit.nodesystem.gui.settings.GGraphSettings;
+import at.crimsonbit.nodesystem.gui.settings.GSettings;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -26,7 +29,8 @@ public class GPortConHelper extends Rectangle {
 	private final double DRAW_OFFSET_OUTPUT = 5d;
 	private boolean isInput = false;
 	private boolean isMarked = false;
-	private boolean doShow = true;
+	private boolean doShow = (boolean) GGraphSettings.getInstance().getSetting(GSettings.SETTING_SHOW_CONNECTION_HELP);;
+	private GPort source;
 
 	public GPortConHelper() {
 		setX(x);
@@ -35,12 +39,13 @@ public class GPortConHelper extends Rectangle {
 		draw();
 	}
 
-	public GPortConHelper(double xs, double ys, boolean input) {
+	public GPortConHelper(double xs, double ys, boolean input, GPort source) {
 		this.x = xs;
 		this.y = ys;
 		this.isInput = input;
-		setArcHeight(20d);
-		setArcWidth(20d);
+		this.source = source;
+		setArcHeight(10d);
+		setArcWidth(10d);
 		if (!isInput)
 			setX(xs - DRAW_OFFSET_OUTPUT);
 		else
@@ -71,7 +76,26 @@ public class GPortConHelper extends Rectangle {
 
 		setOnMouseDragEntered(event -> {
 			if (doShow) {
-				setFill(new Color(0.2d, 0.8d, 0.2d, 0.4d));
+				GNodeMaster master = this.source.getNode().getNodeGraph().getGuiMaster();
+				setFill(new Color(0.8d, 0.2d, 0.2d, 0.4d));
+
+				if (!master.getSourceConPort().isInput()
+						&& master.getNodeMaster().checkConnectionPossible(this.source.getNode().getAbstractNode(),
+								this.source.getStringID(), master.getSourceConPort().getNode().getAbstractNode(),
+								master.getSourceConPort().getStringID())
+
+						|| master.getSourceConPort().isInput() && master.getNodeMaster().checkConnectionPossible(
+								master.getSourceConPort().getNode().getAbstractNode(),
+								master.getSourceConPort().getStringID(), this.source.getNode().getAbstractNode(),
+								this.source.getStringID())) {
+					setFill(new Color(0.2d, 0.8d, 0.2d, 0.4d));
+				}
+
+				if ((!this.source.isInput() && !master.getSourceConPort().isInput())
+						|| (this.source.isInput() && master.getSourceConPort().isInput())
+						|| (this.source.getNode().equals(master.getSourceConPort().getNode())))
+					setFill(new Color(0.8d, 0.2d, 0.2d, 0.4d));
+
 			}
 			setMarked(true);
 		});

@@ -11,6 +11,7 @@ import at.crimsonbit.nodesystem.gui.color.GStyle;
 import at.crimsonbit.nodesystem.gui.color.GTheme;
 import at.crimsonbit.nodesystem.gui.dialog.GPopUp;
 import at.crimsonbit.nodesystem.gui.node.port.GPort;
+import at.crimsonbit.nodesystem.gui.settings.GGraphSettings;
 import at.crimsonbit.nodesystem.gui.settings.GSettings;
 import at.crimsonbit.nodesystem.node.IGuiNodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
@@ -418,11 +419,12 @@ public class GNode extends AnchorPane implements IGNode {
 		e = new DropShadow();
 		e.setBlurType(BlurType.GAUSSIAN);
 		e.setColor(GTheme.getInstance().getColor(GColors.COLOR_SHADOW_COLOR));
-		e.setWidth((double) getNodeGraph().getSettings().get(GSettings.SETTING_SHADOW_WIDTH));
-		e.setHeight((double) getNodeGraph().getSettings().get(GSettings.SETTING_SHADOW_HEIGHT));
-		e.setOffsetX((double) getNodeGraph().getSettings().get(GSettings.SETTING_SHADOW_WIDTH));
-		e.setOffsetY((double) getNodeGraph().getSettings().get(GSettings.SETTING_SHADOW_HEIGHT));
-		e.setRadius((double) getNodeGraph().getSettings().get(GSettings.SETTING_SHADOW_RADIUS));
+		GGraphSettings inst = GGraphSettings.getInstance();
+		e.setWidth((double) inst.getSetting(GSettings.SETTING_SHADOW_WIDTH));
+		e.setHeight((double) inst.getSetting(GSettings.SETTING_SHADOW_HEIGHT));
+		e.setOffsetX((double) inst.getSetting(GSettings.SETTING_SHADOW_WIDTH));
+		e.setOffsetY((double) inst.getSetting(GSettings.SETTING_SHADOW_HEIGHT));
+		e.setRadius((double) inst.getSetting(GSettings.SETTING_SHADOW_RADIUS));
 		base.setEffect(e);
 	}
 
