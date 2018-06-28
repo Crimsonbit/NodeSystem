@@ -1,5 +1,6 @@
 package at.crimsonbit.nodesystem.gui;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -20,7 +21,7 @@ import at.crimsonbit.nodesystem.gui.node.port.GPort;
 import at.crimsonbit.nodesystem.gui.widget.toast.JFXToast;
 import at.crimsonbit.nodesystem.gui.widget.toast.ToastPosition;
 import at.crimsonbit.nodesystem.gui.widget.toast.ToastTime;
-import at.crimsonbit.nodesystem.node.types.Base;
+import at.crimsonbit.nodesystem.node.types.IGuiNodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeMaster;
@@ -176,6 +177,16 @@ public class GNodeMaster {
 		}
 	}
 
+	public void registerNodesInJar(String[] jarfile) {
+		try {
+			this.nodeMaster.registerNodesFromJar(jarfile);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public void registerNodes(String packag) {
 		this.nodeMaster.registerNodes(packag);
 	}
@@ -243,10 +254,6 @@ public class GNodeMaster {
 
 	}
 
-	public void addNode(String id, Base type, boolean draw, GNodeGraph graph) {
-		addNode(new GNode(id, type, draw, graph));
-	}
-
 	public void addNode(GNode cell) {
 		allNodes.add(cell);
 		addedNodes.add(cell);
@@ -286,7 +293,7 @@ public class GNodeMaster {
 		try {
 			getNodeMaster().setConnection(port1.getNode().getAbstractNode(), port1.getStringID(),
 					port2.getNode().getAbstractNode(), port2.getStringID());
-			port1.getPortRectangle().setInputColor(graph.getColorLookup().get(port2.getNode().getNodeType()));
+			port1.getPortRectangle().setInputColor(port2.getNode().getNodeType().getColor());
 			port1.getPortRectangle().redraw();
 			port1.redraw();
 			port1.getNode().getConnections().add(con);
@@ -340,7 +347,7 @@ public class GNodeMaster {
 		Map<AbstractNode, GNode> cache = new HashMap<>();
 
 		for (AbstractNode node : master.getAllNodes()) {
-			Class<? extends GNode> clazz = getNodeGraph().getNodeMap().get(master.getTypeOfNode(node));
+			Class<? extends GNode> clazz = ((IGuiNodeType) master.getTypeOfNode(node)).getCustomNodeClass();
 			Constructor<? extends GNode> constr = clazz.getConstructor(String.class, int.class, boolean.class,
 					GNodeGraph.class);
 			GNode gn = constr.newInstance(master.getTypeOfNode(node).toString(), master.getIdOfNode(node), true, graph);

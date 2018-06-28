@@ -29,21 +29,10 @@ import at.crimsonbit.nodesystem.gui.widget.toast.JFXToast;
 import at.crimsonbit.nodesystem.gui.widget.toast.ToastPosition;
 import at.crimsonbit.nodesystem.gui.widget.toast.ToastTime;
 import at.crimsonbit.nodesystem.node.arduino.ArduinoNodeClass;
-import at.crimsonbit.nodesystem.node.base.OutputNodeClass;
-import at.crimsonbit.nodesystem.node.base.PathNodeClass;
-import at.crimsonbit.nodesystem.node.constant.ConstantNodeClass;
 import at.crimsonbit.nodesystem.node.image.ImageNodeClass;
 import at.crimsonbit.nodesystem.node.types.Arduino;
 import at.crimsonbit.nodesystem.node.types.ArduinoPinMode;
-import at.crimsonbit.nodesystem.node.types.Base;
-import at.crimsonbit.nodesystem.node.types.Calculate;
-import at.crimsonbit.nodesystem.node.types.Constant;
-import at.crimsonbit.nodesystem.node.types.Image;
-import at.crimsonbit.nodesystem.node.types.ImageFilter;
-import at.crimsonbit.nodesystem.node.types.ImageHelper;
-import at.crimsonbit.nodesystem.node.types.Math;
-import at.crimsonbit.nodesystem.node.types.Noise;
-import at.crimsonbit.nodesystem.node.types.Terrain;
+import at.crimsonbit.nodesystem.node.types.IGuiNodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeMaster;
 import at.crimsonbit.nodesystem.nodebackend.misc.NoSuchNodeException;
@@ -104,7 +93,6 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private Set<GNode> selectedNodesGroup = new HashSet<GNode>();
 
 	private GSearchBar bar = new GSearchBar();
-	private final Map<INodeType, Class<? extends GNode>> nodeMap = new HashMap<INodeType, Class<? extends GNode>>();
 	private GClipboard clipboard;
 	private DragContext dragContext = new DragContext();
 	private FileChooser fileChooser = new FileChooser();
@@ -127,7 +115,6 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		}
 		log(Level.INFO, "Setting up NodeGraph...");
 
-		setDefaultColorLookup();
 		setNodeGraph(this);
 
 		this.selection = new Rectangle();
@@ -184,7 +171,6 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		}
 		log(Level.INFO, "Setting up NodeGraph...");
 
-		setDefaultColorLookup();
 		setNodeGraph(this);
 
 		this.selection = new Rectangle();
@@ -283,25 +269,10 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 			log(Level.INFO, "Loading internal nodes...");
 			getGuiMaster().registerNodes(INTERNAL_NODES);
 		}
-		fillNodeList();
 		loadMenus();
 		addKeySupport();
 
 		log(Level.INFO, "Added Menus and Key-support!");
-		addCustomNode(Base.OUTPUT, OutputNodeClass.class);
-		addCustomNode(Base.PATH, PathNodeClass.class);
-
-		for (INodeType t : Arduino.values()) {
-			addCustomNode(t, ArduinoNodeClass.class);
-		}
-
-		for (INodeType t : Image.values()) {
-			addCustomNode(t, ImageNodeClass.class);
-		}
-
-		for (INodeType t : Constant.values()) {
-			addCustomNode(t, ConstantNodeClass.class);
-		}
 		log(Level.INFO, "Added default custom node classes!");
 	}
 
@@ -331,39 +302,6 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 				event.consume();
 
 			});
-		}
-	}
-
-	/**
-	 * <h1>public void addCustomNode({@link INodeType}, {@link Class}).</h1>
-	 * <hr>
-	 * <p>
-	 * With this method it is possible to add custom node-classes to specific
-	 * node-types. For more information on how to add a custom node-type and class,
-	 * please see the example.
-	 * </p>
-	 * 
-	 * @param type
-	 *            the node you want to add your custom class.
-	 * @param clazz
-	 *            the {@link Class} of your custom node-class you want to use.
-	 */
-	public void addCustomNode(INodeType type, Class<? extends GNode> clazz) {
-		getNodeMap().put(type, clazz);
-	}
-
-	public void addCustomNode(INodeType[] values, Class<? extends GNode> clazz) {
-		for (INodeType t : values) {
-			getNodeMap().put(t, clazz);
-		}
-
-	}
-
-	private void fillNodeList() {
-		GNode dummy_tmp = new GNode("dummy", false);
-		Set<INodeType> map = getGuiMaster().getNodeMaster().getAllNodeClasses();
-		for (INodeType type : map) {
-			getNodeMap().put(type, dummy_tmp.getClass());
 		}
 	}
 
@@ -661,26 +599,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 				}
 
-				/**
-				 * Sets the constant
-				 */
-				if (event.isShiftDown() && event.getCode().equals(KeyCode.C) && !(getSelectedNodesGroup().size() > 0)) {
-					for (INodeType t : Constant.values())
-						if (getActive().getNodeType().equals(t)) {
-							((ConstantNodeClass) getActive()).setConstant();
-							// update();
-						}
-				}
-				/**
-				 * calculates the output
-				 */
-				if (event.isShiftDown() && event.getCode().equals(KeyCode.O) && !(getSelectedNodesGroup().size() > 0)) {
-					if (getActive().getNodeType().equals(Base.OUTPUT)) {
-						((OutputNodeClass) getActive()).setOutput();
-
-						// update();
-					}
-				}
+				getSelectedNodesGroup().forEach(n -> n.onKeyPressed(event));
 			}
 
 			/**
@@ -720,6 +639,24 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	public void setPopUpDialog(GPopUp dialog) {
 		this.popUpDialog = dialog;
 		addPopUpHandler(this.popUpDialog);
+	}
+
+	/**
+	 * <h1>public void registerNodesInJar({@link String}).</h1>
+	 * <hr>
+	 * <p>
+	 * This method registers all nodes within the jar File given by jarfile. The
+	 * path is a {@link String} that has to be either a full or relative Path to the
+	 * jar file. The method does search all packages in the jar File automatically!
+	 * </p>
+	 * 
+	 * @param jarfile
+	 *            The path to the jar File
+	 */
+	public void registerNodesInJar(String[] jarfile) {
+		log(Level.INFO, "Registering custom nodes...");
+		getGuiMaster().registerNodesInJar(jarfile);
+
 	}
 
 	/**
@@ -840,8 +777,8 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	public void consumeMessage(int id, GEntry source) {
 
 		if (id < 1000) {
-			INodeType type = getGuiMaster().getNodeMaster().getTypeByName(source.getName());
-			Class<? extends GNode> clazz = getNodeMap().get(type);
+			IGuiNodeType type = (IGuiNodeType) getGuiMaster().getNodeMaster().getTypeByName(source.getName());
+			Class<? extends GNode> clazz = type.getCustomNodeClass();
 			Constructor<? extends GNode> con;
 			try {
 				con = clazz.getConstructor(String.class, INodeType.class, boolean.class, GNodeGraph.class, double.class,
@@ -1115,64 +1052,6 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 	}
 
-	private void setDefaultColorLookup() {
-		log(Level.INFO, "Setting up default color lookup...");
-		getColorLookup().put(Base.OUTPUT, Color.LIGHTBLUE);
-		getColorLookup().put(Base.PATH, Color.DARKSEAGREEN);
-
-		for (INodeType t : Arduino.values())
-			getColorLookup().put(t, new Color(0, (double) 152 / 255d, (double) 157 / 255d, 1));
-
-		for (INodeType t : ArduinoPinMode.values())
-
-			getColorLookup().put(t, new Color(0, (double) 152 / 255d, (double) 157 / 255d, 1));
-
-		for (INodeType t : Noise.values())
-			getColorLookup().put(t, Color.LIGHTCORAL);
-
-		for (INodeType t : ImageHelper.values())
-			getColorLookup().put(t, Color.DARKGREEN);
-
-		for (INodeType t : Terrain.values())
-			getColorLookup().put(t, Color.BLUEVIOLET);
-
-		for (INodeType t : Constant.values())
-			getColorLookup().put(t, Color.INDIANRED);
-
-		for (INodeType t : Math.values())
-			getColorLookup().put(t, Color.ORANGE);
-
-		for (INodeType t : Calculate.values())
-			getColorLookup().put(t, Color.DARKORANGE);
-
-		for (INodeType t : Image.values())
-			getColorLookup().put(t, Color.BROWN);
-
-		for (INodeType t : ImageFilter.values())
-			getColorLookup().put(t, Color.SADDLEBROWN);
-
-	}
-
-	/**
-	 * <h1>public void addColorLookup({@link INodeType}, {@link Color})</h1>
-	 * <hr>
-	 * <p>
-	 * This method allows the user to add custom colors to nodes.
-	 * </p>
-	 * 
-	 * @param type
-	 *            the type you want to define or change the color
-	 * @param c
-	 *            the color
-	 */
-	public void addColorLookup(INodeType type, Color c) {
-		this.colorLookup.put(type, c);
-	}
-
-	public HashMap<INodeType, Color> getColorLookup() {
-		return colorLookup;
-	}
-
 	/**
 	 * <h1>public void clearGraph()</h1>
 	 * <p>
@@ -1195,9 +1074,4 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	public void setNodeScene(Scene sc) {
 		this.sc = sc;
 	}
-
-	public Map<INodeType, Class<? extends GNode>> getNodeMap() {
-		return nodeMap;
-	}
-
 }

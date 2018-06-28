@@ -1,15 +1,18 @@
 package at.crimsonbit.nodesystem.application;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.GNodeSystem;
 import at.crimsonbit.nodesystem.gui.GNodeView;
-import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.util.logger.SystemLogger;
 import javafx.scene.Scene;
-import javafx.scene.paint.Color;
 
 /**
  * <h1>NodeSystemBuilder</h1>
@@ -32,6 +35,8 @@ public class NodeSystemBuilder {
 	private boolean default_nodes;
 	private ApplicationContext context = ApplicationContext.getContext();
 
+	private List<String> jarfiles = new ArrayList<>();
+
 	/**
 	 * Constructor.
 	 * 
@@ -49,7 +54,7 @@ public class NodeSystemBuilder {
 		if (log) {
 			SystemLogger.attachLogger(true, true);
 		}
-		
+
 		sys = new GNodeSystem();
 		view = sys.getNodeView();
 		graph = view.getNodeGraph();
@@ -96,11 +101,36 @@ public class NodeSystemBuilder {
 		return this;
 	}
 
-	public NodeSystemBuilder registerColors(Color c, INodeType... types) {
-		if (graph != null)
-			for (INodeType t : types) {
-				graph.addColorLookup(t, c);
+	/**
+	 * <h1>registerCustomNodesJar({@link String}</h1>
+	 * <p>
+	 * This method can be called as many times as neccessary! With this method you
+	 * can register your own custom nodes by telling this method the jar File module
+	 * </p>
+	 * 
+	 * @param pack
+	 *            the jar File path
+	 * @param c
+	 *            the color of the nodes
+	 * @return this
+	 */
+	public NodeSystemBuilder registerCustomNodesJar(String jarfile) {
+		jarfiles.add(jarfile);
+
+		return this;
+	}
+
+	public NodeSystemBuilder registerAllModules(String path) {
+		Path p = Paths.get(path);
+		if (p != null && Files.isDirectory(p)) {
+			try {
+				Files.walk(p).filter(t -> t.getFileName().toString().endsWith(".jar")).forEach(f -> {
+					registerCustomNodesJar(f.toAbsolutePath().toString());
+				});
+			} catch (IOException e) {
+				throw new RuntimeException("Could not load Modules", e);
 			}
+		}
 		return this;
 	}
 
@@ -168,6 +198,7 @@ public class NodeSystemBuilder {
 	 */
 	public GNodeGraph build() {
 		if (this.graph != null) {
+			this.graph.registerNodesInJar(jarfiles.toArray(new String[jarfiles.size()]));
 			graph.initGraph(default_nodes);
 			this.graph.log(Level.INFO, "NodeSystem ready!");
 			return this.graph;

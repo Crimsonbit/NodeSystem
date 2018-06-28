@@ -195,7 +195,7 @@ public class GPort extends Group implements IGConsumable {
 						line = new Line();
 					
 					node.getNodeGraph().setState(GState.PORTCON);
-					line.setStroke(node.getNodeGraph().getColorLookup().get(node.getNodeType()));
+					line.setStroke(node.getNodeType().getColor());
 					line.setStrokeWidth(
 							(double) node.getNodeGraph().getSettings().get(GSettings.SETTING_CURVE_WIDTH));
 					line.startXProperty().bind(node.layoutXProperty().add(getPortX() + MAGIC_OFFSET));

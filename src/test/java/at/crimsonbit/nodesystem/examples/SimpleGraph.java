@@ -1,8 +1,6 @@
 package at.crimsonbit.nodesystem.examples;
 
 import at.crimsonbit.nodesystem.application.NodeSystemBuilder;
-import at.crimsonbit.nodesystem.examples.customnode.CustomNodeClassExample;
-import at.crimsonbit.nodesystem.examples.customnode.CustomNodes;
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.color.GColors;
 import at.crimsonbit.nodesystem.gui.color.GTheme;
@@ -28,13 +26,8 @@ public class SimpleGraph extends Application {
 		primaryStage.setTitle("Node Editor");
 
 		GNodeGraph graph = new NodeSystemBuilder(1275, 800, true)
-				.registerCustomNodes("at.crimsonbit.nodesystem.examples.customnode")
-				.registerColors(Color.SANDYBROWN, CustomNodes.values()).registerDefaultNodes(true).build();
-
-		/**
-		 * Example of how to add custom node-classes to specific node types
-		 */
-		graph.addCustomNode(CustomNodes.EXAMPLE, new CustomNodeClassExample().getClass());
+				.registerCustomNodes("at.crimsonbit.nodesystem.examples.customnode").registerAllModules("Modules/")
+				.registerDefaultNodes(true).build();
 
 		/**
 		 * Example of how to change settings used in the node-system
@@ -52,9 +45,10 @@ public class SimpleGraph extends Application {
 		primaryStage.show();
 
 	}
+
 	/**
-	 * This is only needed for arduino nodes.
-	 * The Serial connection works on a different thread than the JavaFX Main thread.
+	 * This is only needed for arduino nodes. The Serial connection works on a
+	 * different thread than the JavaFX Main thread.
 	 */
 	@Override
 	public void stop() throws Exception {

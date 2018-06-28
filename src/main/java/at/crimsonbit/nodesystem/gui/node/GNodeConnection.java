@@ -78,7 +78,7 @@ public class GNodeConnection extends Group {
 
 		line.endXProperty().bind(target.layoutXProperty().add(targetPort.getPortX() + MAGIC_OFFSET));
 		line.endYProperty().bind(target.layoutYProperty().add(targetPort.getY() + MAGIC_OFFSET));
-		line.setStroke(source.getNodeGraph().getColorLookup().get(source.getNodeType()));
+		line.setStroke(source.getNodeType().getColor());
 		line.setStrokeWidth((double) source.getNodeGraph().getSettings().get(GSettings.SETTING_CURVE_WIDTH));
 		line.setStrokeLineCap(StrokeLineCap.ROUND);
 		line.setFill(Color.TRANSPARENT);
@@ -127,7 +127,7 @@ public class GNodeConnection extends Group {
 		line.endXProperty().bind(target.layoutXProperty().add(targetPort.getPortX() + MAGIC_OFFSET));
 		line.endYProperty().bind(target.layoutYProperty().add(targetPort.getY() + MAGIC_OFFSET));
 
-		line.setStroke(source.getNodeGraph().getColorLookup().get(source.getNodeType()));
+		line.setStroke(source.getNodeType().getColor());
 		line.setStrokeWidth((double) source.getNodeGraph().getSettings().get(GSettings.SETTING_CURVE_WIDTH));
 		line.setStrokeLineCap(StrokeLineCap.ROUND);
 		line.setFill(Color.TRANSPARENT);

@@ -12,6 +12,7 @@ import at.crimsonbit.nodesystem.gui.color.GTheme;
 import at.crimsonbit.nodesystem.gui.dialog.GPopUp;
 import at.crimsonbit.nodesystem.gui.node.port.GPort;
 import at.crimsonbit.nodesystem.gui.settings.GSettings;
+import at.crimsonbit.nodesystem.node.types.IGuiNodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeMaster;
@@ -23,13 +24,11 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Stop;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
@@ -64,7 +63,7 @@ public class GNode extends AnchorPane implements IGNode {
 	protected boolean doDraw = false;
 	protected boolean active = false;
 	private boolean portPressed = false;
-	protected INodeType type;
+	protected IGuiNodeType type;
 	private String nameAddition = "";
 	protected String name;
 	protected int inPortCount = 0;
@@ -121,7 +120,7 @@ public class GNode extends AnchorPane implements IGNode {
 		this.nodeID = id;
 		this.name = name;
 		this.nodeGraph = graph;
-		this.type = graph.getGuiMaster().getNodeMaster().getTypeOfNode(id);
+		this.type = (IGuiNodeType) graph.getGuiMaster().getNodeMaster().getTypeOfNode(id);
 		this.typeName = this.type.toString();
 		this.doDraw = draw;
 		defaultTopColor();
@@ -166,11 +165,7 @@ public class GNode extends AnchorPane implements IGNode {
 		Tooltip.install(this, tooltip);
 	}
 
-	public INodeType getType() {
-		return type;
-	}
-
-	public void setType(INodeType type) {
+	public void setType(IGuiNodeType type) {
 		this.type = type;
 	}
 
@@ -204,7 +199,7 @@ public class GNode extends AnchorPane implements IGNode {
 		return this.nodeGraph;
 	}
 
-	public INodeType getNodeType() {
+	public IGuiNodeType getNodeType() {
 		return this.type;
 	}
 
@@ -292,12 +287,12 @@ public class GNode extends AnchorPane implements IGNode {
 		double height = 50d / 3d;
 		top = new Rectangle(width, height);
 		if (GTheme.getInstance().getStyle().equals(GStyle.GRADIENT)) {
-			LinearGradient lg = GTheme.getInstance().getGradient(nodeGraph.getColorLookup().get(type));
+			LinearGradient lg = GTheme.getInstance().getGradient(((IGuiNodeType) (type)).getColor());
 			top.setStroke(lg);
 			top.setFill(lg);
 		} else if (GTheme.getInstance().getStyle().equals(GStyle.DEFAULT)) {
-			top.setStroke(nodeGraph.getColorLookup().get(type));
-			top.setFill(nodeGraph.getColorLookup().get(type));
+			top.setStroke(((IGuiNodeType) (type)).getColor());
+			top.setFill(((IGuiNodeType) (type)).getColor());
 		} else if (GTheme.getInstance().getStyle().equals(GStyle.NO_COLOR)) {
 
 		}
@@ -335,12 +330,12 @@ public class GNode extends AnchorPane implements IGNode {
 		top.setArcHeight(arc);
 
 		if (GTheme.getInstance().getStyle().equals(GStyle.GRADIENT)) {
-			LinearGradient lg = GTheme.getInstance().getGradient(nodeGraph.getColorLookup().get(type));
+			LinearGradient lg = GTheme.getInstance().getGradient(((IGuiNodeType) (type)).getColor());
 			top.setStroke(lg);
 			top.setFill(lg);
 		} else if (GTheme.getInstance().getStyle().equals(GStyle.DEFAULT)) {
-			top.setStroke(nodeGraph.getColorLookup().get(type));
-			top.setFill(nodeGraph.getColorLookup().get(type));
+			top.setStroke(((IGuiNodeType) (type)).getColor());
+			top.setFill(((IGuiNodeType) (type)).getColor());
 		} else if (GTheme.getInstance().getStyle().equals(GStyle.NO_COLOR)) {
 
 		}
@@ -842,6 +837,10 @@ public class GNode extends AnchorPane implements IGNode {
 			this.y = y;
 			this.name = name;
 		}
+
+	}
+
+	public void onKeyPressed(KeyEvent event) {
 
 	}
 
