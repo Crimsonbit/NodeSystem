@@ -5,7 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.node.GNode;
-import at.crimsonbit.nodesystem.node.types.IGuiNodeType;
+import at.crimsonbit.nodesystem.node.IGuiNodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;

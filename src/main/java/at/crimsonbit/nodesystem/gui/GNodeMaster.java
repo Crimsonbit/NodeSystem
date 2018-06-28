@@ -21,7 +21,7 @@ import at.crimsonbit.nodesystem.gui.node.port.GPort;
 import at.crimsonbit.nodesystem.gui.widget.toast.JFXToast;
 import at.crimsonbit.nodesystem.gui.widget.toast.ToastPosition;
 import at.crimsonbit.nodesystem.gui.widget.toast.ToastTime;
-import at.crimsonbit.nodesystem.node.types.IGuiNodeType;
+import at.crimsonbit.nodesystem.node.IGuiNodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeMaster;

@@ -1,4 +1,4 @@
-package at.crimsonbit.nodesystem.node.types;
+package at.crimsonbit.nodesystem.node;
 
 import javafx.scene.paint.Color;
 
