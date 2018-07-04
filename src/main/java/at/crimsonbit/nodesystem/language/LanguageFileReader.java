@@ -2,13 +2,37 @@ package at.crimsonbit.nodesystem.language;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class LanguageFileReader {
 
 	private int state = 0;
+
+	public LanguageFile readLanguageFile(FileInputStream inStream) {
+
+		LanguageFile langFile = new LanguageFile();
+
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(inStream))) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				readLine(line, langFile);
+				// System.out.println(line);
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+
+		}
+		state = 0;
+		return langFile;
+	}
 
 	public LanguageFile readLanguageFile(File file) {
 		FileReader reader = null;
