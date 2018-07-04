@@ -60,11 +60,7 @@ public class LanguageSetup {
 		}
 		return "STRING NOT FOUND";
 	}
-
-	public LanguageFile getLanguageFile(String type) {
-		return null;
-	}
-
+	
 	public void readLanguageFile(InputStream inStream) {
 		langFiles.add(reader.readLanguageFile(inStream));
 
