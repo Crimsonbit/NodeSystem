@@ -4,15 +4,20 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.logging.Level;
 
+import at.crimsonbit.nodesystem.application.NodeGraphBuilder;
 import at.crimsonbit.nodesystem.gui.color.GColors;
 import at.crimsonbit.nodesystem.gui.color.GTheme;
 import at.crimsonbit.nodesystem.gui.dialog.GEntry;
@@ -101,6 +106,44 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private GSubMenu fileMenu = new GSubMenu(1, "File");
 	private GLogPane logPane;
 	private InnerShadow innerShadow;
+	private List<String> jarfiles = new ArrayList<>();
+
+	public void registerJarModules(String path) {
+		this.registerAllModules(path);
+		this.registerNodesInJar(jarfiles.toArray(new String[jarfiles.size()]));
+		this.initGraph(true);
+	}
+
+	/**
+	 * <h1>registerCustomNodesJar({@link String}</h1>
+	 * <p>
+	 * This method can be called as many times as neccessary! With this method you
+	 * can register your own custom nodes by telling this method the jar File module
+	 * </p>
+	 * 
+	 * @param pack
+	 *            the jar File path
+	 * @param c
+	 *            the color of the nodes
+	 */
+	private void registerCustomNodesJar(String jarfile) {
+		jarfiles.add(jarfile);
+
+	}
+
+	private void registerAllModules(String path) {
+		Path p = Paths.get(path);
+		if (p != null && Files.isDirectory(p)) {
+			try {
+				Files.walk(p).filter(t -> t.getFileName().toString().endsWith(".jar")).forEach(f -> {
+					registerCustomNodesJar(f.toAbsolutePath().toString());
+				});
+			} catch (IOException e) {
+				throw new RuntimeException("Could not load Modules", e);
+			}
+		}
+
+	}
 
 	public GNodeGraph() {
 		this(null);
@@ -108,7 +151,11 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	}
 
 	public GNodeGraph(GLogPane logPane) {
-		setLogPane(logPane);
+		this.logPane = logPane;
+		initializeGraph();
+	}
+
+	public void initializeGraph() {
 		try {
 			log = SystemLogger.getLogger(logPane);
 		} catch (IOException e) {
@@ -119,6 +166,56 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 		setNodeGraph(this);
 
+		initSelection();
+		createInternalResources();
+		addInternalResourcesToCanvas();
+		createGraphDialog();
+		createMouseHandler();
+		addInnerShadow();
+		addSelectGroupSupport();
+		setDefaultThemeOptions();
+		createLocalClipboard();
+
+		log(Level.INFO, "NodeGraph set-up successfully!");
+	}
+
+	private void createLocalClipboard() {
+		clipboard = GClipboard.getClipboard(this);
+	}
+
+	private void createMouseHandler() {
+		this.handler = new GNodeMouseHandler(this);
+	}
+
+	private void createGraphDialog() {
+		graphDialog = new GPopUp();
+		graphDialog.addItem(-1, "Node-Graph", true);
+		graphDialog.addSeparator(-2);
+		graphDialog.addItem(nodeMenu);
+		graphDialog.addItem(fileMenu);
+		this.setPopUpDialog(graphDialog);
+	}
+
+	private void addInternalResourcesToCanvas() {
+		this.canvas.getChildren().add(nodeLayer);
+		this.canvas.getChildren().add(lineLayer);
+		this.canvas.getChildren().add(tempLineLayer);
+		this.canvas.getChildren().add(this.selection);
+		this.getChildren().add(canvas);
+
+		this.canvas.getTransforms().add(getScaleTransform());
+	}
+
+	private void createInternalResources() {
+		this.nodeMaster = new GNodeMaster(this);
+		this.nodePanel = new GNodePanel(this);
+		this.canvas = new Group();
+		this.nodeLayer = new GNodeLayer();
+		this.lineLayer = new GLineLayer();
+		this.tempLineLayer = new GLineLayer();
+	}
+
+	private void initSelection() {
 		this.selection = new Rectangle();
 		this.selection.setStroke(Color.LIGHTSKYBLUE);
 		this.selection.setArcWidth(21.0);
@@ -127,39 +224,14 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		Color c = Color.LIGHTSKYBLUE;
 		this.selection.setFill(new Color(c.getRed(), c.getGreen(), c.getBlue(), 0.2d));
 		this.selection.getStrokeDashArray().add(10.0);
-
-		this.nodeMaster = new GNodeMaster(this);
-
-		this.nodePanel = new GNodePanel(this);
-		// this.getChildren().add(this.nodePanel);
-
-		this.canvas = new Group();
-		this.nodeLayer = new GNodeLayer();
-		this.lineLayer = new GLineLayer();
-		this.tempLineLayer = new GLineLayer();
-
-		this.canvas.getChildren().add(nodeLayer);
-		this.canvas.getChildren().add(lineLayer);
-		this.canvas.getChildren().add(tempLineLayer);
-		this.canvas.getChildren().add(this.selection);
-		this.getChildren().add(canvas);
-		this.handler = new GNodeMouseHandler(this);
-		// this.getChildren().add(this.settingsPane);
-		this.canvas.getTransforms().add(getScaleTransform());
-		graphDialog = new GPopUp();
-		graphDialog.addItem(-1, "Node Editor", true);
-		graphDialog.addSeparator(-2);
-		graphDialog.addItem(nodeMenu);
-		graphDialog.addItem(fileMenu);
-
-		this.setPopUpDialog(graphDialog);
-		log(Level.INFO, "NodeGraph set-up successfully!");
-		addInnerLayer();
-
-		addSelectGroupSupport();
 	}
 
-	private void addInnerLayer() {
+	private void setDefaultThemeOptions() {
+		GTheme.getInstance().setGraph(this);
+		GTheme.getInstance().setTheme(GTheme.THEME_DARK);
+	}
+
+	private void addInnerShadow() {
 		innerShadow = new InnerShadow();
 
 		// Setting the offset values of the inner shadow
@@ -174,16 +246,12 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		innerShadow.setOffsetX((double) inst.getSetting(GSettings.SETTING_SHADOW_WIDTH));
 		innerShadow.setOffsetY((double) inst.getSetting(GSettings.SETTING_SHADOW_HEIGHT));
 		innerShadow.setRadius((double) inst.getSetting(GSettings.SETTING_SHADOW_RADIUS));
-		clipboard = GClipboard.getClipboard(this);
+
 		setEffect(innerShadow);
 	}
 
 	public GLogPane getLogPane() {
 		return logPane;
-	}
-
-	public void setLogPane(GLogPane logPane) {
-		this.logPane = logPane;
 	}
 
 	public Set<GNode> getSelectedNodesGroup() {
@@ -214,7 +282,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 			getGuiMaster().registerNodes(INTERNAL_NODES);
 		}
 		loadMenus();
-		addKeySupport();
+		addKeySupport(getScene());
 
 		log(Level.INFO, "Added Menus and Key-support!");
 		log(Level.INFO, "Added default custom node classes!");
@@ -345,11 +413,6 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		});
 
 		setOnMouseReleased(event -> {
-			// Do what you want with selection's properties here
-			// System.out.printf("X: %.2f, Y: %.2f, Width: %.2f, Height: %.2f%n",
-			// selection.getX(), selection.getY(),
-			// selection.getWidth(), selection.getHeight());
-
 			/**
 			 * Check if nodes are in bounds.
 			 */
@@ -376,169 +439,249 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 			}
 		});
 
-		/*
-		 * setOnMouseClicked(new EventHandler<MouseEvent>() {
-		 * 
-		 * @Override public void handle(MouseEvent event) { if (getActive() == null) {
-		 * selection.setWidth(0); selection.setHeight(0); selection.setArcWidth(0.0);
-		 * selection.setArcHeight(0.0); selection.setStrokeWidth(0); } }
-		 * 
-		 * });
-		 * 
-		 * setOnMousePressed(new EventHandler<MouseEvent>() {
-		 * 
-		 * @Override public void handle(MouseEvent event) { // if (getActive() == null)
-		 * { selection.setArcWidth(21.0); selection.setArcHeight(21.0);
-		 * selection.setStrokeWidth(1); double scale = getScaleValue(); dragContext.x =
-		 * getBoundsInParent().getMinX() * scale - event.getScreenX(); dragContext.y =
-		 * getBoundsInParent().getMinY() * scale - event.getScreenY();
-		 * setCursor(Cursor.MOVE); double x = event.getSceneX() / getScaleValue();
-		 * double y = event.getSceneY() / getScaleValue();
-		 * 
-		 * selection.setX(x); selection.setY(y); // } }
-		 * 
-		 * });
-		 * 
-		 * setOnMouseDragged(new EventHandler<MouseEvent>() {
-		 * 
-		 * @Override public void handle(MouseEvent event) { // TODO Auto-generated
-		 * method stub // if (getActive() == null) { double offsetX =
-		 * (event.getScreenX() + dragContext.x); double offsetY = (event.getScreenY() +
-		 * dragContext.y);
-		 * 
-		 * // adjust the offset in case we are zoomed double scale = getScaleValue();
-		 * 
-		 * offsetX /= scale; offsetY /= scale;
-		 * 
-		 * selection.setWidth(offsetX); selection.setHeight(offsetY); // } }
-		 * 
-		 * });
-		 */
 	}
-
-	private void addKeySupport() {
-		if (getScene() != null)
-			getScene().setOnKeyPressed(onKeyPressedEventHandler);
-	}
-
-	private EventHandler<KeyEvent> onKeyPressedEventHandler = new EventHandler<KeyEvent>() {
-		@Override
-		public void handle(KeyEvent event) {
-
-			/*
-			 * Opens the search bar
-			 */
-			if (event.isControlDown() && event.getCode().equals(KeyCode.SPACE)) {
-				if (!bar.isOpen())
-					bar.search((Stage) getScene().getWindow(), GNodeGraph.this);
-			}
-
-			if (getActive() != null || getSelectedNodesGroup().size() > 0) {
-
-				/**
-				 * Rename node
-				 */
-
-				if (event.getCode().equals(KeyCode.F2) && !(getSelectedNodesGroup().size() > 0)) {
-					doBlur();
-					TextInputDialog dialog = new TextInputDialog(getActive().getName());
-					dialog.setTitle("Name");
-					dialog.setHeaderText("Set a new name for the node.");
-					dialog.setContentText("Name: ");
-					Optional<String> result = dialog.showAndWait();
-					if (result.isPresent()) {
-						getActive().setName(result.get());
-						removeBlur();
-					} else {
-						removeBlur();
-					}
-
-					getActive().redraw();
-				}
+	
+	public void addKeySupport(Scene sc) {
+		if (sc != null)
+			sc.setOnKeyPressed(event -> {
 
 				/*
-				 * Copies the active node onto the clipboard (clipboard is for GNodes only!)
+				 * Opens the search bar
 				 */
-				if (event.isControlDown() && event.getCode().equals(KeyCode.C)) {
-					if (getSelectedNodesGroup().size() > 0) {
-						clipboard.copy(getSelectedNodesGroup());
-						log(Level.INFO,
-								"Copied node group of size: " + getSelectedNodesGroup().size() + " to the clpboard!");
-
-					} else {
-						clipboard.copy(getActive());
-						log(Level.INFO, "Node: " + getActive().getName() + " copied to clipboard!");
-					}
+				if (event.isControlDown() && event.getCode().equals(KeyCode.SPACE)) {
+					if (!bar.isOpen())
+						bar.search((Stage) getScene().getWindow(), GNodeGraph.this);
 				}
 
-				if (event.isControlDown() && event.getCode().equals(KeyCode.R)) {
-					setScaleValue(1d);
+				if (getActive() != null || getSelectedNodesGroup().size() > 0) {
 
+					/**
+					 * Rename node
+					 */
+
+					if (event.getCode().equals(KeyCode.F2) && !(getSelectedNodesGroup().size() > 0)) {
+						doBlur();
+						TextInputDialog dialog = new TextInputDialog(getActive().getName());
+						dialog.setTitle("Name");
+						dialog.setHeaderText("Set a new name for the node.");
+						dialog.setContentText("Name: ");
+						Optional<String> result = dialog.showAndWait();
+						if (result.isPresent()) {
+							getActive().setName(result.get());
+							removeBlur();
+						} else {
+							removeBlur();
+						}
+
+						getActive().redraw();
+					}
+
+					/*
+					 * Copies the active node onto the clipboard (clipboard is for GNodes only!)
+					 */
+					if (event.isControlDown() && event.getCode().equals(KeyCode.C)) {
+						if (getSelectedNodesGroup().size() > 0) {
+							clipboard.copy(getSelectedNodesGroup());
+							log(Level.INFO, "Copied node group of size: " + getSelectedNodesGroup().size()
+									+ " to the clpboard!");
+
+						} else {
+							clipboard.copy(getActive());
+							log(Level.INFO, "Node: " + getActive().getName() + " copied to clipboard!");
+						}
+					}
+
+					if (event.isControlDown() && event.getCode().equals(KeyCode.R)) {
+						setScaleValue(1d);
+
+					}
+
+					/**
+					 * Pastes from the clipboard
+					 */
+					if (event.isControlDown() && event.getCode().equals(KeyCode.V)) {
+						if (getSelectedNodesGroup().size() > 0) {
+							clipboard.pasteNodeGroup();
+							log(Level.INFO,
+									"Pasted node group of size: " + getSelectedNodesGroup().size() + " to the graph!");
+							getSelectedNodesGroup().clear();
+						} else {
+							clipboard.paste();
+							log(Level.INFO, "Node: " + getActive().getName() + " pasted from clipboard!");
+						}
+					}
+
+					/**
+					 * Removes the active node
+					 */
+					if (event.getCode().equals(KeyCode.DELETE)) {
+						if (getSelectedNodesGroup().size() > 0) {
+							for (GNode n : getSelectedNodesGroup()) {
+								getGuiMaster().removeNode(n);
+								update();
+								log(Level.INFO, "Deleted a total of " + getSelectedNodesGroup().size() + " nodes!");
+							}
+							getSelectedNodesGroup().clear();
+						} else {
+							if (getActive() != null) {
+								getGuiMaster().removeNode(getActive());
+								update();
+							} else if (getState().equals(GState.PORTCON)) {
+								setState(GState.DEFAULT);
+							}
+							log(Level.INFO, "Node: " + getActive().getName() + " was deleted from the graph!");
+						}
+
+					}
+
+					getSelectedNodesGroup().forEach(n -> n.onKeyPressed(event));
 				}
 
 				/**
-				 * Pastes from the clipboard
+				 * Save the graph
 				 */
-				if (event.isControlDown() && event.getCode().equals(KeyCode.V)) {
-					if (getSelectedNodesGroup().size() > 0) {
-						clipboard.pasteNodeGroup();
-						log(Level.INFO,
-								"Pasted node group of size: " + getSelectedNodesGroup().size() + " to the graph!");
-						getSelectedNodesGroup().clear();
-					} else {
-						clipboard.paste();
-						log(Level.INFO, "Node: " + getActive().getName() + " pasted from clipboard!");
+				if (event.isControlDown() && event.getCode().equals(KeyCode.S)) {
+					onSave();
+
+				}
+				/**
+				 * Load the graph
+				 */
+				if (event.isControlDown() && event.getCode().equals(KeyCode.L)) {
+					onLoad();
+
+				}
+				/**
+				 * Show the pop up menu
+				 */
+				if (event.isControlDown() && event.getCode().equals(KeyCode.X)) {
+					popUpDialog.show(nodeMaster.getNodeGraph(), getpX(), getpY());
+				}
+
+			});
+
+	}
+
+	public void addKeySupport() {
+
+		if (getScene() != null)
+			getScene().setOnKeyPressed(event -> {
+				/*
+				 * Opens the search bar
+				 */
+				if (event.isControlDown() && event.getCode().equals(KeyCode.SPACE)) {
+					if (!bar.isOpen())
+						bar.search((Stage) getScene().getWindow(), GNodeGraph.this);
+				}
+
+				if (getActive() != null || getSelectedNodesGroup().size() > 0) {
+
+					/**
+					 * Rename node
+					 */
+
+					if (event.getCode().equals(KeyCode.F2) && !(getSelectedNodesGroup().size() > 0)) {
+						doBlur();
+						TextInputDialog dialog = new TextInputDialog(getActive().getName());
+						dialog.setTitle("Name");
+						dialog.setHeaderText("Set a new name for the node.");
+						dialog.setContentText("Name: ");
+						Optional<String> result = dialog.showAndWait();
+						if (result.isPresent()) {
+							getActive().setName(result.get());
+							removeBlur();
+						} else {
+							removeBlur();
+						}
+
+						getActive().redraw();
 					}
+
+					/*
+					 * Copies the active node onto the clipboard (clipboard is for GNodes only!)
+					 */
+					if (event.isControlDown() && event.getCode().equals(KeyCode.C)) {
+						if (getSelectedNodesGroup().size() > 0) {
+							clipboard.copy(getSelectedNodesGroup());
+							log(Level.INFO, "Copied node group of size: " + getSelectedNodesGroup().size()
+									+ " to the clpboard!");
+
+						} else {
+							clipboard.copy(getActive());
+							log(Level.INFO, "Node: " + getActive().getName() + " copied to clipboard!");
+						}
+					}
+
+					if (event.isControlDown() && event.getCode().equals(KeyCode.R)) {
+						setScaleValue(1d);
+
+					}
+
+					/**
+					 * Pastes from the clipboard
+					 */
+					if (event.isControlDown() && event.getCode().equals(KeyCode.V)) {
+						if (getSelectedNodesGroup().size() > 0) {
+							clipboard.pasteNodeGroup();
+							log(Level.INFO,
+									"Pasted node group of size: " + getSelectedNodesGroup().size() + " to the graph!");
+							getSelectedNodesGroup().clear();
+						} else {
+							clipboard.paste();
+							log(Level.INFO, "Node: " + getActive().getName() + " pasted from clipboard!");
+						}
+					}
+
+					/**
+					 * Removes the active node
+					 */
+					if (event.getCode().equals(KeyCode.DELETE)) {
+						if (getSelectedNodesGroup().size() > 0) {
+							for (GNode n : getSelectedNodesGroup()) {
+								getGuiMaster().removeNode(n);
+								update();
+								log(Level.INFO, "Deleted a total of " + getSelectedNodesGroup().size() + " nodes!");
+							}
+							getSelectedNodesGroup().clear();
+						} else {
+							if (getActive() != null) {
+								getGuiMaster().removeNode(getActive());
+								update();
+							} else if (getState().equals(GState.PORTCON)) {
+								setState(GState.DEFAULT);
+							}
+							log(Level.INFO, "Node: " + getActive().getName() + " was deleted from the graph!");
+						}
+
+					}
+
+					getSelectedNodesGroup().forEach(n -> n.onKeyPressed(event));
 				}
 
 				/**
-				 * Removes the active node
+				 * Save the graph
 				 */
-				if (event.getCode().equals(KeyCode.DELETE)) {
-					if (getSelectedNodesGroup().size() > 0) {
-						for (GNode n : getSelectedNodesGroup()) {
-							getGuiMaster().removeNode(n);
-							update();
-							log(Level.INFO, "Deleted a total of " + getSelectedNodesGroup().size() + " nodes!");
-						}
-						getSelectedNodesGroup().clear();
-					} else {
-						if (getActive() != null) {
-							getGuiMaster().removeNode(getActive());
-							update();
-						} else if (getState().equals(GState.PORTCON)) {
-							setState(GState.DEFAULT);
-						}
-						log(Level.INFO, "Node: " + getActive().getName() + " was deleted from the graph!");
-					}
+				if (event.isControlDown() && event.getCode().equals(KeyCode.S)) {
+					onSave();
 
 				}
+				/**
+				 * Load the graph
+				 */
+				if (event.isControlDown() && event.getCode().equals(KeyCode.L)) {
+					onLoad();
 
-				getSelectedNodesGroup().forEach(n -> n.onKeyPressed(event));
-			}
+				}
+				/**
+				 * Show the pop up menu
+				 */
+				if (event.isControlDown() && event.getCode().equals(KeyCode.X)) {
+					popUpDialog.show(nodeMaster.getNodeGraph(), getpX(), getpY());
+				}
 
-			/**
-			 * Save the graph
-			 */
-			if (event.isControlDown() && event.getCode().equals(KeyCode.S)) {
-				onSave();
+			});
 
-			}
-			/**
-			 * Load the graph
-			 */
-			if (event.isControlDown() && event.getCode().equals(KeyCode.L)) {
-				onLoad();
-
-			}
-			/**
-			 * Show the pop up menu
-			 */
-			if (event.isControlDown() && event.getCode().equals(KeyCode.X)) {
-				popUpDialog.show(nodeMaster.getNodeGraph(), getpX(), getpY());
-			}
-		}
-	};
+	}
 
 	/**
 	 * <h1>public void setPopUpDialog({@link GPopUp})</h1>
@@ -805,7 +948,13 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		clearGraph();
 		getGuiMaster().getNodeMaster().clear();
 		getGuiMaster().clear();
-		Tuple<NodeMaster, String> data = NodeMaster.load(path);
+		Tuple<NodeMaster, String> data = null;
+		try {
+			data = NodeMaster.load(path);
+		} catch (Exception e) {
+			JFXToast.makeToast((Stage) getScene().getWindow(), data.b, ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
+		}
+
 		if (data.a == null) {
 			JFXToast.makeToast((Stage) getScene().getWindow(), data.b, ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
 			log(Level.SEVERE, data.b);
@@ -981,7 +1130,8 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		return sc;
 	}
 
-	public void setNodeScene(Scene sc) {
+	private void setNodeScene(Scene sc) {
 		this.sc = sc;
+
 	}
 }

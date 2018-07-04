@@ -2,7 +2,7 @@ package at.crimsonbit.nodesystem.gui.color;
 
 import java.util.HashMap;
 
-import at.crimsonbit.nodesystem.util.RangeMapper;
+import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
@@ -16,6 +16,7 @@ import javafx.scene.paint.Stop;
 public class GTheme {
 
 	private HashMap<GColors, Color> colorMap = new HashMap<GColors, Color>();
+	private GNodeGraph graph;
 	private GStyle themeStyle = GStyle.GRADIENT;
 	private static GTheme instance;
 
@@ -37,6 +38,9 @@ public class GTheme {
 
 	private void initColorTheme() {
 		if (theme == 0) {
+			if (this.graph != null) {
+				graph.getGraphScene().getStylesheets().add(getClass().getResource("theme-dark.css").toExternalForm());
+			}
 			getThemeColorMap().put(GColors.COLOR_NODE_ACTIVE, getColor(140d, 162d, 196d));
 			getThemeColorMap().put(GColors.COLOR_SELECTION, Color.LIGHTSKYBLUE);
 			getThemeColorMap().put(GColors.COLOR_ACTIVE_TOGGLED, getColor(140d, 162d, 196d));
@@ -52,6 +56,9 @@ public class GTheme {
 			getThemeColorMap().put(GColors.COLOR_NODE_TRIANGLE_HOVERED, Color.CORNFLOWERBLUE);
 
 		} else if (theme == 1) {
+			if (this.graph != null) {
+				graph.getGraphScene().getStylesheets().add(getClass().getResource("theme-light.css").toExternalForm());
+			}
 			getThemeColorMap().put(GColors.COLOR_NODE_ACTIVE, Color.LIGHTSKYBLUE); // new Color(0.992, 0.647, 0.305, 1)
 			getThemeColorMap().put(GColors.COLOR_ACTIVE_TOGGLED, Color.LIGHTSKYBLUE);
 			getThemeColorMap().put(GColors.COLOR_PORT_INPUT, Color.CORNFLOWERBLUE);
@@ -65,6 +72,13 @@ public class GTheme {
 			getThemeColorMap().put(GColors.COLOR_NODE_TRIANGLE_DEFAULT, Color.WHITE);
 			getThemeColorMap().put(GColors.COLOR_NODE_TRIANGLE_HOVERED, Color.CORNFLOWERBLUE);
 		}
+	}
+
+	public String getSearchBarStyleSheet() {
+		if (theme == 1) {
+			return getClass().getResource("theme-light-searchbar.css").toExternalForm();
+		} else
+			return getClass().getResource("theme-dark-searchbar.css").toExternalForm();
 	}
 
 	public Color getColor(double c) {
@@ -123,6 +137,7 @@ public class GTheme {
 
 	public void setTheme(int i) {
 		theme = i;
+		initColorTheme();
 	}
 
 	public void setStyle(GStyle style) {
@@ -131,6 +146,7 @@ public class GTheme {
 
 	public GStyle getStyle() {
 		return this.themeStyle;
+
 	}
 
 	public Color getColor(GColors color) {
@@ -149,6 +165,11 @@ public class GTheme {
 		Stop[] stops = new Stop[] { new Stop(0, color), new Stop(1, Color.TRANSPARENT) };
 		LinearGradient lg1 = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
 		return lg1;
+	}
+
+	public void setGraph(GNodeGraph gNodeGraph) {
+		this.graph = gNodeGraph;
+
 	}
 
 }

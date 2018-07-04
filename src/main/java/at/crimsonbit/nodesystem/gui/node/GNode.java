@@ -89,6 +89,8 @@ public class GNode extends AnchorPane implements IGNode {
 	private final Tooltip tooltip = new Tooltip();
 	private final int PORT_TOP_DRAW_OFFSET = 10;
 	protected boolean toggledDraw = false;
+	private double nodeX;
+	private double nodeY;
 
 	private NodeMaster getNodeMaster() {
 		return nodeGraph.getGuiMaster().getNodeMaster();
@@ -135,6 +137,8 @@ public class GNode extends AnchorPane implements IGNode {
 
 	public GNode(String name, int id, boolean draw, GNodeGraph graph, double x, double y) {
 		this(name, id, draw, graph);
+		this.nodeX = x;
+		this.nodeY = y;
 		relocate(x, y);
 	}
 
@@ -144,6 +148,22 @@ public class GNode extends AnchorPane implements IGNode {
 
 	public List<GNodeConnection> getConnections() {
 		return this.connections;
+	}
+	
+	public double getNodeX() {
+		return nodeX;
+	}
+
+	public void setNodeX(double nodeX) {
+		this.nodeX = nodeX;
+	}
+
+	public double getNodeY() {
+		return nodeY;
+	}
+
+	public void setNodeY(double nodeY) {
+		this.nodeY = nodeY;
 	}
 
 	public String getConnectionsString() {

@@ -1,6 +1,6 @@
 package at.crimsonbit.nodesystem.examples;
 
-import at.crimsonbit.nodesystem.application.NodeSystemBuilder;
+import at.crimsonbit.nodesystem.application.NodeGraphBuilder;
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.color.GColors;
 import at.crimsonbit.nodesystem.gui.color.GTheme;
@@ -26,7 +26,7 @@ public class SimpleGraph extends Application {
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("Node Editor");
 
-		GNodeGraph graph = new NodeSystemBuilder(1275, 800, true).registerAllModules("Modules/").build();
+		GNodeGraph graph = new NodeGraphBuilder(1275, 800, true).registerAllModules("Modules/").build();
 
 		/**
 		 * Example of how to change settings used in the node-system
@@ -39,7 +39,6 @@ public class SimpleGraph extends Application {
 		graph.updateColors();
 
 		Scene scene = graph.getNodeScene();
-		scene.getStylesheets().add(getClass().getResource("node-menu.css").toExternalForm());
 		primaryStage.setScene(scene);
 		primaryStage.show();
 

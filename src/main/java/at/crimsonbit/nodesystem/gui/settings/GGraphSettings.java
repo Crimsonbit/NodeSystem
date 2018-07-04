@@ -25,6 +25,7 @@ public class GGraphSettings {
 		set(GSettings.SETTING_SHADOW_HEIGHT, 5d);
 		set(GSettings.SETTING_SHADOW_RADIUS, 20d);
 		set(GSettings.SETTING_SHOW_CONNECTION_HELP, true);
+		set(GSettings.SETTING_BIG_LINES_SPACING, 10);
 	}
 
 	/**

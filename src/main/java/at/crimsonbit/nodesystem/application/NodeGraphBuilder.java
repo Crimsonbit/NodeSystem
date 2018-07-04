@@ -24,7 +24,7 @@ import javafx.scene.Scene;
  * @author Florian Wagner
  *
  */
-public class NodeSystemBuilder {
+public class NodeGraphBuilder {
 
 	private GNodeSystem sys;
 	private GNodeView view;
@@ -48,7 +48,7 @@ public class NodeSystemBuilder {
 	 * @param log
 	 *            tells the nodesystem whether if it should write into a log or not
 	 */
-	public NodeSystemBuilder(double width, double height, boolean log) {
+	public NodeGraphBuilder(double width, double height, boolean log) {
 		this.w = width;
 		this.h = height;
 		if (log) {
@@ -71,7 +71,7 @@ public class NodeSystemBuilder {
 	 * 
 	 * @return this
 	 */
-	public NodeSystemBuilder attachSettingsPane() {
+	public NodeGraphBuilder attachSettingsPane() {
 		sys.attachSettingsPane(true);
 		view = sys.getNodeView();
 		graph = view.getNodeGraph();
@@ -94,7 +94,7 @@ public class NodeSystemBuilder {
 	 *            the color of the nodes
 	 * @return this
 	 */
-	public NodeSystemBuilder registerCustomNodes(String pckg) {
+	public NodeGraphBuilder registerCustomNodes(String pckg) {
 		if (graph != null)
 			graph.registerNodes(pckg);
 
@@ -114,13 +114,13 @@ public class NodeSystemBuilder {
 	 *            the color of the nodes
 	 * @return this
 	 */
-	public NodeSystemBuilder registerCustomNodesJar(String jarfile) {
+	public NodeGraphBuilder registerCustomNodesJar(String jarfile) {
 		jarfiles.add(jarfile);
 
 		return this;
 	}
 
-	public NodeSystemBuilder registerAllModules(String path) {
+	public NodeGraphBuilder registerAllModules(String path) {
 		Path p = Paths.get(path);
 		if (p != null && Files.isDirectory(p)) {
 			try {
@@ -139,7 +139,7 @@ public class NodeSystemBuilder {
 	 * <p>
 	 * Attaches a logger to the nodegraph. <br>
 	 * Attention: You have to call this method <b>BEFORE</b>
-	 * {@link NodeSystemBuilder#init()}!
+	 * {@link NodeGraphBuilder#init()}!
 	 * </p>
 	 * 
 	 * @param uH
@@ -148,7 +148,7 @@ public class NodeSystemBuilder {
 	 *            if you want to enable TXT logging
 	 * @return this
 	 */
-	public NodeSystemBuilder attachLogger(boolean uH, boolean uT) {
+	public NodeGraphBuilder attachLogger(boolean uH, boolean uT) {
 
 		SystemLogger.attachLogger(uH, uT);
 
@@ -166,7 +166,7 @@ public class NodeSystemBuilder {
 	 *            false
 	 * @return this
 	 */
-	public NodeSystemBuilder registerDefaultNodes(boolean f) {
+	public NodeGraphBuilder registerDefaultNodes(boolean f) {
 
 		default_nodes = f;
 
@@ -182,7 +182,7 @@ public class NodeSystemBuilder {
 	 * 
 	 * @return this
 	 */
-	public NodeSystemBuilder attachInfo() {
+	public NodeGraphBuilder attachInfo() {
 		if (graph != null)
 			graph.addInfo();
 		return this;
@@ -199,8 +199,8 @@ public class NodeSystemBuilder {
 	public GNodeGraph build() {
 		if (this.graph != null) {
 			this.graph.registerNodesInJar(jarfiles.toArray(new String[jarfiles.size()]));
-			graph.initGraph(default_nodes);
-			this.graph.log(Level.INFO, "NodeSystem ready!");
+			this.graph.initGraph(default_nodes);
+			this.graph.log(Level.INFO, "NodeGraph ready!");
 			return this.graph;
 		}
 		return null;

@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import at.crimsonbit.nodesystem.gui.color.GColors;
 import at.crimsonbit.nodesystem.gui.color.GTheme;
 import at.crimsonbit.nodesystem.gui.node.GNode;
+import at.crimsonbit.nodesystem.gui.settings.GGraphSettings;
 import at.crimsonbit.nodesystem.gui.settings.GSettings;
 import at.crimsonbit.nodesystem.util.DragContext;
 import javafx.event.EventHandler;
@@ -53,6 +54,7 @@ public class GGraphScene extends AnchorPane implements ILogging {
 	private double curY;
 	private double pX;
 	private double pY;
+	private int BIG_LINE_SPACING = (int) GGraphSettings.getInstance().getSetting(GSettings.SETTING_BIG_LINES_SPACING);
 	double width;
 	double height;
 	protected Logger log;
@@ -89,6 +91,8 @@ public class GGraphScene extends AnchorPane implements ILogging {
 
 			@Override
 			public void handle(MouseEvent event) {
+				dragContext.x = -event.getScreenX();
+				dragContext.y = -event.getScreenY();
 
 				if (graph.getActive() != null) {
 					graph.getActive().setActive(false);
@@ -203,7 +207,7 @@ public class GGraphScene extends AnchorPane implements ILogging {
 				final int vLineCount = (int) Math.floor((width + 1) / spacing);
 
 				for (int i = 0; i < hLineCount; i++) {
-					if (i % 7 == 0) {
+					if (i % BIG_LINE_SPACING == 0) {
 						gc.setStroke(Color.BLACK);
 						gc.setLineWidth(strokeValue + 2);
 					} else {
@@ -214,7 +218,7 @@ public class GGraphScene extends AnchorPane implements ILogging {
 				}
 
 				for (int i = 0; i < vLineCount; i++) {
-					if (i % 7 == 0) {
+					if (i % BIG_LINE_SPACING == 0) {
 						gc.setStroke(Color.BLACK);
 						gc.setLineWidth(strokeValue + 2);
 					} else {
@@ -244,29 +248,22 @@ public class GGraphScene extends AnchorPane implements ILogging {
 
 	public void zoomTo(double scaleValue, double x, double y) {
 
-		this.scaleValue = scaleValue;
 		needsLayout = true;
-		
-		scaleTransform.setPivotX(x);
-		scaleTransform.setPivotY(y);
-		scaleTransform.setX(scaleValue);
-		scaleTransform.setY(scaleValue);
-		// for (GNode n : graph.getGuiMaster().getAllCells()) {
-		// n.setScaleX(scaleValue);
-		// n.setScaleY(scaleValue);
-		// n.redraw(true);
-		// }
 		layoutChildren();
+
+		scaleTransform.setX(scaleValue);
+		scaleTransform.setPivotX(localMouseX);
+		scaleTransform.setPivotY(localMouseY);
+		scaleTransform.setY(scaleValue);
 	}
 
 	public void moveTo(double x, double y) {
 		needsLayout = true;
 
-		// scaleTransform.setPivotX(x);
-		// scaleTransform.setPivotY(y);
 		for (GNode n : graph.getGuiMaster().getAllNodes()) {
-			n.relocate(x, y);
+			n.relocate((n.getNodeX() + x), (n.getNodeY() + y));
 		}
+
 		layoutChildren();
 	}
 
@@ -297,17 +294,20 @@ public class GGraphScene extends AnchorPane implements ILogging {
 		public void handle(MouseEvent event) {
 
 			if (event.isMiddleButtonDown()) {
+				double offsetY = (event.getScreenY() + dragContext.y);
+				double offsetX = (event.getScreenX() + dragContext.x);
 
-				double offsetX = event.getScreenX() + dragContext.x;
-				double offsetY = event.getScreenY() + dragContext.y;
-
-				// adjust the offset in case we are zoomed
+				if (event.isControlDown()) {
+					offsetY = 0;
+				}
+				
 				double scale = getScaleValue();
 
 				offsetX /= scale;
 				offsetY /= scale;
 
 				moveTo(offsetX, offsetY);
+				event.consume();
 			}
 
 		}
@@ -361,7 +361,6 @@ public class GGraphScene extends AnchorPane implements ILogging {
 					strokeWidth(strokeValue);
 
 			} else {
-				double oldScale = scaleValue;
 
 				if (scrollEvent.getDeltaY() < 0) {
 					scaleValue *= DELTA_MINUS;
@@ -371,9 +370,8 @@ public class GGraphScene extends AnchorPane implements ILogging {
 					lineSpacing *= DELTA_PLUS;
 				}
 
-
 				scaleValue = clamp(scaleValue, MIN_SCALE, MAX_SCALE);
-		
+				lineSpacing = clamp(lineSpacing, MIN_SPACING, MAX_SPACING);
 				if (scaleValue != MIN_SCALE)
 					zoomTo(scaleValue, localMouseX, localMouseY);
 

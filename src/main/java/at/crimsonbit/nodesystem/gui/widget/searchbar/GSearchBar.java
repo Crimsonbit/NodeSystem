@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
+import at.crimsonbit.nodesystem.gui.color.GTheme;
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.node.IGuiNodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
@@ -78,15 +79,15 @@ public class GSearchBar {
 		root.getChildren().add(idd_search_text);
 		root.getChildren().add(idd_search_res);
 
-		root.setRightAnchor(idd_search_res, 0d);
-		root.setBottomAnchor(idd_search_text, 0d);
-		root.setTopAnchor(idd_search_text, 0d);
-		root.setLeftAnchor(idd_search_text, 0d);
-		root.setRightAnchor(idd_search_text, 0d);
+		AnchorPane.setRightAnchor(idd_search_res, 0d);
+		AnchorPane.setBottomAnchor(idd_search_text, 0d);
+		AnchorPane.setTopAnchor(idd_search_text, 0d);
+		AnchorPane.setLeftAnchor(idd_search_text, 0d);
+		AnchorPane.setRightAnchor(idd_search_text, 0d);
 
 		scene = new Scene(root);
-		scene.getStylesheets().add(getClass().getResource("searchbar.css").toExternalForm());
-		// stage.setResizable(false);
+		System.out.println(GTheme.getInstance().getSearchBarStyleSheet());
+		scene.getStylesheets().add(GTheme.getInstance().getSearchBarStyleSheet());
 		scene.setFill(Color.TRANSPARENT);
 		stage.initStyle(StageStyle.TRANSPARENT);
 		stage.setScene(scene);
@@ -96,7 +97,7 @@ public class GSearchBar {
 		stage.setY((sc.getY() + sc.getHeight() / 1.1) - stage.getHeight() / 2);
 		idd_search_res.relocate(300, 0);
 		idd_search_text.setOnKeyPressed(onKeyPressedEventHandler);
-		// idd_search_res.setOnKeyPressed(onKeyPressedEventHandler);
+
 		idd_search_res.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 				idd_search_text.setText(newValue);

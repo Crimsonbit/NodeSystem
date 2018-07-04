@@ -3,7 +3,7 @@ package at.crimsonbit.nodesystem.examples;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 
-import at.crimsonbit.nodesystem.application.NodeSystemBuilder;
+import at.crimsonbit.nodesystem.application.NodeGraphBuilder;
 import at.crimsonbit.nodesystem.examples.customnode.CustomNodeClassExample;
 import at.crimsonbit.nodesystem.examples.customnode.CustomNodes;
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
@@ -25,7 +25,7 @@ public class LoadExistingGraph extends Application {
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("Node Editor");
 
-		GNodeGraph graph = new NodeSystemBuilder(1275, 800, true)
+		GNodeGraph graph = new NodeGraphBuilder(1275, 800, true)
 				.registerCustomNodes("at.crimsonbit.nodesystem.examples.customnode").registerDefaultNodes(true)
 				.attachInfo().build();
 
@@ -41,7 +41,6 @@ public class LoadExistingGraph extends Application {
 		GGraphSettings.getInstance().set(GSettings.SETTING_CURVE_CURVE, 100d);
 
 		Scene scene = graph.getNodeScene();
-		scene.getStylesheets().add(getClass().getResource("node-menu.css").toExternalForm());
 		primaryStage.setScene(scene);
 		primaryStage.show();
 

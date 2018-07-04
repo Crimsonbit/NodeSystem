@@ -1,0 +1,37 @@
+.context-menu {
+	-fx-background-color: #797979;
+	-fx-border-color: white;
+	-fx-border-radius: 10.0 10.0 10.0 10.0;
+	-fx-background-radius: 10.0 10.0 10.0 10.0;
+}
+
+.menu-item .label {
+	-fx-text-fill: white;
+}
+
+.menu-item:focused {
+	-fx-text-fill: orange;
+	-fx-background-color: #767b7f;
+}
+
+.menu-item:focused .label {
+	-fx-text-fill: orange;
+}
+.text-field {
+	-fx-border-color: white;
+	-fx-background-radius: 15.0px;
+	-fx-border-radius: 15.0px;
+}
+.combo-box {
+	-fx-background-color: #191919;
+	-fx-border-color: white;
+	-fx-border-radius: 10.0 10.0 10.0 10.0;
+	-fx-background-radius: 10.0 10.0 10.0 10.0;
+}
+.combo-box-popup .list-view .list-cell:filled:selected, .combo-box-popup .list-view .list-cell:filled:selected:hover 
+{
+    -fx-background: orange;
+    -fx-background-color: orange;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 10, 0, 0, 0);
+    -fx-text-fill: -fx-selection-bar-text;
+}

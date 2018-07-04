@@ -5,12 +5,14 @@ import java.util.ResourceBundle;
 
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public class GraphFromFXMLExample extends Application implements Initializable {
 
@@ -28,7 +30,7 @@ public class GraphFromFXMLExample extends Application implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		id_nodeView.initGraph(true);
+		id_nodeView.registerJarModules("Modules/");
 
 	}
 
@@ -47,6 +49,7 @@ public class GraphFromFXMLExample extends Application implements Initializable {
 		scene = new Scene(root, width, height);
 
 		stage.setScene(scene);
+
 		stage.show();
 
 	}
