@@ -38,6 +38,9 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableMap;
 
+import at.crimsonbit.nodesystem.language.LanguageFile;
+import at.crimsonbit.nodesystem.language.LanguageFileReader;
+import at.crimsonbit.nodesystem.language.LanguageSetup;
 import at.crimsonbit.nodesystem.nodebackend.api.dto.ConnectionDTO;
 import at.crimsonbit.nodesystem.nodebackend.api.dto.FieldDTO;
 import at.crimsonbit.nodesystem.nodebackend.api.dto.NodeDTO;
@@ -139,8 +142,13 @@ public class NodeMaster {
 			Enumeration<JarEntry> entries = jf.entries();
 			while (entries.hasMoreElements()) {
 				JarEntry je = entries.nextElement();
-				if (je.isDirectory() || !je.getName().endsWith(".class"))
+				if (je.isDirectory() || !je.getName().endsWith(".class")) {
+					// Test for string file
+					if (je.getName().endsWith(".strings")) {
+						LanguageSetup.getInstance().readLanguageFile(jf.getInputStream(je));
+					}
 					continue;
+				}
 				String className = je.getName().substring(0, je.getName().length() - ".class".length());
 				className = className.replace('/', '.');
 				Class<?> clazz = cl.loadClass(className);
