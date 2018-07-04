@@ -51,6 +51,7 @@ public class LanguageSetup {
 
 	public String getString(String type, String token) {
 		for (LanguageFile f : langFiles) {
+
 			if (f.getType().equals(type)) {
 				if (f.getLang().equals(currentLanguage)) {
 
@@ -60,7 +61,7 @@ public class LanguageSetup {
 		}
 		return "STRING NOT FOUND";
 	}
-	
+
 	public void readLanguageFile(InputStream inStream) {
 		langFiles.add(reader.readLanguageFile(inStream));
 
