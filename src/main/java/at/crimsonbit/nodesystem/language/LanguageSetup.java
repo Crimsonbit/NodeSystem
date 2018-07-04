@@ -1,7 +1,7 @@
 package at.crimsonbit.nodesystem.language;
 
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,7 +65,7 @@ public class LanguageSetup {
 		return null;
 	}
 
-	public void readLanguageFile(FileInputStream inStream) {
+	public void readLanguageFile(InputStream inStream) {
 		langFiles.add(reader.readLanguageFile(inStream));
 
 	}
