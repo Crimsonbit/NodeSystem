@@ -34,6 +34,7 @@ import at.crimsonbit.nodesystem.gui.widget.searchbar.GSearchBar;
 import at.crimsonbit.nodesystem.gui.widget.toast.JFXToast;
 import at.crimsonbit.nodesystem.gui.widget.toast.ToastPosition;
 import at.crimsonbit.nodesystem.gui.widget.toast.ToastTime;
+import at.crimsonbit.nodesystem.language.LanguageSetup;
 import at.crimsonbit.nodesystem.node.IGuiNodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.NodeMaster;
@@ -76,6 +77,7 @@ import javafx.stage.Stage;
 public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 	private static final String INTERNAL_NODES = "at.crimsonbit.nodesystem.node";
+	private LanguageSetup lang = LanguageSetup.getInstance();
 	private GNodeMaster nodeMaster;
 	private Group canvas;
 	private GNode activeCell;
@@ -102,8 +104,8 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private Rectangle selection;
 	private Text nodeInfo = new Text();
 	private GState state = GState.DEFAULT;
-	private GSubMenu nodeMenu = new GSubMenu(0, "Add Node");
-	private GSubMenu fileMenu = new GSubMenu(1, "File");
+	private GSubMenu nodeMenu = new GSubMenu(0, lang.getString("core", "nodeMenu"));
+	private GSubMenu fileMenu = new GSubMenu(1, lang.getString("core", "fileMenu"));
 	private GLogPane logPane;
 	private InnerShadow innerShadow;
 	private List<String> jarfiles = new ArrayList<>();
@@ -440,7 +442,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		});
 
 	}
-	
+
 	public void addKeySupport(Scene sc) {
 		if (sc != null)
 			sc.setOnKeyPressed(event -> {
@@ -766,9 +768,9 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 			// menuBar.addMenu(menu);
 		}
 
-		GEntry saveGraph = new GEntry(1000, "Save Graph", false);
-		GEntry loadGraph = new GEntry(1001, "Load Graph", false);
-		GEntry closeGraph = new GEntry(1002, "Close Graph", false);
+		GEntry saveGraph = new GEntry(1000, lang.getString("core", "saveMenu"), false);
+		GEntry loadGraph = new GEntry(1001, lang.getString("core", "loadMenu"), false);
+		GEntry closeGraph = new GEntry(1002, lang.getString("core", "closeMenu"), false);
 		int id = Integer.valueOf(saveGraph.getId());
 		saveGraph.setOnAction(event -> {
 			consumeMessage(id, (GEntry) saveGraph);
@@ -870,12 +872,12 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		if (f != null)
 			try {
 				getGuiMaster().getNodeMaster().save(f.getPath(), true);
-				JFXToast.makeToast((Stage) getScene().getWindow(), "NodeSystem saved successfully!",
+				JFXToast.makeToast((Stage) getScene().getWindow(), lang.getString("core", "saveToast"),
 						ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
 				log(Level.FINE, "NodeSystem saved successfully!");
 			} catch (IOException e) {
-				JFXToast.makeToast((Stage) getScene().getWindow(), "Error while saving!", ToastTime.TIME_SHORT,
-						ToastPosition.BOTTOM);
+				JFXToast.makeToast((Stage) getScene().getWindow(), lang.getString("core", "saveErrorToast"),
+						ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
 				e.printStackTrace();
 				log(Level.SEVERE, "Error while saving!");
 			}
@@ -909,17 +911,17 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 				if (ret) {
 					log(Level.FINE, "NodeSystem loaded successfully!");
-					JFXToast.makeToast((Stage) getScene().getWindow(), "NodeSystem loaded successfully!",
+					JFXToast.makeToast((Stage) getScene().getWindow(), lang.getString("core", "loadToast"),
 							ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
 				}
 			} catch (Exception e) {
-				JFXToast.makeToast((Stage) getScene().getWindow(), "Error while loading!", ToastTime.TIME_SHORT,
-						ToastPosition.BOTTOM);
+				JFXToast.makeToast((Stage) getScene().getWindow(), lang.getString("core", "loadErrorToast"),
+						ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
 				e.printStackTrace();
 				log(Level.SEVERE, "Error while loading!");
 			}
 		else {
-			JFXToast.makeToast((Stage) getScene().getWindow(), "Error: No file selected!", ToastTime.TIME_SHORT,
+			JFXToast.makeToast((Stage) getScene().getWindow(), lang.getString("core", "loadErrorToastFile"), ToastTime.TIME_SHORT,
 					ToastPosition.BOTTOM);
 			log(Level.SEVERE, "Error: No file selected!");
 		}

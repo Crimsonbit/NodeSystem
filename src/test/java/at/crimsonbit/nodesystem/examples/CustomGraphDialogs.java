@@ -28,7 +28,7 @@ public class CustomGraphDialogs extends Application {
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("Node Editor");
 
-		GNodeGraph graph = new NodeGraphBuilder(1275, 800, true).registerAllModules("Modules/").build();
+		GNodeGraph graph = new NodeGraphBuilder(1275, 800, true, "English").registerAllModules("Modules/").build();
 
 		/**
 		 * Example of how to add custom node-classes to specific node types

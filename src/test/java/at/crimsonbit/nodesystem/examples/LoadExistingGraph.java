@@ -25,7 +25,7 @@ public class LoadExistingGraph extends Application {
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("Node Editor");
 
-		GNodeGraph graph = new NodeGraphBuilder(1275, 800, true)
+		GNodeGraph graph = new NodeGraphBuilder(1275, 800, true, "English")
 				.registerCustomNodes("at.crimsonbit.nodesystem.examples.customnode").registerDefaultNodes(true)
 				.attachInfo().build();
 

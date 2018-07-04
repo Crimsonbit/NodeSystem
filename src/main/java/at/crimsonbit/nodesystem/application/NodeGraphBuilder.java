@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.GNodeSystem;
 import at.crimsonbit.nodesystem.gui.GNodeView;
+import at.crimsonbit.nodesystem.language.LanguageSetup;
 import at.crimsonbit.nodesystem.util.logger.SystemLogger;
 import javafx.scene.Scene;
 
@@ -48,9 +49,10 @@ public class NodeGraphBuilder {
 	 * @param log
 	 *            tells the nodesystem whether if it should write into a log or not
 	 */
-	public NodeGraphBuilder(double width, double height, boolean log) {
+	public NodeGraphBuilder(double width, double height, boolean log, String language) {
 		this.w = width;
 		this.h = height;
+		LanguageSetup.getInstance(language);
 		if (log) {
 			SystemLogger.attachLogger(true, true);
 		}

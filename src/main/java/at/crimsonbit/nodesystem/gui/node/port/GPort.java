@@ -2,7 +2,6 @@ package at.crimsonbit.nodesystem.gui.node.port;
 
 import java.util.Set;
 
-import at.crimsonbit.nodesystem.gui.GGraphScene;
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.GNodeMaster;
 import at.crimsonbit.nodesystem.gui.GState;
@@ -12,6 +11,7 @@ import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.gui.node.IGConsumable;
 import at.crimsonbit.nodesystem.gui.settings.GGraphSettings;
 import at.crimsonbit.nodesystem.gui.settings.GSettings;
+import at.crimsonbit.nodesystem.language.LanguageSetup;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.control.MenuItem;
@@ -36,6 +36,7 @@ public class GPort extends Group implements IGConsumable {
 
 	private double x;
 	private double y;
+	private LanguageSetup lang = LanguageSetup.getInstance();
 	private int id;
 	private boolean input;
 	private GNode node;
@@ -65,7 +66,7 @@ public class GPort extends Group implements IGConsumable {
 		GPopUp pop = new GPopUp();
 		pop.addItem(-1, labels, true);
 		// pop.addItem(0, "Connect");
-		pop.addItem(1, "Disconnect");
+		pop.addItem(1, lang.getString("core", "portMenuDisconnect"));
 		this.dialog = pop;
 
 		// mouseHandler();

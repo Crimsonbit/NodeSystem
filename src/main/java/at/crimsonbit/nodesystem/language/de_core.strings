@@ -1,0 +1,28 @@
+info 
+{
+type:		"core";
+language:	"Deutsch";
+author:		"Florian W";
+}
+
+strings 
+{
+nodeMenu:	"Node Hinzufügen";
+fileMenu:	"Datei";
+saveMenu:	"Graphen Speichern";
+loadMenu:	"Graphen Laden";
+closeMenu:	"Graphen Schließen";
+saveToast:	"NodeGraph erfolgreich gespeichert!";
+saveErrorToast:	"Fehler beim speichern des NodeGraphen!";
+loadToast:	"NodeGraph wurde erfolgreich geladen!";
+loadErrorToast:	"Fehler beim laden des NodeGraphen!";
+loadErrorToastFile:	"Fehler! Bitte selektiere eine Datei!";
+nodePopCopy:	"Node Kopieren";
+nodePopRemoveActive:	"Aktiv Status entfernen";
+nodePopReName:	"Umbenennen";
+nodePopRemove:	"Löschen";
+nodeReMenuTitle:	"Name";
+nodeReMenuText:	"Setze den Namen der Node";
+nodeReMenuContent:	"Name ";
+portMenuDisconnect:	"Verbindung aufheben";
+}

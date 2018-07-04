@@ -13,6 +13,7 @@ import at.crimsonbit.nodesystem.gui.dialog.GPopUp;
 import at.crimsonbit.nodesystem.gui.node.port.GPort;
 import at.crimsonbit.nodesystem.gui.settings.GGraphSettings;
 import at.crimsonbit.nodesystem.gui.settings.GSettings;
+import at.crimsonbit.nodesystem.language.LanguageSetup;
 import at.crimsonbit.nodesystem.node.IGuiNodeType;
 import at.crimsonbit.nodesystem.nodebackend.api.AbstractNode;
 import at.crimsonbit.nodesystem.nodebackend.api.INodeType;
@@ -57,6 +58,7 @@ public class GNode extends AnchorPane implements IGNode {
 	protected List<GPort> inputPorts = new ArrayList<GPort>();
 	protected List<GPort> outputPorts = new ArrayList<GPort>();
 	protected List<GNodeConnection> connections = new ArrayList<GNodeConnection>();
+	private LanguageSetup lang = LanguageSetup.getInstance();
 	private Scale scaleTransform;
 	private GPopUp popUpDialog;
 	private Color topColor;
@@ -149,7 +151,7 @@ public class GNode extends AnchorPane implements IGNode {
 	public List<GNodeConnection> getConnections() {
 		return this.connections;
 	}
-	
+
 	public double getNodeX() {
 		return nodeX;
 	}
@@ -580,10 +582,10 @@ public class GNode extends AnchorPane implements IGNode {
 		GPopUp pop = new GPopUp();
 		pop.addItem(-2, getName(), true);
 		pop.addSeparator(-1);
-		pop.addItem(ppc++, "Copy Node");
-		pop.addItem(ppc++, "remove Active");
-		pop.addItem(ppc++, "Rename");
-		pop.addItem(ppc++, "Remove");
+		pop.addItem(ppc++, lang.getString("core", "nodePopCopy"));
+		pop.addItem(ppc++, lang.getString("core", "nodePopRemoveActive"));
+		pop.addItem(ppc++, lang.getString("core", "nodePopReName"));
+		pop.addItem(ppc++, lang.getString("core", "nodePopRemove"));
 
 		// if (this.type == Base.OUTPUT) {
 		// pop.addItem(ppc++, "Get Output");
@@ -630,9 +632,9 @@ public class GNode extends AnchorPane implements IGNode {
 		} else if (id == 2) {
 			nodeGraph.doBlur();
 			TextInputDialog dialog = new TextInputDialog(getName());
-			dialog.setTitle("Name");
-			dialog.setHeaderText("Set a new name for the node.");
-			dialog.setContentText("Name: ");
+			dialog.setTitle( lang.getString("core", "nodePopRemove"));
+			dialog.setHeaderText(lang.getString("core", "nodeReMenuText"));
+			dialog.setContentText(lang.getString("core", "nodeReMenuContent"));
 			Optional<String> result = dialog.showAndWait();
 			if (result.isPresent()) {
 				setName(result.get() + nameAddition);
