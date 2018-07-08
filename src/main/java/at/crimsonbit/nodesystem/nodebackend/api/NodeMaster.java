@@ -183,7 +183,7 @@ public class NodeMaster {
 								+ clazz.getCanonicalName() + " with the same type");
 					}
 					registeredNodes.put(type, clazz);
-					stringToType.put(type.toString(), type);
+					stringToType.put(type.name(), type);
 					found = true;
 				}
 			}

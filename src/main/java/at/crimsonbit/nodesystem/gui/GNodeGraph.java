@@ -751,7 +751,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 				menu = new GSubMenu(subMenuCount++, name);
 				cache.put(name, menu);
 			}
-			GEntry ent = new GEntry(idCount++, type.toString(), false);
+			GEntry ent = new GEntry(idCount++, type.toString(), type.name(), false);
 			int id = Integer.valueOf(ent.getId());
 			ent.setOnAction(event -> {
 				consumeMessage(id, (GEntry) ent);
@@ -837,7 +837,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	public void consumeMessage(int id, GEntry source) {
 
 		if (id < 1000) {
-			IGuiNodeType type = (IGuiNodeType) getGuiMaster().getNodeMaster().getTypeByName(source.getName());
+			IGuiNodeType type = (IGuiNodeType) getGuiMaster().getNodeMaster().getTypeByName(source.getUnlocalizedName());
 			Class<? extends GNode> clazz = type.getCustomNodeClass();
 			Constructor<? extends GNode> con;
 			try {

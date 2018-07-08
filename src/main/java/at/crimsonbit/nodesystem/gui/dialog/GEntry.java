@@ -12,6 +12,7 @@ public class GEntry extends MenuItem {
 
 	private int id;
 	private String name;
+	private String unlocname = "";
 
 	public GEntry(int id, String name) {
 		super(name);
@@ -25,6 +26,15 @@ public class GEntry extends MenuItem {
 		setId(String.valueOf(id));
 		this.id = id;
 		this.name = name;
+		setDisable(enabled);
+	}
+
+	public GEntry(int id, String name, String unlocname, boolean enabled) {
+		super(name);
+		setId(String.valueOf(id));
+		this.id = id;
+		this.name = name;
+		this.unlocname = unlocname;
 		setDisable(enabled);
 	}
 
@@ -43,6 +53,14 @@ public class GEntry extends MenuItem {
 		this.name = name;
 		setDisable(enabled);
 		setAccelerator(kombi);
+	}
+
+	public String getUnlocalizedName() {
+		return unlocname;
+	}
+
+	public void setUnlocalizedName(String unlocname) {
+		this.unlocname = unlocname;
 	}
 
 	public int getID() {

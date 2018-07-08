@@ -14,7 +14,7 @@ public class LanguageSetup {
 	private static LanguageSetup instance;
 	private List<LanguageFile> langFiles = new ArrayList<LanguageFile>();
 	private Map<LangType, LanguageFile> langMap = new HashMap<>();
-
+	
 	public static LanguageSetup getInstance() {
 		if (instance == null) {
 			instance = new LanguageSetup();
@@ -27,6 +27,25 @@ public class LanguageSetup {
 			instance = new LanguageSetup(lang);
 		}
 		return instance;
+	}
+
+	public LanguageSetup load(File... files) {
+		LanguageFile f = null;
+		for (File fi : files) {
+			f = reader.readLanguageFile(fi);
+			langMap.put(new LangType(f.getType(), f.getLang()), f);
+		}
+		return this;
+	}
+
+	public LanguageSetup load(Class cl, String... files) {
+		LanguageFile f = null;
+		for (String fi : files) {
+			f = reader.readLanguageFile(new File(cl.getResource(fi).getFile()));
+			langMap.put(new LangType(f.getType(), f.getLang()), f);
+		}
+
+		return this;
 	}
 
 	private LanguageSetup(String lang) {
