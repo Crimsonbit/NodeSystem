@@ -5,6 +5,8 @@ import java.util.Set;
 import at.crimsonbit.nodesystem.gui.GNodeGraph;
 import at.crimsonbit.nodesystem.gui.GNodeMaster;
 import at.crimsonbit.nodesystem.gui.GState;
+import at.crimsonbit.nodesystem.gui.color.GColors;
+import at.crimsonbit.nodesystem.gui.color.GTheme;
 import at.crimsonbit.nodesystem.gui.dialog.GEntry;
 import at.crimsonbit.nodesystem.gui.dialog.GPopUp;
 import at.crimsonbit.nodesystem.gui.node.GNode;
@@ -16,9 +18,12 @@ import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
+import javafx.scene.effect.BlurType;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.StrokeLineCap;
 
@@ -38,9 +43,10 @@ public class GPort extends Group implements IGConsumable {
 	private double y;
 	private LanguageSetup lang = LanguageSetup.getInstance();
 	private int id;
+	private GGraphSettings inst = GGraphSettings.getInstance();
 	private boolean input;
 	private GNode node;
-	private Line line;
+	private CubicCurve line;
 	private GPopUp dialog;
 	private String stringID;
 	private GPortLabel label;
@@ -173,8 +179,19 @@ public class GPort extends Group implements IGConsumable {
 					if (event.isPrimaryButtonDown() && !event.isSecondaryButtonDown()) {
 						node.setPortPressed(true);
 						if (line == null)
-							line = new Line();
+							line = new CubicCurve();
 
+						// line.setControlX1(0);
+						// line.setControlY1(0);
+
+						// line.setControlX2(event.getX());
+						// line.setControlY2(event.getY());
+						line.controlX1Property().bind(node.layoutXProperty()
+								.add(getPortX() + (double) inst.getSetting(GSettings.SETTING_CURVE_CURVE)));
+						line.controlY1Property().bind(node.layoutYProperty().add(getY()));
+						line.controlX2Property().bind(node.layoutXProperty()
+								.add(event.getX() - (double) inst.getSetting(GSettings.SETTING_CURVE_CURVE)));
+						line.controlY2Property().bind(node.layoutYProperty().add(event.getY()));
 						node.getNodeGraph().setState(GState.PORTCON);
 						line.setStroke(node.getNodeType().getColor());
 						line.setStrokeWidth(
@@ -188,6 +205,18 @@ public class GPort extends Group implements IGConsumable {
 						line.endXProperty().bind(node.layoutXProperty().add(event.getX()));
 						line.endYProperty().bind(node.layoutYProperty().add(event.getY()));
 						line.toFront();
+
+						DropShadow e = new DropShadow();
+						e.setBlurType(BlurType.GAUSSIAN);
+						e.setBlurType(BlurType.GAUSSIAN);
+
+						e.setColor(GTheme.getInstance().getColor(GColors.COLOR_SHADOW_COLOR));
+						e.setWidth((double) inst.getSetting(GSettings.SETTING_SHADOW_WIDTH));
+						e.setHeight((double) inst.getSetting(GSettings.SETTING_SHADOW_HEIGHT));
+						e.setOffsetX((double) inst.getSetting(GSettings.SETTING_SHADOW_WIDTH));
+						e.setOffsetY((double) inst.getSetting(GSettings.SETTING_SHADOW_HEIGHT));
+						e.setRadius((double) inst.getSetting(GSettings.SETTING_SHADOW_RADIUS));
+						line.setEffect(e);
 
 						node.getNodeGraph().getTempLineLayer().getChildren().remove(line);
 						node.getNodeGraph().getTempLineLayer().getChildren().add(line);

@@ -66,10 +66,10 @@ public class GNodeConnection extends Group {
 		line = new CubicCurve();
 		line.startXProperty().bind(source.layoutXProperty().add(sourcePort.getPortX() + MAGIC_OFFSET));
 		line.startYProperty().bind(source.layoutYProperty().add(sourcePort.getY() + MAGIC_OFFSET));
-		line.setControlX1(sourcePort.getPortX() + 50);
-		line.setControlY1(sourcePort.getY());
-		line.setControlX2(targetPort.getPortX() - 50);
-		line.setControlY2(targetPort.getY());
+		//line.setControlX1(sourcePort.getPortX() + 50);
+		//line.setControlY1(sourcePort.getY());
+		//line.setControlX2(targetPort.getPortX() - 50);
+		//line.setControlY2(targetPort.getY());
 		line.controlX1Property().bind(source.layoutXProperty().add(sourcePort.getPortX()
 				+ (double) inst.getSetting(GSettings.SETTING_CURVE_CURVE)));
 		line.controlY1Property().bind(source.layoutYProperty().add(sourcePort.getY()));
