@@ -22,7 +22,8 @@ import javafx.scene.shape.StrokeLineCap;
  * @author Florian Wagner
  *
  */
-public class GNodeConnection extends Group {
+public class GNodeConnection extends Group
+{
 
 	protected GPort sourcePort;
 	protected GPort targetPort;
@@ -33,15 +34,15 @@ public class GNodeConnection extends Group {
 	private double width;
 	private final int MAGIC_OFFSET = 3;
 	private GGraphSettings inst = GGraphSettings.getInstance();
+
 	/**
 	 * Initializes a new connecten
 	 * 
-	 * @param sourcePort
-	 *            should be the ouput of a node
-	 * @param targetPort
-	 *            should be the input of a node
+	 * @param sourcePort should be the ouput of a node
+	 * @param targetPort should be the input of a node
 	 */
-	public GNodeConnection(GPort sourcePort, GPort targetPort) {
+	public GNodeConnection(GPort sourcePort, GPort targetPort)
+	{
 
 		this.sourcePort = sourcePort;
 		this.targetPort = targetPort;
@@ -52,33 +53,36 @@ public class GNodeConnection extends Group {
 		tTip.setText("Source: " + sourcePort.getStringID() + "\nTarge: " + targetPort.getStringID());
 		draw();
 		getChildren().add(line);
-	//	Tooltip.install(this, tTip);
+		// Tooltip.install(this, tTip);
 	}
 
-	public void resetSourcePort(GPort source) {
+	public void resetSourcePort(GPort source)
+	{
 		this.sourcePort = source;
 	}
 
 	/**
 	 * Draws the connection to the graph
 	 */
-	public void draw() {
+	public void draw()
+	{
 		line = new CubicCurve();
+
 		line.startXProperty().bind(source.layoutXProperty().add(sourcePort.getPortX() + MAGIC_OFFSET));
 		line.startYProperty().bind(source.layoutYProperty().add(sourcePort.getY() + 5d));
-		//line.setControlX1(sourcePort.getPortX() + 50);
-		//line.setControlY1(sourcePort.getY());
-		//line.setControlX2(targetPort.getPortX() - 50);
-		//line.setControlY2(targetPort.getY());
-		line.controlX1Property().bind(source.layoutXProperty().add(sourcePort.getPortX()
-				+ (double) inst.getSetting(GSettings.SETTING_CURVE_CURVE)));
+		// line.setControlX1(sourcePort.getPortX() + 50);
+		// line.setControlY1(sourcePort.getY());
+		// line.setControlX2(targetPort.getPortX() - 50);
+		// line.setControlY2(targetPort.getY());
+		line.controlX1Property().bind(source.layoutXProperty()
+				.add(sourcePort.getPortX() + (double) inst.getSetting(GSettings.SETTING_CURVE_CURVE)));
 		line.controlY1Property().bind(source.layoutYProperty().add(sourcePort.getY()));
-		line.controlX2Property().bind(target.layoutXProperty().add(targetPort.getPortX()
-				- (double) inst.getSetting(GSettings.SETTING_CURVE_CURVE)));
+		line.controlX2Property().bind(target.layoutXProperty()
+				.add(targetPort.getPortX() - (double) inst.getSetting(GSettings.SETTING_CURVE_CURVE)));
 		line.controlY2Property().bind(target.layoutYProperty().add(targetPort.getY()));
 
 		line.endXProperty().bind(target.layoutXProperty().add(targetPort.getPortX() + MAGIC_OFFSET));
-		line.endYProperty().bind(target.layoutYProperty().add(targetPort.getY()  + 5d));
+		line.endYProperty().bind(target.layoutYProperty().add(targetPort.getY() + 5d));
 		line.setStroke(source.getNodeType().getColor());
 		line.setStrokeWidth((double) inst.getSetting(GSettings.SETTING_CURVE_WIDTH));
 		line.setStrokeLineCap(StrokeLineCap.ROUND);
@@ -87,7 +91,7 @@ public class GNodeConnection extends Group {
 		DropShadow e = new DropShadow();
 		e.setBlurType(BlurType.GAUSSIAN);
 		e.setBlurType(BlurType.GAUSSIAN);
-	
+
 		e.setColor(GTheme.getInstance().getColor(GColors.COLOR_SHADOW_COLOR));
 		e.setWidth((double) inst.getSetting(GSettings.SETTING_SHADOW_WIDTH));
 		e.setHeight((double) inst.getSetting(GSettings.SETTING_SHADOW_HEIGHT));
@@ -95,67 +99,69 @@ public class GNodeConnection extends Group {
 		e.setOffsetY((double) inst.getSetting(GSettings.SETTING_SHADOW_HEIGHT));
 		e.setRadius((double) inst.getSetting(GSettings.SETTING_SHADOW_RADIUS));
 		line.setEffect(e);
+
 	}
 
 	/**
 	 * Draws the connection on a specific y position. This is needed for the node
 	 * toggling.
 	 * 
-	 * @param y
-	 *            the y position
+	 * @param y the y position
 	 */
-	public void draw(double y) {
+	public void draw(double y)
+	{
 		getChildren().remove(line);
 		line = new CubicCurve();
+		if (this.sourcePort.isPressed())
+		{
+			line.startXProperty().bind(source.layoutXProperty().add(sourcePort.getPortX() + MAGIC_OFFSET));
+			line.startYProperty().set(y);
 
-		line.startXProperty().bind(source.layoutXProperty().add(sourcePort.getPortX() + MAGIC_OFFSET));
-		line.startYProperty().set(y);
+			line.setControlX1(sourcePort.getPortX() + 50);
+			line.setControlY1(y);
 
-		line.setControlX1(sourcePort.getPortX() + 50);
-		line.setControlY1(y);
+			line.setControlX2(targetPort.getPortX() - 50);
+			line.setControlY2(targetPort.getY());
 
-		line.setControlX2(targetPort.getPortX() - 50);
-		line.setControlY2(targetPort.getY());
+			line.controlX1Property().bind(source.layoutXProperty()
+					.add(sourcePort.getPortX() + (double) inst.getSetting(GSettings.SETTING_CURVE_CURVE)));
+			line.controlY1Property().set(y);
 
-		line.controlX1Property().bind(source.layoutXProperty().add(sourcePort.getPortX()
-				+ (double) inst.getSetting(GSettings.SETTING_CURVE_CURVE)));
-		line.controlY1Property().set(y);
+			line.controlX2Property().bind(target.layoutXProperty()
+					.add(targetPort.getPortX() - (double) inst.getSetting(GSettings.SETTING_CURVE_CURVE)));
+			line.controlY2Property().bind(target.layoutYProperty().add(targetPort.getY()));
 
-		line.controlX2Property().bind(target.layoutXProperty().add(targetPort.getPortX()
-				- (double) inst.getSetting(GSettings.SETTING_CURVE_CURVE)));
-		line.controlY2Property().bind(target.layoutYProperty().add(targetPort.getY()));
+			line.endXProperty().bind(target.layoutXProperty().add(targetPort.getPortX() + MAGIC_OFFSET));
+			line.endYProperty().bind(target.layoutYProperty().add(targetPort.getY() + 5d));
 
-		line.endXProperty().bind(target.layoutXProperty().add(targetPort.getPortX() + MAGIC_OFFSET));
-		line.endYProperty().bind(target.layoutYProperty().add(targetPort.getY() + 5d));
+			line.setStroke(source.getNodeType().getColor());
+			line.setStrokeWidth((double) inst.getSetting(GSettings.SETTING_CURVE_WIDTH));
+			line.setStrokeLineCap(StrokeLineCap.ROUND);
+			line.setFill(Color.TRANSPARENT);
 
-		line.setStroke(source.getNodeType().getColor());
-		line.setStrokeWidth((double) inst.getSetting(GSettings.SETTING_CURVE_WIDTH));
-		line.setStrokeLineCap(StrokeLineCap.ROUND);
-		line.setFill(Color.TRANSPARENT);
-
-		DropShadow e = new DropShadow();
-		e.setBlurType(BlurType.GAUSSIAN);
-		e.setBlurType(BlurType.GAUSSIAN);
-		e.setColor(GTheme.getInstance().getColor(GColors.COLOR_SHADOW_COLOR));
-		e.setWidth((double) inst.getSetting(GSettings.SETTING_SHADOW_WIDTH));
-		e.setHeight((double) inst.getSetting(GSettings.SETTING_SHADOW_HEIGHT));
-		e.setOffsetX((double) inst.getSetting(GSettings.SETTING_SHADOW_WIDTH));
-		e.setOffsetY((double) inst.getSetting(GSettings.SETTING_SHADOW_HEIGHT));
-		e.setRadius((double) inst.getSetting(GSettings.SETTING_SHADOW_RADIUS));
-		line.setEffect(e);
-		// getChildren().add(line);
-		//System.out.println(getChildren());
+			DropShadow e = new DropShadow();
+			e.setBlurType(BlurType.GAUSSIAN);
+			e.setBlurType(BlurType.GAUSSIAN);
+			e.setColor(GTheme.getInstance().getColor(GColors.COLOR_SHADOW_COLOR));
+			e.setWidth((double) inst.getSetting(GSettings.SETTING_SHADOW_WIDTH));
+			e.setHeight((double) inst.getSetting(GSettings.SETTING_SHADOW_HEIGHT));
+			e.setOffsetX((double) inst.getSetting(GSettings.SETTING_SHADOW_WIDTH));
+			e.setOffsetY((double) inst.getSetting(GSettings.SETTING_SHADOW_HEIGHT));
+			e.setRadius((double) inst.getSetting(GSettings.SETTING_SHADOW_RADIUS));
+			line.setEffect(e);
+			// getChildren().add(line);
+			// System.out.println(getChildren());
+		}
 	}
 
 	/**
 	 * Updates the connection ports
 	 * 
-	 * @param p1
-	 *            output port
-	 * @param p2
-	 *            input port
+	 * @param p1 output port
+	 * @param p2 input port
 	 */
-	public void update(GPort p1, GPort p2) {
+	public void update(GPort p1, GPort p2)
+	{
 		this.sourcePort = p1;
 		this.targetPort = p2;
 		getChildren().remove(line);
@@ -163,11 +169,13 @@ public class GNodeConnection extends Group {
 		getChildren().add(line);
 	}
 
-	public double getWidth() {
+	public double getWidth()
+	{
 		return width;
 	}
 
-	public void setWidth(double width) {
+	public void setWidth(double width)
+	{
 		this.width = width;
 	}
 
@@ -176,7 +184,8 @@ public class GNodeConnection extends Group {
 	 * 
 	 * @return the source node
 	 */
-	public GNode getSource() {
+	public GNode getSource()
+	{
 		return source;
 	}
 
@@ -185,15 +194,18 @@ public class GNodeConnection extends Group {
 	 * 
 	 * @return the target node
 	 */
-	public GNode getTarget() {
+	public GNode getTarget()
+	{
 		return target;
 	}
+
 	/**
 	 * Returns the source port of the connections source node (output)
 	 * 
 	 * @return the source port
 	 */
-	public GPort getSourcePort() {
+	public GPort getSourcePort()
+	{
 		return sourcePort;
 	}
 
@@ -202,12 +214,14 @@ public class GNodeConnection extends Group {
 	 * 
 	 * @return the target port
 	 */
-	public GPort getTargetPort() {
+	public GPort getTargetPort()
+	{
 		return targetPort;
 	}
 
 	@Override
-	public int hashCode() {
+	public int hashCode()
+	{
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((source == null) ? 0 : source.hashCode());
@@ -218,7 +232,8 @@ public class GNodeConnection extends Group {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(Object obj)
+	{
 		if (this == obj)
 			return true;
 		if (obj == null)
@@ -226,22 +241,26 @@ public class GNodeConnection extends Group {
 		if (getClass() != obj.getClass())
 			return false;
 		GNodeConnection other = (GNodeConnection) obj;
-		if (source == null) {
+		if (source == null)
+		{
 			if (other.source != null)
 				return false;
 		} else if (!source.equals(other.source))
 			return false;
-		if (sourcePort == null) {
+		if (sourcePort == null)
+		{
 			if (other.sourcePort != null)
 				return false;
 		} else if (!sourcePort.equals(other.sourcePort))
 			return false;
-		if (target == null) {
+		if (target == null)
+		{
 			if (other.target != null)
 				return false;
 		} else if (!target.equals(other.target))
 			return false;
-		if (targetPort == null) {
+		if (targetPort == null)
+		{
 			if (other.targetPort != null)
 				return false;
 		} else if (!targetPort.equals(other.targetPort))

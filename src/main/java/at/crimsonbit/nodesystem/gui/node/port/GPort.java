@@ -37,7 +37,8 @@ import javafx.scene.shape.StrokeLineCap;
  *
  */
 
-public class GPort extends Group implements IGConsumable {
+public class GPort extends Group implements IGConsumable
+{
 
 	private double x;
 	private double y;
@@ -59,7 +60,8 @@ public class GPort extends Group implements IGConsumable {
 	private final int SNAP_SIZE_Y = 5;
 	private boolean isConnected = false;
 
-	public GPort(int id, boolean input, String labels, double x, double y, GNode node) {
+	public GPort(int id, boolean input, String labels, double x, double y, GNode node)
+	{
 		this.node = node;
 		this.id = id;
 		this.stringID = labels;
@@ -78,22 +80,26 @@ public class GPort extends Group implements IGConsumable {
 		// mouseHandler();
 		draw();
 
-		for (MenuItem item : this.dialog.getItems()) {
+		for (MenuItem item : this.dialog.getItems())
+		{
 			int idd = Integer.valueOf(item.getId());
-			item.setOnAction(event -> { //
-				// System.out.println(idd);
-				consumeMessage(idd, (GEntry) event.getSource());
+			item.setOnAction(event ->
+				{ //
+					// System.out.println(idd);
+					consumeMessage(idd, (GEntry) event.getSource());
+					event.consume();
+				});
+		}
+		this.addEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, event ->
+			{
+				dialog.show(this, event.getScreenX(), event.getScreenY());
 				event.consume();
 			});
-		}
-		this.addEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, event -> {
-			dialog.show(this, event.getScreenX(), event.getScreenY());
-			event.consume();
-		});
 
-		this.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
-			dialog.hide();
-		});
+		this.addEventHandler(MouseEvent.MOUSE_PRESSED, event ->
+			{
+				dialog.hide();
+			});
 
 		tooltip.setText("GPort: " + this.id + "\n" + "Input: " + this.input + "\n" + "Type: "
 				+ node.getAbstractNode().get(labels));
@@ -101,39 +107,51 @@ public class GPort extends Group implements IGConsumable {
 		// Tooltip.install(this.getNode(), tooltip);
 		// getChildren().add(line);
 
-		setOnMouseReleased(new EventHandler<MouseEvent>() {
+		setOnMouseReleased(new EventHandler<MouseEvent>()
+		{
 
 			@Override
-			public void handle(MouseEvent event) {
-				if (node.isPortPressed()) {
+			public void handle(MouseEvent event)
+			{
+				if (node.isPortPressed())
+				{
 
 					boolean isInput = false;
 					boolean isOutput = false;
 					GNodeMaster master = node.getNodeGraph().getGuiMaster();
 					master.removecurConnectPorts();
 
-					if (!input) {
+					if (!input)
+					{
 						master.setFirstPort(GPort.this);
 						isOutput = true;
-					} else {
+					} else
+					{
 						master.setSecondPort(GPort.this);
 						isInput = true;
 					}
 
 					Set<GNode> allNodes = node.getNodeGraph().getGuiMaster().getAllNodes();
 
-					outer: for (GNode n : allNodes) {
-						if (isInput && !isOutput) {
-							for (GPort p : n.getOutputPorts()) {
-								if (p.getConHelper().isMarked()) {
+					outer: for (GNode n : allNodes)
+					{
+						if (isInput && !isOutput)
+						{
+							for (GPort p : n.getOutputPorts())
+							{
+								if (p.getConHelper().isMarked())
+								{
 									master.setFirstPort(p);
 									break outer;
 								}
 
 							}
-						} else {
-							for (GPort p : n.getInputPorts()) {
-								if (p.getConHelper().isMarked()) {
+						} else
+						{
+							for (GPort p : n.getInputPorts())
+							{
+								if (p.getConHelper().isMarked())
+								{
 									master.setSecondPort(p);
 									break outer;
 								}
@@ -155,90 +173,107 @@ public class GPort extends Group implements IGConsumable {
 			}
 		});
 
-		setOnMouseClicked(event -> {
-			Set<GNode> allNodes = node.getNodeGraph().getGuiMaster().getAllNodes();
-			for (GNode n : allNodes) {
-				for (GPort p : n.getOutputPorts()) {
-					p.getConHelper().setMarked(false);
+		setOnMouseClicked(event ->
+			{
+				Set<GNode> allNodes = node.getNodeGraph().getGuiMaster().getAllNodes();
+				for (GNode n : allNodes)
+				{
+					for (GPort p : n.getOutputPorts())
+					{
+						p.getConHelper().setMarked(false);
+					}
+					for (GPort p : n.getInputPorts())
+					{
+						p.getConHelper().setMarked(false);
+					}
 				}
-				for (GPort p : n.getInputPorts()) {
-					p.getConHelper().setMarked(false);
-				}
-			}
 
-		});
-		setOnDragDetected(evt -> {
-			node.getNodeGraph().getGuiMaster().setSourceConPort(this);
-			startFullDrag();
-		});
-		setOnMouseDragged(new EventHandler<MouseEvent>() {
+			});
+		setOnDragDetected(evt ->
+			{
+				node.getNodeGraph().getGuiMaster().setSourceConPort(this);
+				startFullDrag();
+			});
+		setOnMouseDragged(new EventHandler<MouseEvent>()
+		{
 
 			@Override
-			public void handle(MouseEvent event) {
+			public void handle(MouseEvent event)
+			{
 				if (!conHelper.isDoDisconnect())
-					if (event.isPrimaryButtonDown() && !event.isSecondaryButtonDown()) {
-						node.setPortPressed(true);
-						if (line == null)
-							line = new CubicCurve();
+					if (event.isPrimaryButtonDown() && !event.isSecondaryButtonDown())
+					{
+						if (!isInput())
+						{
+							node.setPortPressed(true);
+							if (line == null)
+								line = new CubicCurve();
 
-						line.controlX1Property().bind(node.layoutXProperty()
-								.add(getPortX() + (double) inst.getSetting(GSettings.SETTING_CURVE_CURVE)));
-						line.controlY1Property().bind(node.layoutYProperty().add(getY()));
-						line.controlX2Property().bind(node.layoutXProperty()
-								.add(event.getX() - (double) inst.getSetting(GSettings.SETTING_CURVE_CURVE)));
-						line.controlY2Property().bind(node.layoutYProperty().add(event.getY()));
-						node.getNodeGraph().setState(GState.PORTCON);
-						line.setStroke(node.getNodeType().getColor());
-						line.setStrokeWidth(
-								(double) GGraphSettings.getInstance().getSetting(GSettings.SETTING_CURVE_WIDTH));
-						line.startXProperty().bind(node.layoutXProperty().add(getPortX() + MAGIC_OFFSET));
-						line.startYProperty().bind(node.layoutYProperty().add(getY() + MAGIC_OFFSET));
+							line.controlX1Property().bind(node.layoutXProperty()
+									.add(getPortX() + (double) inst.getSetting(GSettings.SETTING_CURVE_CURVE)));
+							line.controlY1Property().bind(node.layoutYProperty().add(getY() + 5d));
+							line.controlX2Property().bind(node.layoutXProperty()
+									.add(event.getX() - (double) inst.getSetting(GSettings.SETTING_CURVE_CURVE)));
+							line.controlY2Property().bind(node.layoutYProperty().add(event.getY() + 5d));
+							node.getNodeGraph().setState(GState.PORTCON);
+							line.setStroke(node.getNodeType().getColor());
+							line.setStrokeWidth(
+									(double) GGraphSettings.getInstance().getSetting(GSettings.SETTING_CURVE_WIDTH));
+							line.startXProperty().bind(node.layoutXProperty().add(getPortX() + MAGIC_OFFSET));
+							line.startYProperty().bind(node.layoutYProperty().add(getY() + 5d));
 
-						line.setStrokeLineCap(StrokeLineCap.ROUND);
-						line.setFill(Color.TRANSPARENT);
+							line.setStrokeLineCap(StrokeLineCap.ROUND);
+							line.setFill(Color.TRANSPARENT);
 
-						line.endXProperty().bind(node.layoutXProperty().add(event.getX()));
-						line.endYProperty().bind(node.layoutYProperty().add(event.getY()));
-						line.toFront();
+							line.endXProperty().bind(node.layoutXProperty().add(event.getX()));
+							line.endYProperty().bind(node.layoutYProperty().add(event.getY()));
+							line.toFront();
 
-						DropShadow e = new DropShadow();
-						e.setBlurType(BlurType.GAUSSIAN);
-						e.setBlurType(BlurType.GAUSSIAN);
+							DropShadow e = new DropShadow();
+							e.setBlurType(BlurType.GAUSSIAN);
+							e.setBlurType(BlurType.GAUSSIAN);
 
-						e.setColor(GTheme.getInstance().getColor(GColors.COLOR_SHADOW_COLOR));
-						e.setWidth((double) inst.getSetting(GSettings.SETTING_SHADOW_WIDTH));
-						e.setHeight((double) inst.getSetting(GSettings.SETTING_SHADOW_HEIGHT));
-						e.setOffsetX((double) inst.getSetting(GSettings.SETTING_SHADOW_WIDTH));
-						e.setOffsetY((double) inst.getSetting(GSettings.SETTING_SHADOW_HEIGHT));
-						e.setRadius((double) inst.getSetting(GSettings.SETTING_SHADOW_RADIUS));
-						line.setEffect(e);
+							e.setColor(GTheme.getInstance().getColor(GColors.COLOR_SHADOW_COLOR));
+							e.setWidth((double) inst.getSetting(GSettings.SETTING_SHADOW_WIDTH));
+							e.setHeight((double) inst.getSetting(GSettings.SETTING_SHADOW_HEIGHT));
+							e.setOffsetX((double) inst.getSetting(GSettings.SETTING_SHADOW_WIDTH));
+							e.setOffsetY((double) inst.getSetting(GSettings.SETTING_SHADOW_HEIGHT));
+							e.setRadius((double) inst.getSetting(GSettings.SETTING_SHADOW_RADIUS));
+							line.setEffect(e);
 
-						node.getNodeGraph().getTempLineLayer().getChildren().remove(line);
-						node.getNodeGraph().getTempLineLayer().getChildren().add(line);
-						node.getNodeGraph().getTempLineLayer().toFront();
-						node.getNodeGraph().update();
+							node.getNodeGraph().getTempLineLayer().getChildren().remove(line);
+							node.getNodeGraph().getTempLineLayer().getChildren().add(line);
+							node.getNodeGraph().getTempLineLayer().toFront();
+							node.getNodeGraph().update();
+						}
 					}
 			}
 		});
 	}
 
-	public boolean isConnected() {
+	public boolean isConnected()
+	{
 		return isConnected;
 	}
 
-	public void setConnected(boolean isConnected) {
+	public void setConnected(boolean isConnected)
+	{
 		this.isConnected = isConnected;
 	}
 
-	void mouseHandle(MouseEvent event, boolean press) {
+	void mouseHandle(MouseEvent event, boolean press)
+	{
 
 		GNodeGraph graph = node.getNodeGraph();
-		if (isInput()) {
+		if (isInput())
+		{
 			graph.getGuiMaster().setSecondPort(GPort.this);
-		} else {
+		} else
+		{
 			graph.getGuiMaster().setFirstPort(GPort.this);
 		}
-		if (graph.getGuiMaster().connectPorts()) {
+		if (graph.getGuiMaster().connectPorts())
+		{
 			graph.update();
 			graph.getGuiMaster().removecurConnectPorts();
 		}
@@ -247,23 +282,27 @@ public class GPort extends Group implements IGConsumable {
 	}
 
 	@SuppressWarnings("unused")
-	private void mouseHandler() {
+	private void mouseHandler()
+	{
 		this.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> mouseHandle(event, false));
 		this.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> mouseHandle(event, false));
 	}
 
-	public void setDrawText(boolean f) {
+	public void setDrawText(boolean f)
+	{
 		this.drawText = f;
 	}
 
-	public void draw() {
+	public void draw()
+	{
 		if (drawText)
 			getChildren().add(label);
 		getChildren().add(rect);
 		getChildren().add(conHelper);
 	}
 
-	public void redraw() {
+	public void redraw()
+	{
 		getChildren().clear();
 		if (drawText)
 			getChildren().add(label);
@@ -271,11 +310,13 @@ public class GPort extends Group implements IGConsumable {
 		getChildren().add(conHelper);
 	}
 
-	public double getPortX() {
+	public double getPortX()
+	{
 		return this.x;
 	}
 
-	public void relocatePortX(double x) {
+	public void relocatePortX(double x)
+	{
 		// getChildren().clear();
 		label.setIx(x);
 		rect.setRX(x);
@@ -286,71 +327,88 @@ public class GPort extends Group implements IGConsumable {
 		// draw();
 	}
 
-	public void relocatePortY(double y) {
+	public void relocatePortY(double y)
+	{
 		label.setIy(y);
 		rect.setRY(y);
 		this.y = y;
 	}
 
-	public GPortRect getPortRectangle() {
+	public GPortRect getPortRectangle()
+	{
 		return this.rect;
 	}
 
-	public String getStringID() {
+	public String getStringID()
+	{
 		return stringID;
 	}
 
-	public void setStringID(String stringID) {
+	public void setStringID(String stringID)
+	{
 		this.stringID = stringID;
 	}
 
-	public GPopUp getPopUpDialog() {
+	public GPopUp getPopUpDialog()
+	{
 		return this.dialog;
 	}
 
-	public GNode getNode() {
+	public GNode getNode()
+	{
 		return this.node;
 	}
 
-	public int getID() {
+	public int getID()
+	{
 		return this.id;
 	}
 
-	public GPortConHelper getConHelper() {
+	public GPortConHelper getConHelper()
+	{
 		return conHelper;
 	}
 
-	public void setConHelper(GPortConHelper conHelper) {
+	public void setConHelper(GPortConHelper conHelper)
+	{
 		this.conHelper = conHelper;
 	}
 
-	public double getX() {
+	public double getX()
+	{
 		return x;
 	}
 
-	public void setX(double x) {
+	public void setX(double x)
+	{
 		this.x = x;
 	}
 
-	public double getY() {
+	public double getY()
+	{
 		return y;
 	}
 
-	public void setY(double y) {
+	public void setY(double y)
+	{
 		this.y = y;
 	}
 
-	public boolean isInput() {
+	public boolean isInput()
+	{
 		return input;
 	}
 
-	public void setInput(boolean input) {
+	public void setInput(boolean input)
+	{
 		this.input = input;
 	}
 
 	@Override
-	public void consumeMessage(int id, GEntry source) {
-		if (id == 0) {
+	public void consumeMessage(int id, GEntry source)
+	{
+		if (id == 0)
+		{
 			GNodeGraph graph = node.getNodeGraph();
 			// graph.getGuiMaster().addConnection(node1, node2);
 			if (isInput())
@@ -359,7 +417,8 @@ public class GPort extends Group implements IGConsumable {
 				graph.getGuiMaster().setFirstPort(this);
 			graph.getGuiMaster().connectPorts();
 			graph.update();
-		} else if (id == 1) {
+		} else if (id == 1)
+		{
 			GNodeGraph graph = node.getNodeGraph();
 			graph.getGuiMaster().removeConnection(this);
 			graph.update();
@@ -367,7 +426,8 @@ public class GPort extends Group implements IGConsumable {
 	}
 
 	@Override
-	public int hashCode() {
+	public int hashCode()
+	{
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + id;
@@ -377,7 +437,8 @@ public class GPort extends Group implements IGConsumable {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(Object obj)
+	{
 		if (this == obj)
 			return true;
 		if (obj == null)
@@ -387,12 +448,14 @@ public class GPort extends Group implements IGConsumable {
 		GPort other = (GPort) obj;
 		if (id != other.id)
 			return false;
-		if (node == null) {
+		if (node == null)
+		{
 			if (other.node != null)
 				return false;
 		} else if (!node.equals(other.node))
 			return false;
-		if (stringID == null) {
+		if (stringID == null)
+		{
 			if (other.stringID != null)
 				return false;
 		} else if (!stringID.equals(other.stringID))

@@ -43,7 +43,7 @@ public class GGraphScene extends AnchorPane implements ILogging
 	private boolean needsLayout = false;
 	private Scale scaleTransform;
 	private double scaleValue = 1.0;
-	private double strokeValue = 0.1;
+	private double strokeValue = 0.8;
 	private double lineSpacing = 25;
 	private double xOffset = 0;
 	private double yOffset = 0;
@@ -83,8 +83,8 @@ public class GGraphScene extends AnchorPane implements ILogging
 			public void handle(MouseEvent event)
 			{
 				// TODO Auto-generated method stub
-				dragContext.x = getBoundsInParent().getMinX() - event.getScreenX();
-				dragContext.y = getBoundsInParent().getMinY() - event.getScreenY();
+				dragContext.x = canvas.getBoundsInParent().getMinX() - event.getScreenX();
+				dragContext.y = canvas.getBoundsInParent().getMinY() - event.getScreenY();
 
 			}
 
@@ -314,8 +314,8 @@ public class GGraphScene extends AnchorPane implements ILogging
 
 		for (GNode n : graph.getGuiMaster().getAllNodes())
 		{
-			// n.setNodeX(n.getNodeX() + x);
-			// n.setNodeY(n.getNodeY() + y);
+			//n.setNodeX(dragContext.x );
+			//n.setNodeY(dragContext.y );
 			n.relocate((n.getNodeX() + x), (n.getNodeY() + y));
 		}
 
