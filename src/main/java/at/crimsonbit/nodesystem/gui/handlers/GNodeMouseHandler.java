@@ -48,11 +48,14 @@ public class GNodeMouseHandler
 		@Override
 		public void handle(MouseEvent event)
 		{
-			
-			// TODO Auto-generated method stub
 			GNode node = (GNode) event.getSource();
-			node.setHovered(true);
-			node.redraw(true);
+			if (!node.getNodeGraph().getState().equals(GState.PORTCON))
+			{
+				// TODO Auto-generated method stub
+
+				node.setHovered(true);
+				node.redraw(true);
+			}
 		}
 
 	};
@@ -63,10 +66,14 @@ public class GNodeMouseHandler
 		@Override
 		public void handle(MouseEvent event)
 		{
-			// TODO Auto-generated method stub
 			GNode node = (GNode) event.getSource();
-			node.setHovered(false);
-			node.redraw(true);
+			if (!node.getNodeGraph().getState().equals(GState.PORTCON))
+			{
+				// TODO Auto-generated method stub
+
+				node.setHovered(false);
+				node.redraw(true);
+			}
 		}
 
 	};
