@@ -19,39 +19,79 @@ import javafx.scene.input.MouseEvent;
  * @author Florian Wagner
  *
  */
-public class GNodeMouseHandler {
+public class GNodeMouseHandler
+{
 
 	private final DragContext dragContext = new DragContext();
 	private GNodeGraph graph;
 	private GNode node;
 
-	public GNodeMouseHandler(GNodeGraph g) {
+	public GNodeMouseHandler(GNodeGraph g)
+	{
 		this.graph = g;
 	}
 
-	public void makeMoveable(final Node n) {
+	public void makeMoveable(final Node n)
+	{
 		this.node = (GNode) n;
 
 		node.setOnMousePressed(onMousePressedEventHandler);
 		node.setOnMouseDragged(onMouseDraggedEventHandler);
 		node.setOnMouseReleased(onMouseReleasedEventHandler);
-
+		node.setOnMouseEntered(onMouseEntered);
+		node.setOnMouseExited(onMouseExited);
 	}
 
-	EventHandler<MouseEvent> onMousePressedEventHandler = new EventHandler<MouseEvent>() {
+	EventHandler<MouseEvent> onMouseEntered = new EventHandler<MouseEvent>()
+	{
 
-		public void handle(MouseEvent event) {
+		@Override
+		public void handle(MouseEvent event)
+		{
+			
+			// TODO Auto-generated method stub
 			GNode node = (GNode) event.getSource();
-			if (event.isPrimaryButtonDown() && !node.getNodeGraph().getState().equals(GState.PORTCON)) {
+			node.setHovered(true);
+			node.redraw(true);
+		}
 
-				if (event.getClickCount() == 2) {
+	};
+
+	EventHandler<MouseEvent> onMouseExited = new EventHandler<MouseEvent>()
+	{
+
+		@Override
+		public void handle(MouseEvent event)
+		{
+			// TODO Auto-generated method stub
+			GNode node = (GNode) event.getSource();
+			node.setHovered(false);
+			node.redraw(true);
+		}
+
+	};
+	EventHandler<MouseEvent> onMousePressedEventHandler = new EventHandler<MouseEvent>()
+	{
+
+		public void handle(MouseEvent event)
+		{
+			GNode node = (GNode) event.getSource();
+			if (event.isPrimaryButtonDown() && !node.getNodeGraph().getState().equals(GState.PORTCON))
+			{
+
+				if (event.getClickCount() == 2)
+				{
 					node.toggleDraw();
 					node.redraw(true);
-				} else {
-					if (!(node.isPortPressed())) {
+				} else
+				{
+					if (!(node.isPortPressed()))
+					{
 						node.getNodeGraph().setState(GState.NODE_MOVE);
-						for (GNode n : graph.getGuiMaster().getAllNodes()) {
-							if (!n.equals(node)) {
+						for (GNode n : graph.getGuiMaster().getAllNodes())
+						{
+							if (!n.equals(node))
+							{
 								n.setActive(false);
 								n.redraw();
 							}
@@ -73,13 +113,18 @@ public class GNodeMouseHandler {
 		}
 	};
 
-	EventHandler<MouseEvent> onMouseDraggedEventHandler = new EventHandler<MouseEvent>() {
+	EventHandler<MouseEvent> onMouseDraggedEventHandler = new EventHandler<MouseEvent>()
+	{
 
-		public void handle(MouseEvent event) {
+		public void handle(MouseEvent event)
+		{
 			GNode node = (GNode) event.getSource();
-			if (!node.getNodeGraph().getState().equals(GState.PORTCON)) {
-				if (!node.isPortPressed()) {
-					if (event.isPrimaryButtonDown()) {
+			if (!node.getNodeGraph().getState().equals(GState.PORTCON))
+			{
+				if (!node.isPortPressed())
+				{
+					if (event.isPrimaryButtonDown())
+					{
 						node.getNodeGraph().setState(GState.NODE_MOVE);
 						node.setCursor(Cursor.MOVE);
 
@@ -102,12 +147,16 @@ public class GNodeMouseHandler {
 		}
 	};
 
-	EventHandler<MouseEvent> onMouseReleasedEventHandler = new EventHandler<MouseEvent>() {
+	EventHandler<MouseEvent> onMouseReleasedEventHandler = new EventHandler<MouseEvent>()
+	{
 
-		public void handle(MouseEvent event) {
+		public void handle(MouseEvent event)
+		{
 			GNode node = (GNode) event.getSource();
-			if (!node.getNodeGraph().getState().equals(GState.PORTCON)) {
-				if (!(node.isPortPressed())) {
+			if (!node.getNodeGraph().getState().equals(GState.PORTCON))
+			{
+				if (!(node.isPortPressed()))
+				{
 					// for (GNode n : graph.getGuiMaster().getAllCells()) {
 					// if (!n.equals(node)) {
 					// n.setActive(false);

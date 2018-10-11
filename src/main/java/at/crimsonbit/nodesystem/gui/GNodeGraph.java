@@ -428,6 +428,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 
 		setOnMouseReleased(event -> {
 			/**
+			 * TODO!
 			 * Check if nodes are in bounds.
 			 */
 			if (getState().equals(GState.DEFAULT)) {

@@ -49,7 +49,8 @@ import javafx.stage.FileChooser;
  * @author Florian Wagner
  *
  */
-public class GNode extends AnchorPane implements IGNode {
+public class GNode extends AnchorPane implements IGNode
+{
 
 	private GNodeGraph nodeGraph;
 	private List<Shape> shapes = new ArrayList<Shape>();
@@ -65,6 +66,7 @@ public class GNode extends AnchorPane implements IGNode {
 	private String typeName;
 	protected boolean doDraw = false;
 	protected boolean active = false;
+	protected boolean hovered = false;
 	private boolean portPressed = false;
 	protected IGuiNodeType type;
 	private String nameAddition = "";
@@ -95,16 +97,19 @@ public class GNode extends AnchorPane implements IGNode {
 	private double nodeY;
 	private boolean rename;
 
-	private NodeMaster getNodeMaster() {
+	private NodeMaster getNodeMaster()
+	{
 		return nodeGraph.getGuiMaster().getNodeMaster();
 	}
 
-	public GNode() {
+	public GNode()
+	{
 		this("", false);
 
 	}
 
-	public GNode(String name, boolean draw) {
+	public GNode(String name, boolean draw)
+	{
 		this.nodeID = -1;
 		this.name = name;
 		this.doDraw = draw;
@@ -114,15 +119,18 @@ public class GNode extends AnchorPane implements IGNode {
 
 	}
 
-	public GNode(String name, INodeType type, boolean draw, GNodeGraph graph) {
+	public GNode(String name, INodeType type, boolean draw, GNodeGraph graph)
+	{
 		this(name, graph.getGuiMaster().getNodeMaster().createNodeId(type), draw, graph);
 	}
 
-	public GNode(String name, INodeType type, boolean draw, GNodeGraph graph, double x, double y) {
+	public GNode(String name, INodeType type, boolean draw, GNodeGraph graph, double x, double y)
+	{
 		this(name, graph.getGuiMaster().getNodeMaster().createNodeId(type), draw, graph, x, y);
 	}
 
-	public GNode(String name, int id, boolean draw, GNodeGraph graph) {
+	public GNode(String name, int id, boolean draw, GNodeGraph graph)
+	{
 		this.nodeID = id;
 		this.name = name;
 		this.nodeGraph = graph;
@@ -138,110 +146,135 @@ public class GNode extends AnchorPane implements IGNode {
 
 	}
 
-	public GNode(String name, int id, boolean draw, GNodeGraph graph, double x, double y) {
+	public GNode(String name, int id, boolean draw, GNodeGraph graph, double x, double y)
+	{
 		this(name, id, draw, graph);
 		this.nodeX = x;
 		this.nodeY = y;
 		relocate(x, y);
 	}
 
-	public GNode(GNode gNode) {
+	public GNode(GNode gNode)
+	{
 		this(gNode.name, gNode.getNodeMaster().copyOfNode(gNode.nodeID), gNode.doDraw, gNode.nodeGraph);
 	}
 
-	public List<GNodeConnection> getConnections() {
+	public List<GNodeConnection> getConnections()
+	{
 		return this.connections;
 	}
 
-	public double getNodeX() {
+	public double getNodeX()
+	{
 		return nodeX;
 	}
 
-	public void setNodeX(double nodeX) {
+	public void setNodeX(double nodeX)
+	{
 		this.nodeX = nodeX;
 	}
 
-	public double getNodeY() {
+	public double getNodeY()
+	{
 		return nodeY;
 	}
 
-	public void setNodeY(double nodeY) {
+	public void setNodeY(double nodeY)
+	{
 		this.nodeY = nodeY;
 	}
 
-	public String getConnectionsString() {
+	public String getConnectionsString()
+	{
 		StringBuilder sb = new StringBuilder();
 		sb.append("Connected to: ");
-		for (GNodeConnection con : this.connections) {
-			if (con.getSource().equals(this)) {
+		for (GNodeConnection con : this.connections)
+		{
+			if (con.getSource().equals(this))
+			{
 				sb.append(con.getTarget().getName());
 			}
 		}
 		return sb.toString();
 	}
 
-	public String getTypeName() {
+	public String getTypeName()
+	{
 		return this.typeName;
 	}
 
-	private void addToolTip() {
+	private void addToolTip()
+	{
 		tooltip.setText("Type: " + getNodeType().toString());
 		Tooltip.install(this, tooltip);
 	}
 
-	public void setType(IGuiNodeType type) {
+	public void setType(IGuiNodeType type)
+	{
 		this.type = type;
 	}
 
-	private void addAllPorts() {
+	private void addAllPorts()
+	{
 
 		getInputPorts().clear();
 		getOutputPorts().clear();
-		for (String n : getNodeMaster().getAllInputNames(nodeID)) {
+		for (String n : getNodeMaster().getAllInputNames(nodeID))
+		{
 			addInputPort(inPortCount, n, PORT_INPUT_START_X, PORT_INPUT_START_Y + (inPortCount * PORT_OFFSET));
 			inPortCount++;
 		}
-		for (String n : getNodeMaster().getAllOutputNames(nodeID)) {
+		for (String n : getNodeMaster().getAllOutputNames(nodeID))
+		{
 			addOutputPort(inPortCount, n, PORT_OUTPUT_START_X, PORT_OUTPUT_START_Y + (outPortcount * PORT_OFFSET));
 			outPortcount++;
 		}
 	}
 
-	public boolean doDraw() {
+	public boolean doDraw()
+	{
 		return doDraw;
 	}
 
-	public void setGNodeGraph(GNodeGraph graph) {
+	public void setGNodeGraph(GNodeGraph graph)
+	{
 		this.nodeGraph = graph;
 	}
 
-	public Rectangle getTop() {
+	public Rectangle getTop()
+	{
 		return top;
 	}
 
-	public GNodeGraph getNodeGraph() {
+	public GNodeGraph getNodeGraph()
+	{
 		return this.nodeGraph;
 	}
 
-	public IGuiNodeType getNodeType() {
+	public IGuiNodeType getNodeType()
+	{
 		return this.type;
 	}
 
-	public AbstractNode getAbstractNode() {
+	public AbstractNode getAbstractNode()
+	{
 		return getNodeMaster().getNodeByID(nodeID);
 	}
 
-	public void setTopColor(Color c) {
+	public void setTopColor(Color c)
+	{
 		this.topColor = c;
 		redraw();
 	}
 
-	public void setTopColor(double r, double g, double b) {
+	public void setTopColor(double r, double g, double b)
+	{
 		this.topColor = new Color(r, g, b, 1);
 		redraw();
 	}
 
-	private void defaultTopColor() {
+	private void defaultTopColor()
+	{
 		double tr = RangeMapper.mapValue(70, 0, 255, 0, 1);
 		double tg = RangeMapper.mapValue(75, 0, 255, 0, 1);
 		double tb = RangeMapper.mapValue(79, 0, 255, 0, 1);
@@ -249,78 +282,99 @@ public class GNode extends AnchorPane implements IGNode {
 
 	}
 
-	public void setActive(boolean active) {
+	public void setActive(boolean active)
+	{
 		this.active = active;
 	}
 
-	public boolean isActive() {
+	public boolean isActive()
+	{
 		return this.active;
 	}
 
-	public void addInputPort(GPort port) {
+	public void addInputPort(GPort port)
+	{
 		inputPorts.add(port);
 	}
 
-	public void addInputPort(int id, String label, double x, double y) {
+	public void addInputPort(int id, String label, double x, double y)
+	{
 		inputPorts.add(new GPort(id, true, label, x, y, this));
 	}
 
-	public List<GPort> getInputPorts() {
+	public List<GPort> getInputPorts()
+	{
 		return inputPorts;
 	}
 
-	public void addOutputPort(GPort port) {
+	public void addOutputPort(GPort port)
+	{
 		outputPorts.add(port);
 	}
 
-	public void addOutputPort(int id, String label, double x, double y) {
+	public void addOutputPort(int id, String label, double x, double y)
+	{
 		outputPorts.add(new GPort(id, false, label, x, y, this));
 	}
 
-	public GPort getOutputPortById(int id) {
-		for (GPort port : getOutputPorts()) {
-			if (port.getID() == id) {
+	public GPort getOutputPortById(int id)
+	{
+		for (GPort port : getOutputPorts())
+		{
+			if (port.getID() == id)
+			{
 				return port;
 			}
 		}
 		return null;
 	}
 
-	public GPort getInputPortById(int id) {
-		for (GPort port : getInputPorts()) {
-			if (port.getID() == id) {
+	public GPort getInputPortById(int id)
+	{
+		for (GPort port : getInputPorts())
+		{
+			if (port.getID() == id)
+			{
 				return port;
 			}
 		}
 		return null;
 	}
 
-	public List<GPort> getOutputPorts() {
+	public List<GPort> getOutputPorts()
+	{
 		return outputPorts;
 	}
 
-	public void removeInputPort(GPort port) {
+	public void removeInputPort(GPort port)
+	{
 		inputPorts.remove(port);
 	}
 
-	public void removeOutputPort(GPort port) {
+	public void removeOutputPort(GPort port)
+	{
 		outputPorts.remove(port);
 	}
 
-	public void drawNodeTop(double width) {
+	public void drawNodeTop(double width)
+	{
 		double height = 50d / 3d;
 		top = new Rectangle(width, height);
 
-		if (GTheme.getInstance().getStyle().equals(GStyle.GRADIENT)) {
+		if (GTheme.getInstance().getStyle().equals(GStyle.GRADIENT))
+		{
 			LinearGradient lg = GTheme.getInstance().getGradient(((IGuiNodeType) (type)).getColor());
 			top.setStroke(lg);
 			top.setFill(lg);
-		} else if (GTheme.getInstance().getStyle().equals(GStyle.DEFAULT)) {
+		} else if (GTheme.getInstance().getStyle().equals(GStyle.DEFAULT))
+		{
 			top.setStroke(((IGuiNodeType) (type)).getColor());
 			top.setFill(((IGuiNodeType) (type)).getColor());
-		} else if (GTheme.getInstance().getStyle().equals(GStyle.NO_COLOR)) {
+		} else if (GTheme.getInstance().getStyle().equals(GStyle.NO_COLOR))
+		{
 
-		} else {
+		} else
+		{
 			top = new Rectangle(width, 50d / 2d);
 			top.setStroke(((IGuiNodeType) (type)).getColor());
 			top.setFill(((IGuiNodeType) (type)).getColor());
@@ -331,18 +385,22 @@ public class GNode extends AnchorPane implements IGNode {
 
 		Polygon poly = new Polygon();
 		poly.setFill(GTheme.getInstance().getColor(GColors.COLOR_NODE_TRIANGLE_HOVERED));
-		poly.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
-			poly.setFill(GTheme.getInstance().getColor(GColors.COLOR_NODE_TRIANGLE_DEFAULT));
-		});
-		poly.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
-			poly.setFill(GTheme.getInstance().getColor(GColors.COLOR_NODE_TRIANGLE_HOVERED));
-		});
-		poly.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
-			toggleDraw();
-		});
-		poly.addEventFilter(MouseEvent.MOUSE_RELEASED, event -> {
-			redraw(true);
-		});
+		poly.addEventHandler(MouseEvent.MOUSE_ENTERED, event ->
+			{
+				poly.setFill(GTheme.getInstance().getColor(GColors.COLOR_NODE_TRIANGLE_DEFAULT));
+			});
+		poly.addEventHandler(MouseEvent.MOUSE_EXITED, event ->
+			{
+				poly.setFill(GTheme.getInstance().getColor(GColors.COLOR_NODE_TRIANGLE_HOVERED));
+			});
+		poly.addEventHandler(MouseEvent.MOUSE_PRESSED, event ->
+			{
+				toggleDraw();
+			});
+		poly.addEventFilter(MouseEvent.MOUSE_RELEASED, event ->
+			{
+				redraw(true);
+			});
 
 		// if (!this.toggledDraw) {
 		poly.getPoints().addAll(new Double[] { 10d, 5d, 2d, 5d, 6d, height / 1.2d });
@@ -350,23 +408,28 @@ public class GNode extends AnchorPane implements IGNode {
 		// }
 	}
 
-	public void drawNodeTopArc(double width, double arc) {
+	public void drawNodeTopArc(double width, double arc)
+	{
 		double height = 50d / 3d;
 		top = new Rectangle(width, height);
 		top.setAccessibleText("node_top"); // top.setArcWidth(20.0); //
 		top.setArcHeight(arc);
 		top.setArcWidth(arc);
 
-		if (GTheme.getInstance().getStyle().equals(GStyle.GRADIENT)) {
+		if (GTheme.getInstance().getStyle().equals(GStyle.GRADIENT))
+		{
 			LinearGradient lg = GTheme.getInstance().getGradient(((IGuiNodeType) (type)).getColor());
 			top.setStroke(lg);
 			top.setFill(lg);
-		} else if (GTheme.getInstance().getStyle().equals(GStyle.DEFAULT)) {
+		} else if (GTheme.getInstance().getStyle().equals(GStyle.DEFAULT))
+		{
 			top.setStroke(((IGuiNodeType) (type)).getColor());
 			top.setFill(((IGuiNodeType) (type)).getColor());
-		} else if (GTheme.getInstance().getStyle().equals(GStyle.NO_COLOR)) {
+		} else if (GTheme.getInstance().getStyle().equals(GStyle.NO_COLOR))
+		{
 
-		} else {
+		} else
+		{
 			top = new Rectangle(width, 50d / 2d);
 			top.setAccessibleText("node_top"); // top.setArcWidth(20.0); //
 			top.setArcHeight(arc);
@@ -379,18 +442,22 @@ public class GNode extends AnchorPane implements IGNode {
 
 		Polygon poly = new Polygon();
 		poly.setFill(GTheme.getInstance().getColor(GColors.COLOR_NODE_TRIANGLE_HOVERED));
-		poly.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
-			poly.setFill(GTheme.getInstance().getColor(GColors.COLOR_NODE_TRIANGLE_DEFAULT));
-		});
-		poly.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
-			poly.setFill(GTheme.getInstance().getColor(GColors.COLOR_NODE_TRIANGLE_HOVERED));
-		});
-		poly.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
-			toggleDraw();
-		});
-		poly.addEventFilter(MouseEvent.MOUSE_RELEASED, event -> {
-			redraw(true);
-		});
+		poly.addEventHandler(MouseEvent.MOUSE_ENTERED, event ->
+			{
+				poly.setFill(GTheme.getInstance().getColor(GColors.COLOR_NODE_TRIANGLE_DEFAULT));
+			});
+		poly.addEventHandler(MouseEvent.MOUSE_EXITED, event ->
+			{
+				poly.setFill(GTheme.getInstance().getColor(GColors.COLOR_NODE_TRIANGLE_HOVERED));
+			});
+		poly.addEventHandler(MouseEvent.MOUSE_PRESSED, event ->
+			{
+				toggleDraw();
+			});
+		poly.addEventFilter(MouseEvent.MOUSE_RELEASED, event ->
+			{
+				redraw(true);
+			});
 		// if (this.toggledDraw) {
 		double h1 = height / (1.2d);
 		h1 /= 2;
@@ -401,7 +468,8 @@ public class GNode extends AnchorPane implements IGNode {
 
 	}
 
-	public void drawNodeBase(double width, double height) {
+	public void drawNodeBase(double width, double height)
+	{
 		base = new Rectangle(width, height);
 		Color c = GTheme.getInstance().getColor(GColors.COLOR_NODE);
 		base.setStroke(c);
@@ -412,13 +480,19 @@ public class GNode extends AnchorPane implements IGNode {
 		addView(base);
 	}
 
-	public void drawNodeOutline(double width, double height, boolean active, boolean toggled) {
+	public void drawNodeOutline(double width, double height, boolean active, boolean toggled, boolean hovered)
+	{
 
 		outline = new Rectangle(width, height);
 		// outline.setTranslateY(5);
 		outline.setFill(Color.TRANSPARENT);
-
-		if (toggled) {
+		if (hovered)
+		{
+			outline.setStroke(Color.DARKORANGE);
+			outline.setStrokeWidth(2d);
+		}
+		if (toggled)
+		{
 			outline = new Rectangle(width, height);
 			if (GTheme.getInstance().getStyle().equals(GStyle.DARK))
 				outline = new Rectangle(width, 50d / 2d);
@@ -427,22 +501,26 @@ public class GNode extends AnchorPane implements IGNode {
 			outline.setStroke(GTheme.getInstance().getColor(GColors.COLOR_ACTIVE_TOGGLED));
 			outline.setStrokeWidth(1);
 
-		} else {
+		} else if (!hovered)
+		{
 			outline.setStroke(GTheme.getInstance().getColor(GColors.COLOR_NODE_ACTIVE));
 			outline.setStrokeWidth(1);
 		}
 		outline.setArcWidth(21.0);
 		outline.setArcHeight(21.0);
 
-		if (active) {
+		if (active || hovered)
+		{
 			addView(outline);
-		} else {
+		} else
+		{
 			removeView(outline);
 		}
 
 	}
 
-	public double drawNodeText(String name) {
+	public double drawNodeText(String name)
+	{
 		if (!this.rename)
 			text = new Text(type.toString());
 		else
@@ -451,14 +529,16 @@ public class GNode extends AnchorPane implements IGNode {
 		text.setFill(GTheme.getInstance().getColor(GColors.COLOR_TEXT_COLOR));
 		text.setTranslateY(12.5);
 		text.setTranslateX(15);
-		if (GTheme.getInstance().getStyle().equals(GStyle.DARK)) {
+		if (GTheme.getInstance().getStyle().equals(GStyle.DARK))
+		{
 			text.setTranslateY(33 - text.getBoundsInLocal().getHeight());
 			text.setTranslateX(150 - text.getBoundsInLocal().getWidth());
 		}
 		return text.getBoundsInLocal().getWidth();
 	}
 
-	public void drawNodeShadow() {
+	public void drawNodeShadow()
+	{
 		e = new DropShadow();
 		e.setBlurType(BlurType.GAUSSIAN);
 		e.setColor(GTheme.getInstance().getColor(GColors.COLOR_SHADOW_COLOR));
@@ -471,18 +551,23 @@ public class GNode extends AnchorPane implements IGNode {
 		base.setEffect(e);
 	}
 
-	public void toggleDraw() {
+	public void toggleDraw()
+	{
 		toggledDraw = !toggledDraw;
 
 	}
 
 	@Override
-	public void draw() {
+	public void draw()
+	{
 
-		if (this.doDraw) {
-			if (!toggledDraw) {
+		if (this.doDraw)
+		{
+			if (!toggledDraw)
+			{
 				double h = height * inPortCount;
-				if (inPortCount < outPortcount) {
+				if (inPortCount < outPortcount)
+				{
 					h = height * outPortcount;
 				}
 
@@ -492,31 +577,35 @@ public class GNode extends AnchorPane implements IGNode {
 				if (width < tWidth)
 					width = tWidth;
 				PORT_OUTPUT_START_X = (int) width;
-				
+
 				drawNodeBase(width, h);
-				drawNodeOutline(width, h, active, toggledDraw);
+				drawNodeOutline(width, h, active, toggledDraw, hovered);
+
 				drawNodeTop(width);
 				addView(text);
-				for (GPort p : inputPorts) {
+				for (GPort p : inputPorts)
+				{
 					removeView(p);
 					addView(p);
 					p.toFront();
 				}
-				for (GPort p : outputPorts) {
+				for (GPort p : outputPorts)
+				{
 					removeView(p);
 					addView(p);
 					p.toFront();
 				}
-				
+
 				computeUnToggledPortLocations();
 
-			} else {
+			} else
+			{
 				double width = 150;
 				double tWidth = drawNodeText(name);
 				if (width < tWidth)
 					width = tWidth;
 				drawNodeTopArc(width, 15.0);
-				drawNodeOutline(width, 50 / 3, active, toggledDraw);
+				drawNodeOutline(width, 50 / 3, active, toggledDraw, hovered);
 				addView(text);
 				drawToggledConnections((12.5d / 2d) - 1d);
 			}
@@ -527,38 +616,45 @@ public class GNode extends AnchorPane implements IGNode {
 		}
 	}
 
-	public void redraw() {
+	public void redraw()
+	{
 		redraw(false);
 		redraw(true);
 	}
 
-	public void redraw(boolean draw) {
+	public void redraw(boolean draw)
+	{
 		this.doDraw = draw;
 		draw();
 		computeNewPortLocations();
 
 	}
 
-	public void setPopUpDialog(GPopUp dialog) {
+	public void setPopUpDialog(GPopUp dialog)
+	{
 		this.popUpDialog = dialog;
 		addPopUpHandler();
 	}
 
-	public GPopUp getPopUpDialog() {
+	public GPopUp getPopUpDialog()
+	{
 		return this.popUpDialog;
 	}
 
-	public void addPopUpItem(int id, String name) {
+	public void addPopUpItem(int id, String name)
+	{
 		if (id > ppc)
 			this.popUpDialog.addItem(id, name);
 		addPopUpItemHandler();
 	}
 
-	public int getInternalIDCounter() {
+	public int getInternalIDCounter()
+	{
 		return ppc;
 	}
 
-	private void defaultPopUpDialog() {
+	private void defaultPopUpDialog()
+	{
 		GPopUp pop = new GPopUp();
 		pop.addItem(-2, getName(), true);
 		pop.addSeparator(-1);
@@ -576,50 +672,62 @@ public class GNode extends AnchorPane implements IGNode {
 		setPopUpDialog(pop);
 	}
 
-	private void addPopUpItemHandler() {
-		for (MenuItem item : this.popUpDialog.getItems()) {
+	private void addPopUpItemHandler()
+	{
+		for (MenuItem item : this.popUpDialog.getItems())
+		{
 			int id = Integer.valueOf(item.getId());
-			item.setOnAction(event -> {
-				if (id <= ppc)
-					consumeMessage(id);
-				else
-					consumeCustomMessage(id);
-				event.consume();
-			});
+			item.setOnAction(event ->
+				{
+					if (id <= ppc)
+						consumeMessage(id);
+					else
+						consumeCustomMessage(id);
+					event.consume();
+				});
 		}
 	}
 
-	private void addPopUpHandler() {
-		addEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, event -> {
-			this.popUpDialog.show(this, event.getScreenX(), event.getScreenY());
-			event.consume();
-		});
+	private void addPopUpHandler()
+	{
+		addEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, event ->
+			{
+				this.popUpDialog.show(this, event.getScreenX(), event.getScreenY());
+				event.consume();
+			});
 
-		addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
-			this.popUpDialog.hide();
-		});
+		addEventHandler(MouseEvent.MOUSE_PRESSED, event ->
+			{
+				this.popUpDialog.hide();
+			});
 		addPopUpItemHandler();
 	}
 
-	public void consumeMessage(int id) {
-		if (id == 3) {
+	public void consumeMessage(int id)
+	{
+		if (id == 3)
+		{
 			nodeGraph.getGuiMaster().removeNode(this);
 			nodeGraph.update();
-		} else if (id == 1) {
+		} else if (id == 1)
+		{
 			nodeGraph.update();
 			setActive(false);
 			redraw();
-		} else if (id == 2) {
+		} else if (id == 2)
+		{
 			nodeGraph.doBlur();
 			TextInputDialog dialog = new TextInputDialog(getName());
 			dialog.setTitle(lang.getString("core", "nodePopRemove"));
 			dialog.setHeaderText(lang.getString("core", "nodeReMenuText"));
 			dialog.setContentText(lang.getString("core", "nodeReMenuContent"));
 			Optional<String> result = dialog.showAndWait();
-			if (result.isPresent()) {
+			if (result.isPresent())
+			{
 				setName(result.get() + nameAddition);
 				nodeGraph.removeBlur();
-			} else {
+			} else
+			{
 				nodeGraph.removeBlur();
 			}
 			redraw();
@@ -632,7 +740,8 @@ public class GNode extends AnchorPane implements IGNode {
 			// redraw();
 			// getNodeGraph().update();
 
-		} else if (id == 0) {
+		} else if (id == 0)
+		{
 			getNodeGraph().getClipBoard().copyPaste(this);
 			/*
 			 * GNode node = new GNode(this); node.relocate(getBoundsInParent().getMinX(),
@@ -642,23 +751,28 @@ public class GNode extends AnchorPane implements IGNode {
 		}
 	}
 
-	protected void drawToggledConnections(double y) {
+	protected void drawToggledConnections(double y)
+	{
 		if (getOutputPorts().size() >= 1)
-			for (GPort p : getOutputPorts()) {
+			for (GPort p : getOutputPorts())
+			{
 				p.relocatePortY(y);
 				p.redraw();
 				List<GNodeConnection> conn = getConnections();
-				conn.stream().filter(con -> getOutputPorts().contains(con.getSourcePort())).forEach(con -> {
-					con.update(con.getSourcePort(), con.getTargetPort());
-				});
+				conn.stream().filter(con -> getOutputPorts().contains(con.getSourcePort())).forEach(con ->
+					{
+						con.update(con.getSourcePort(), con.getTargetPort());
+					});
 			}
-		for (GPort p : getInputPorts()) {
+		for (GPort p : getInputPorts())
+		{
 			p.relocatePortY(y);
 			p.redraw();
 			List<GNodeConnection> conn = getConnections();
-			conn.stream().filter(con -> getInputPorts().contains(con.getTargetPort())).forEach(con -> {
-				con.update(con.getSourcePort(), con.getTargetPort());
-			});
+			conn.stream().filter(con -> getInputPorts().contains(con.getTargetPort())).forEach(con ->
+				{
+					con.update(con.getSourcePort(), con.getTargetPort());
+				});
 		}
 		// conn.stream().filter(con ->
 		// getInputPorts().contains(con.getTargetPort())).forEach(con -> {
@@ -666,103 +780,136 @@ public class GNode extends AnchorPane implements IGNode {
 		// });
 	}
 
-	protected void computeUnToggledPortLocations() {
+	protected void computeUnToggledPortLocations()
+	{
 		int inPortCount = 0;
 		int outPortCount = 0;
-		for (GPort p : getOutputPorts()) {
+		for (GPort p : getOutputPorts())
+		{
 			p.relocatePortX(this.top.getWidth() - PORT_TOP_DRAW_OFFSET);
 			p.relocatePortY(PORT_INPUT_START_Y + (outPortCount * PORT_OFFSET));
 			p.redraw();
 			List<GNodeConnection> conn = getConnections();
-			conn.stream().filter(con -> getOutputPorts().contains(con.getSourcePort())).forEach(con -> {
-				con.update(con.getSourcePort(), con.getTargetPort());
-			});
+			conn.stream().filter(con -> getOutputPorts().contains(con.getSourcePort())).forEach(con ->
+				{
+					con.update(con.getSourcePort(), con.getTargetPort());
+				});
 			outPortCount++;
 		}
-		for (GPort p : getInputPorts()) {
+		for (GPort p : getInputPorts())
+		{
 			// p.relocatePortX(this.top.getWidth() - PORT_TOP_DRAW_OFFSET);
 			p.relocatePortY(PORT_INPUT_START_Y + (inPortCount * PORT_OFFSET));
 			p.redraw();
 			List<GNodeConnection> conn = getConnections();
-			conn.stream().filter(con -> getInputPorts().contains(con.getTargetPort())).forEach(con -> {
-				con.update(con.getSourcePort(), con.getTargetPort());
-			});
+			conn.stream().filter(con -> getInputPorts().contains(con.getTargetPort())).forEach(con ->
+				{
+					con.update(con.getSourcePort(), con.getTargetPort());
+				});
 			inPortCount++;
 		}
 	}
 
-	protected void computeNewPortLocations() {
-		for (GPort p : getOutputPorts()) {
+	protected void computeNewPortLocations()
+	{
+		for (GPort p : getOutputPorts())
+		{
 			p.relocatePortX(this.top.getWidth() - PORT_TOP_DRAW_OFFSET);
 			p.redraw();
 			List<GNodeConnection> conn = getConnections();
-			conn.stream().filter(con -> getOutputPorts().contains(con.getSourcePort())).forEach(con -> {
-				con.update(con.getSourcePort(), con.getTargetPort());
-			});
+			conn.stream().filter(con -> getOutputPorts().contains(con.getSourcePort())).forEach(con ->
+				{
+					con.update(con.getSourcePort(), con.getTargetPort());
+				});
 		}
 	}
 
-	public void setName(String string) {
+	public void setName(String string)
+	{
 		this.rename = true;
 		this.name = string;
 	}
 
-	public void addShape(Shape s) {
+	public void addShape(Shape s)
+	{
 		shapes.add(s);
 	}
 
-	public List<Shape> getShapes() {
+	public List<Shape> getShapes()
+	{
 		return this.shapes;
 	}
 
-	public void addNodeChildren(GNode cell) {
+	public void addNodeChildren(GNode cell)
+	{
 		children.add(cell);
 	}
 
-	public List<GNode> getNodeChildren() {
+	public List<GNode> getNodeChildren()
+	{
 		return children;
 	}
 
-	public void addNodeParent(GNode cell) {
+	public void addNodeParent(GNode cell)
+	{
 		parents.add(cell);
 	}
 
-	public List<GNode> getNodeParents() {
+	public List<GNode> getNodeParents()
+	{
 		return parents;
 	}
 
-	public void removeCellChild(GNode cell) {
+	public void removeCellChild(GNode cell)
+	{
 		children.remove(cell);
 	}
 
-	public void addView(Node view) {
+	public void addView(Node view)
+	{
 		getChildren().add(view);
 
 	}
 
-	public void removeView(Node view) {
+	public void removeView(Node view)
+	{
 		getChildren().remove(view);
 	}
 
-	public String getName() {
+	public String getName()
+	{
 		return name;
 	}
 
-	public void setPortPressed(boolean pressed) {
+	public void setPortPressed(boolean pressed)
+	{
 		this.portPressed = pressed;
 	}
 
-	public boolean isPortPressed() {
+	public boolean isPortPressed()
+	{
 		return this.portPressed;
 	}
 
 	@Override
-	public void consumeCustomMessage(int id) {
+	public void consumeCustomMessage(int id)
+	{
 
 	}
 
+	public boolean isHovered()
+	{
+		return hovered;
+	}
+
+	public void setHovered(boolean hovered)
+	{
+		this.hovered = hovered;
+	}
+
 	@Override
-	public int hashCode() {
+	public int hashCode()
+	{
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((nodeGraph == null) ? 0 : nodeGraph.hashCode());
@@ -772,7 +919,8 @@ public class GNode extends AnchorPane implements IGNode {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(Object obj)
+	{
 		if (this == obj)
 			return true;
 		if (obj == null)
@@ -780,14 +928,16 @@ public class GNode extends AnchorPane implements IGNode {
 		if (getClass() != obj.getClass())
 			return false;
 		GNode other = (GNode) obj;
-		if (nodeGraph == null) {
+		if (nodeGraph == null)
+		{
 			if (other.nodeGraph != null)
 				return false;
 		} else if (!nodeGraph.equals(other.nodeGraph))
 			return false;
 		if (nodeID != other.nodeID)
 			return false;
-		if (type == null) {
+		if (type == null)
+		{
 			if (other.type != null)
 				return false;
 		} else if (!type.equals(other.type))
@@ -795,12 +945,14 @@ public class GNode extends AnchorPane implements IGNode {
 		return true;
 	}
 
-	public int getNodeID() {
+	public int getNodeID()
+	{
 		return nodeID;
 	}
 
 	@Override
-	public String toString() {
+	public String toString()
+	{
 		return name + ", type: " + type + ", ppc: " + ppc + ", connections: " + getConnectionsString();
 	}
 
@@ -811,7 +963,8 @@ public class GNode extends AnchorPane implements IGNode {
 	 * @param data
 	 */
 	@SuppressWarnings("unchecked")
-	public void loadData(Object data) {
+	public void loadData(Object data)
+	{
 		Data d = (Data) data;
 		relocate(d.x, d.y);
 		this.setName(d.name);
@@ -825,18 +978,21 @@ public class GNode extends AnchorPane implements IGNode {
 	 * @see GNode#loadData(Object)
 	 * @return
 	 */
-	public Object storeData() {
+	public Object storeData()
+	{
 		return new Data(this.getLayoutX(), this.getLayoutY(), this.getName());
 	}
 
-	private static class Data implements Serializable {
+	private static class Data implements Serializable
+	{
 
 		private static final long SerialVersionUID = 0;
 
 		public final double x, y;
 		public final String name;
 
-		public Data(double x, double y, String name) {
+		public Data(double x, double y, String name)
+		{
 			super();
 			this.x = x;
 			this.y = y;
@@ -845,7 +1001,8 @@ public class GNode extends AnchorPane implements IGNode {
 
 	}
 
-	public void onKeyPressed(KeyEvent event) {
+	public void onKeyPressed(KeyEvent event)
+	{
 
 	}
 
