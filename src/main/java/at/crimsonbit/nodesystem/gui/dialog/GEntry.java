@@ -76,6 +76,7 @@ public class GEntry extends MenuItem {
 	}
 
 	public void setName(String name) {
+		setText(name);
 		this.name = name;
 	}
 

@@ -92,6 +92,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private GLineLayer tempLineLayer;
 	private GNodePanel nodePanel;
 	private HashMap<INodeType, Color> colorLookup = new HashMap<INodeType, Color>();
+	private Set<GEntry> menuEntries = new HashSet<GEntry>();
 
 	private Set<GNode> selectedNodesGroup = new HashSet<GNode>();
 
@@ -106,6 +107,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	private GState state = GState.DEFAULT;
 	private GSubMenu nodeMenu = new GSubMenu(0, lang.getString("core", "nodeMenu"));
 	private GSubMenu fileMenu = new GSubMenu(1, lang.getString("core", "fileMenu"));
+	private GSubMenu languageMenu = new GSubMenu(2, lang.getString("core", "langMenu"));
 	private GLogPane logPane;
 	private InnerShadow innerShadow;
 	private List<String> jarfiles = new ArrayList<>();
@@ -189,12 +191,22 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		this.handler = new GNodeMouseHandler(this);
 	}
 
+	private void reInitializeAllDialogs() {
+		nodeMenu = new GSubMenu(0, lang.getString("core", "nodeMenu"));
+		fileMenu = new GSubMenu(1, lang.getString("core", "fileMenu"));
+		languageMenu = new GSubMenu(2, lang.getString("core", "langMenu"));
+		createGraphDialog();
+		loadMenus();
+	}
+
 	private void createGraphDialog() {
 		graphDialog = new GPopUp();
 		graphDialog.addItem(-1, "Node-Graph", true);
 		graphDialog.addSeparator(-2);
 		graphDialog.addItem(nodeMenu);
 		graphDialog.addItem(fileMenu);
+		graphDialog.addSeparator(-3);
+		graphDialog.addItem(languageMenu);
 		this.setPopUpDialog(graphDialog);
 	}
 
@@ -557,6 +569,7 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 				 * Show the pop up menu
 				 */
 				if (event.isControlDown() && event.getCode().equals(KeyCode.X)) {
+					setDialogTexts();
 					popUpDialog.show(nodeMaster.getNodeGraph(), getpX(), getpY());
 				}
 
@@ -739,9 +752,9 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	}
 
 	private void loadMenus() {
-		log(Level.INFO, "Loading menus....");
-		Set<INodeType> map = getGuiMaster().getNodeMaster().getAllNodeClasses();
+		// log(Level.INFO, "Loading menus....");
 
+		Set<INodeType> map = getGuiMaster().getNodeMaster().getAllNodeClasses();
 		Map<String, GSubMenu> cache = new HashMap<>();
 		for (INodeType type : map) {
 
@@ -758,14 +771,23 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 				event.consume();
 
 			});
-			log(Level.INFO, "Adding sub-menu: " + menu.toString());
+			// log(Level.INFO, "Adding sub-menu: " + menu.toString());
 			menu.addItem(ent);
-
+			menuEntries.add(ent);
 		}
 		for (GSubMenu menu : cache.values()) {
 			nodeMenu.addMenu(menu);
-			log(Level.INFO, "Adding menu: " + menu.toString());
+			// log(Level.INFO, "Adding menu: " + menu.toString());
 			// menuBar.addMenu(menu);
+		}
+		int ids = 2000;
+		for (String s : LanguageSetup.getInstance().getLanguages()) {
+			GEntry ent = new GEntry(ids, s, false);
+			ent.setOnAction(event -> {
+				consumeMessage(Integer.valueOf(ent.getId()), (GEntry) ent);
+				event.consume();
+			});
+			languageMenu.addItem(ent);
 		}
 
 		GEntry saveGraph = new GEntry(1000, lang.getString("core", "saveMenu"), false);
@@ -793,13 +815,29 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		fileMenu.addItem(loadGraph);
 		fileMenu.addSeparator(1003);
 		fileMenu.addItem(closeGraph);
-		log(Level.INFO, "Done loading menus!");
+		// log(Level.INFO, "Done loading menus!");
 	}
+
+	private void setDialogTexts() {
+		nodeMenu.setText(lang.getString("core", "nodeMenu"));
+		fileMenu.setText(lang.getString("core", "fileMenu"));
+		languageMenu.setText(lang.getString("core", "langMenu"));
+
+		for (GEntry ent : menuEntries) {
+		
+			Tuple<String, String> t = lang.getTokenFromString(ent.getName());
+			if (!t.a.equals("NULL") && !t.b.equals("NULL"))
+				ent.setText(lang.getString(t.b, t.a));
+		}
+	} 
 
 	private void addPopUpHandler(GPopUp dialog) {
 		this.addEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, event -> {
 			setCurX(event.getSceneX());
 			setCurY(event.getSceneY());
+
+			setDialogTexts();
+
 			dialog.show(this, event.getScreenX(), event.getScreenY());
 			event.consume();
 		});
@@ -837,7 +875,8 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 	public void consumeMessage(int id, GEntry source) {
 
 		if (id < 1000) {
-			IGuiNodeType type = (IGuiNodeType) getGuiMaster().getNodeMaster().getTypeByName(source.getUnlocalizedName());
+			IGuiNodeType type = (IGuiNodeType) getGuiMaster().getNodeMaster()
+					.getTypeByName(source.getUnlocalizedName());
 			Class<? extends GNode> clazz = type.getCustomNodeClass();
 			Constructor<? extends GNode> con;
 			try {
@@ -861,6 +900,18 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 		if (id == 1002) {
 			Stage stage = (Stage) getScene().getWindow();
 			stage.close();
+		}
+
+		if (id >= 2000) {
+			// System.out.println(source.getName());
+			LanguageSetup.getInstance().setLanguage(source.getName());
+			// reInitializeAllDialogs();
+
+			for (GNode n : getGuiMaster().getAllNodes()) {
+				// n.setName();
+				n.redraw();
+			}
+
 		}
 
 		update();
@@ -921,8 +972,8 @@ public class GNodeGraph extends GGraphScene implements IGConsumable {
 				log(Level.SEVERE, "Error while loading!");
 			}
 		else {
-			JFXToast.makeToast((Stage) getScene().getWindow(), lang.getString("core", "loadErrorToastFile"), ToastTime.TIME_SHORT,
-					ToastPosition.BOTTOM);
+			JFXToast.makeToast((Stage) getScene().getWindow(), lang.getString("core", "loadErrorToastFile"),
+					ToastTime.TIME_SHORT, ToastPosition.BOTTOM);
 			log(Level.SEVERE, "Error: No file selected!");
 		}
 	}

@@ -31,7 +31,8 @@ import javafx.stage.StageStyle;
  * @author Florian Wagner
  *
  */
-public class GSearchBar {
+public class GSearchBar
+{
 
 	private static Scene scene;
 	private static Stage stage;
@@ -42,7 +43,8 @@ public class GSearchBar {
 	private TextField idd_search_text;
 	private ComboBox<String> idd_search_res;
 
-	public GSearchBar() {
+	public GSearchBar()
+	{
 
 	}
 
@@ -51,7 +53,8 @@ public class GSearchBar {
 	 * 
 	 * @return the search result
 	 */
-	public String getSearch() {
+	public String getSearch()
+	{
 		return search;
 	}
 
@@ -60,7 +63,8 @@ public class GSearchBar {
 	 * @param sc
 	 * @param graph
 	 */
-	public void search(Stage sc, GNodeGraph graph) {
+	public void search(Stage sc, GNodeGraph graph)
+	{
 		open = true;
 		graph.doBlur();
 		this.graph = graph;
@@ -98,17 +102,21 @@ public class GSearchBar {
 		idd_search_res.relocate(300, 0);
 		idd_search_text.setOnKeyPressed(onKeyPressedEventHandler);
 
-		idd_search_res.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+		idd_search_res.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>()
+		{
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue)
+			{
 				idd_search_text.setText(newValue);
 				idd_search_text.requestFocus();
 			}
 		});
 	}
 
-	private void reFillComboBox() {
+	private void reFillComboBox()
+	{
 		idd_search_res.getItems().removeAll(idd_search_res.getItems());
-		for (String s : graph.getGuiMaster().getNodeMaster().getStringToTypeMap().keySet()) {
+		for (String s : graph.getGuiMaster().getNodeMaster().getStringToTypeMap().keySet())
+		{
 			if (idd_search_text.getText() != null)
 				if (s.toLowerCase().contains(idd_search_text.getText().toLowerCase()))
 					idd_search_res.getItems().add(s);
@@ -116,40 +124,50 @@ public class GSearchBar {
 		}
 	}
 
-	private EventHandler<KeyEvent> onKeyPressedEventHandler = new EventHandler<KeyEvent>() {
+	private EventHandler<KeyEvent> onKeyPressedEventHandler = new EventHandler<KeyEvent>()
+	{
 		@Override
-		public void handle(KeyEvent event) {
+		public void handle(KeyEvent event)
+		{
 
-			if (event.getCode().equals(KeyCode.SPACE) && event.isControlDown()) {
-				if (idd_search_res.getItems().size() == 1) {
+			if (event.getCode().equals(KeyCode.SPACE) && event.isControlDown())
+			{
+				if (idd_search_res.getItems().size() == 1)
+				{
 					idd_search_text.setText(idd_search_res.getItems().get(0));
 				}
 			}
 
-			if (event.getCode().equals(KeyCode.ESCAPE)) {
+			if (event.getCode().equals(KeyCode.ESCAPE))
+			{
 				stage.close();
 				open = false;
 				graph.removeBlur();
 				return;
 			}
 
-			if (event.getCode().equals(KeyCode.ENTER)) {
+			if (event.getCode().equals(KeyCode.ENTER))
+			{
 
 				search = idd_search_text.getText();
 				stage.close();
 				open = false;
-				if (graph != null) {
+				if (graph != null)
+				{
 					INodeType type = graph.getGuiMaster().getNodeMaster().getTypeByName(search);
-					if (type != null) {
+					if (type != null)
+					{
 						Class<? extends GNode> clazz = ((IGuiNodeType) type).getCustomNodeClass();
 						Constructor<? extends GNode> con;
-						try {
+						try
+						{
 							con = clazz.getConstructor(String.class, INodeType.class, boolean.class, GNodeGraph.class,
 									double.class, double.class);
 							GNode n = con.newInstance(search, type, true, graph, graph.getCurX(), graph.getCurY());
 							graph.getGuiMaster().addNode(n);
 						} catch (NoSuchMethodException | SecurityException | InstantiationException
-								| IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+								| IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
+						{
 							e.printStackTrace();
 						}
 
@@ -169,7 +187,8 @@ public class GSearchBar {
 	 * 
 	 * @return
 	 */
-	public boolean isOpen() {
+	public boolean isOpen()
+	{
 		return open;
 	}
 

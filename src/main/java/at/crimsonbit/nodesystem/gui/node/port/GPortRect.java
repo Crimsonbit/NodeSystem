@@ -1,6 +1,7 @@
 package at.crimsonbit.nodesystem.gui.node.port;
 
 import at.crimsonbit.nodesystem.gui.color.GColors;
+import at.crimsonbit.nodesystem.gui.color.GStyle;
 import at.crimsonbit.nodesystem.gui.color.GTheme;
 import at.crimsonbit.nodesystem.gui.node.GNode;
 import at.crimsonbit.nodesystem.gui.settings.GSettings;
@@ -13,7 +14,8 @@ import javafx.scene.shape.Rectangle;
  *
  */
 
-public class GPortRect extends Rectangle {
+public class GPortRect extends Rectangle
+{
 
 	private GNode node;
 	private double x;
@@ -21,12 +23,24 @@ public class GPortRect extends Rectangle {
 	private boolean input;
 	private Color inputColor;
 	private Color outputColor;
-	private double size = 6;
+	private double size = 3;
 
-	public void redraw() {
-
+	public void redraw()
+	{
 		setX(x);
 		setY(y);
+		if (GTheme.getInstance().getStyle().equals(GStyle.DARK))
+		{
+			size = 10;
+			setX(x + size / 2d);
+			if (input)
+			{
+				setX(x - size);
+			}
+		} else
+		{
+			size = 6;
+		}
 		setWidth(size);
 		setHeight(size);
 		if (input)
@@ -34,14 +48,15 @@ public class GPortRect extends Rectangle {
 		else
 			setFill(this.outputColor);
 
-		// setStroke(Color.LIGHTSKYBLUE);
 		setArcWidth(20.0);
 		setArcHeight(20.0);
 		setStrokeWidth(1);
 	}
 
-	public GPortRect(double x, double y, boolean input, GNode node) {
+	public GPortRect(double x, double y, boolean input, GNode node)
+	{
 		this.node = node;
+
 		this.x = x;
 		this.y = y;
 		this.input = input;
@@ -50,61 +65,75 @@ public class GPortRect extends Rectangle {
 		redraw();
 	}
 
-	public void setSize(double s) {
+	public void setSize(double s)
+	{
 		this.size = s;
 	}
 
-	public double getSize() {
+	public double getSize()
+	{
 		return this.size;
 	}
 
-	public Color getInputColor() {
+	public Color getInputColor()
+	{
 		return inputColor;
 	}
 
-	public void setInputColor(Color inputColor) {
+	public void setInputColor(Color inputColor)
+	{
 		this.inputColor = inputColor;
 	}
 
-	public Color getOutputColor() {
+	public Color getOutputColor()
+	{
 		return outputColor;
 	}
 
-	public void setOutputColor(Color outputColor) {
+	public void setOutputColor(Color outputColor)
+	{
 		this.outputColor = outputColor;
 	}
 
-	public GNode getNode() {
+	public GNode getNode()
+	{
 		return node;
 	}
 
-	public void setNode(GNode node) {
+	public void setNode(GNode node)
+	{
 		this.node = node;
 	}
 
-	public double getRX() {
+	public double getRX()
+	{
 		return x;
 	}
 
-	public void setRX(double x) {
+	public void setRX(double x)
+	{
 		this.x = x;
 		redraw();
 	}
 
-	public double getRY() {
+	public double getRY()
+	{
 		return y;
 	}
 
-	public void setRY(double y) {
+	public void setRY(double y)
+	{
 		this.y = y;
 
 	}
 
-	public boolean isInput() {
+	public boolean isInput()
+	{
 		return input;
 	}
 
-	public void setInput(boolean input) {
+	public void setInput(boolean input)
+	{
 		this.input = input;
 	}
 

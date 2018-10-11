@@ -73,7 +73,7 @@ public class GNode extends AnchorPane implements IGNode {
 	protected int outPortcount = 0;
 	private final int PORT_INPUT_START_X = 5;
 	private final int PORT_INPUT_START_Y = 35;
-	protected int PORT_OUTPUT_START_X = 140;
+	protected int PORT_OUTPUT_START_X = 150;
 	private int PORT_OUTPUT_START_Y = 35;
 	private final int PORT_OFFSET = 40;
 	protected double height = 52;
@@ -93,6 +93,7 @@ public class GNode extends AnchorPane implements IGNode {
 	protected boolean toggledDraw = false;
 	private double nodeX;
 	private double nodeY;
+	private boolean rename;
 
 	private NodeMaster getNodeMaster() {
 		return nodeGraph.getGuiMaster().getNodeMaster();
@@ -309,6 +310,7 @@ public class GNode extends AnchorPane implements IGNode {
 	public void drawNodeTop(double width) {
 		double height = 50d / 3d;
 		top = new Rectangle(width, height);
+
 		if (GTheme.getInstance().getStyle().equals(GStyle.GRADIENT)) {
 			LinearGradient lg = GTheme.getInstance().getGradient(((IGuiNodeType) (type)).getColor());
 			top.setStroke(lg);
@@ -318,12 +320,15 @@ public class GNode extends AnchorPane implements IGNode {
 			top.setFill(((IGuiNodeType) (type)).getColor());
 		} else if (GTheme.getInstance().getStyle().equals(GStyle.NO_COLOR)) {
 
+		} else {
+			top = new Rectangle(width, 50d / 2d);
+			top.setStroke(((IGuiNodeType) (type)).getColor());
+			top.setFill(((IGuiNodeType) (type)).getColor());
 		}
-
 		top.setAccessibleText("node_top"); // top.setArcWidth(20.0); //
 		top.setArcHeight(20.0);
-
 		addView(top);
+
 		Polygon poly = new Polygon();
 		poly.setFill(GTheme.getInstance().getColor(GColors.COLOR_NODE_TRIANGLE_HOVERED));
 		poly.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
@@ -347,10 +352,10 @@ public class GNode extends AnchorPane implements IGNode {
 
 	public void drawNodeTopArc(double width, double arc) {
 		double height = 50d / 3d;
-		top = new Rectangle(width, 50 / 3);
-
+		top = new Rectangle(width, height);
 		top.setAccessibleText("node_top"); // top.setArcWidth(20.0); //
 		top.setArcHeight(arc);
+		top.setArcWidth(arc);
 
 		if (GTheme.getInstance().getStyle().equals(GStyle.GRADIENT)) {
 			LinearGradient lg = GTheme.getInstance().getGradient(((IGuiNodeType) (type)).getColor());
@@ -361,10 +366,14 @@ public class GNode extends AnchorPane implements IGNode {
 			top.setFill(((IGuiNodeType) (type)).getColor());
 		} else if (GTheme.getInstance().getStyle().equals(GStyle.NO_COLOR)) {
 
+		} else {
+			top = new Rectangle(width, 50d / 2d);
+			top.setAccessibleText("node_top"); // top.setArcWidth(20.0); //
+			top.setArcHeight(arc);
+			top.setArcWidth(arc);
+			top.setStroke(((IGuiNodeType) (type)).getColor());
+			top.setFill(((IGuiNodeType) (type)).getColor());
 		}
-
-		top.setArcWidth(arc);
-		top.setArcHeight(arc);
 
 		addView(top);
 
@@ -411,9 +420,13 @@ public class GNode extends AnchorPane implements IGNode {
 
 		if (toggled) {
 			outline = new Rectangle(width, height);
+			if (GTheme.getInstance().getStyle().equals(GStyle.DARK))
+				outline = new Rectangle(width, 50d / 2d);
+
 			outline.setFill(Color.TRANSPARENT);
 			outline.setStroke(GTheme.getInstance().getColor(GColors.COLOR_ACTIVE_TOGGLED));
 			outline.setStrokeWidth(1);
+
 		} else {
 			outline.setStroke(GTheme.getInstance().getColor(GColors.COLOR_NODE_ACTIVE));
 			outline.setStrokeWidth(1);
@@ -430,10 +443,18 @@ public class GNode extends AnchorPane implements IGNode {
 	}
 
 	public double drawNodeText(String name) {
-		text = new Text(name);
+		if (!this.rename)
+			text = new Text(type.toString());
+		else
+			text = new Text(name);
+
 		text.setFill(GTheme.getInstance().getColor(GColors.COLOR_TEXT_COLOR));
 		text.setTranslateY(12.5);
 		text.setTranslateX(15);
+		if (GTheme.getInstance().getStyle().equals(GStyle.DARK)) {
+			text.setTranslateY(33 - text.getBoundsInLocal().getHeight());
+			text.setTranslateX(150 - text.getBoundsInLocal().getWidth());
+		}
 		return text.getBoundsInLocal().getWidth();
 	}
 
@@ -470,75 +491,34 @@ public class GNode extends AnchorPane implements IGNode {
 
 				if (width < tWidth)
 					width = tWidth;
-
 				PORT_OUTPUT_START_X = (int) width;
-				// addAllNodes();
-
+				
 				drawNodeBase(width, h);
 				drawNodeOutline(width, h, active, toggledDraw);
 				drawNodeTop(width);
-				// drawNodeShadow();
-				// text.setTranslateX(35);
-
 				addView(text);
-
 				for (GPort p : inputPorts) {
 					removeView(p);
 					addView(p);
 					p.toFront();
 				}
-				/*
-				 * if (outputPorts.size() == 1) {
-				 * 
-				 * GPort p = outputPorts.get(0);
-				 * 
-				 * getChildren().remove(p); p.setDrawText(false);
-				 * p.getPortRectangle().setSize(15); p.redraw(); p.relocate(width - 15, 0);
-				 * addView(p); p.toFront();
-				 * 
-				 * } else {
-				 */
 				for (GPort p : outputPorts) {
 					removeView(p);
 					addView(p);
 					p.toFront();
 				}
-				// }
+				
 				computeUnToggledPortLocations();
 
 			} else {
-
 				double width = 150;
 				double tWidth = drawNodeText(name);
-
 				if (width < tWidth)
 					width = tWidth;
-
-				// addAllNodes();
-
-				// drawNodeBase(width, h);
 				drawNodeTopArc(width, 15.0);
 				drawNodeOutline(width, 50 / 3, active, toggledDraw);
-				// drawNodeOutline(width, h, active);
-				// drawNodeShadow();
-				// text.setTranslateX(35);
-
 				addView(text);
-				/*
-				 * if (outputPorts.size() == 1) {
-				 * 
-				 * GPort p = outputPorts.get(0);
-				 * 
-				 * getChildren().remove(p); p.setDrawText(false);
-				 * p.getPortRectangle().setSize(15); p.redraw(); p.relocate(width - 15, 0);
-				 * addView(p); p.toFront(); }
-				 */
 				drawToggledConnections((12.5d / 2d) - 1d);
-
-				/*
-				 * for (GPort p : inputPorts) { removeView(p); addView(p); p.toFront(); } for
-				 * (GPort p : outputPorts) { removeView(p); addView(p); p.toFront(); }
-				 */
 			}
 		} else
 
@@ -632,7 +612,7 @@ public class GNode extends AnchorPane implements IGNode {
 		} else if (id == 2) {
 			nodeGraph.doBlur();
 			TextInputDialog dialog = new TextInputDialog(getName());
-			dialog.setTitle( lang.getString("core", "nodePopRemove"));
+			dialog.setTitle(lang.getString("core", "nodePopRemove"));
 			dialog.setHeaderText(lang.getString("core", "nodeReMenuText"));
 			dialog.setContentText(lang.getString("core", "nodeReMenuContent"));
 			Optional<String> result = dialog.showAndWait();
@@ -723,6 +703,7 @@ public class GNode extends AnchorPane implements IGNode {
 	}
 
 	public void setName(String string) {
+		this.rename = true;
 		this.name = string;
 	}
 

@@ -11,6 +11,7 @@ nodeMenu:	"Add Node";
 fileMenu:	"File";
 saveMenu:	"Save Graph";
 loadMenu:	"Load Graph";
+langMenu:	"Language";
 closeMenu:	"Close Graph";
 saveToast:	"NodeGraph saved successfully!";
 saveErrorToast:	"Error while saving NodeGraph!";

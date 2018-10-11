@@ -27,7 +27,6 @@ public class GPortLabel extends Text {
 
 	public void draw() {
 		int off = getText().length();
-
 		if (!input)
 			setX(ix - (off * 7));
 		else

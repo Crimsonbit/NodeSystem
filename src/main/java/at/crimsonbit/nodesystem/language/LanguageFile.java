@@ -60,7 +60,8 @@ public class LanguageFile {
 	public String getString(String tk) {
 		return this.strings.get(tk);
 	}
-
+	
+	
 	@Override
 	public String toString() {
 		return "LanguageFile [type= " + type + ", lang=" + lang + ", author=" + author + ", strings=" + strings + "]";

@@ -11,6 +11,7 @@ nodeMenu:	"Node Hinzufügen";
 fileMenu:	"Datei";
 saveMenu:	"Graphen Speichern";
 loadMenu:	"Graphen Laden";
+langMenu:	"Sprache";
 closeMenu:	"Graphen Schließen";
 saveToast:	"NodeGraph erfolgreich gespeichert!";
 saveErrorToast:	"Fehler beim speichern des NodeGraphen!";

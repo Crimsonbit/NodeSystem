@@ -67,6 +67,7 @@ public class GSubMenu extends Menu {
 	}
 
 	public void setName(String name) {
+		setText(name);
 		this.name = name;
 	}
 

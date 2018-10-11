@@ -181,11 +181,6 @@ public class GPort extends Group implements IGConsumable {
 						if (line == null)
 							line = new CubicCurve();
 
-						// line.setControlX1(0);
-						// line.setControlY1(0);
-
-						// line.setControlX2(event.getX());
-						// line.setControlY2(event.getY());
 						line.controlX1Property().bind(node.layoutXProperty()
 								.add(getPortX() + (double) inst.getSetting(GSettings.SETTING_CURVE_CURVE)));
 						line.controlY1Property().bind(node.layoutYProperty().add(getY()));

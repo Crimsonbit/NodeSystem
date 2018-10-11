@@ -33,7 +33,8 @@ import javafx.scene.transform.Scale;
  * @author Florian Wagner
  *
  */
-public class GGraphScene extends AnchorPane implements ILogging {
+public class GGraphScene extends AnchorPane implements ILogging
+{
 
 	private static final double HALF_PIXEL_OFFSET = -0.5;
 
@@ -59,14 +60,15 @@ public class GGraphScene extends AnchorPane implements ILogging {
 	double height;
 	protected Logger log;
 
-	public GGraphScene() {
+	public GGraphScene()
+	{
 
 		scaleTransform = new Scale(scaleValue, scaleValue, 0, 0);
 		// getTransforms().add(scaleTransform);
 		getChildren().add(canvas);
 		// setStyle("-fx-background-color: #363b3f");
 
-		setOnScroll(new ZoomHandler());
+		// setOnScroll(new ZoomHandler());
 		addEventHandler(MouseEvent.MOUSE_DRAGGED, new MoveHandler());
 
 		setTopAnchor(canvas, 0d);
@@ -74,9 +76,25 @@ public class GGraphScene extends AnchorPane implements ILogging {
 		setLeftAnchor(canvas, 0d);
 		setRightAnchor(canvas, 0d);
 
-		setOnMouseMoved(new EventHandler<MouseEvent>() {
+		setOnMousePressed(new EventHandler<MouseEvent>()
+		{
+
 			@Override
-			public void handle(MouseEvent event) {
+			public void handle(MouseEvent event)
+			{
+				// TODO Auto-generated method stub
+				dragContext.x = getBoundsInParent().getMinX() - event.getScreenX();
+				dragContext.y = getBoundsInParent().getMinY() - event.getScreenY();
+
+			}
+
+		});
+
+		setOnMouseMoved(new EventHandler<MouseEvent>()
+		{
+			@Override
+			public void handle(MouseEvent event)
+			{
 
 				localMouseX = event.getSceneX();
 				localMouseY = event.getSceneY();
@@ -87,14 +105,17 @@ public class GGraphScene extends AnchorPane implements ILogging {
 			}
 		});
 
-		setOnMouseClicked(new EventHandler<MouseEvent>() {
+		setOnMouseClicked(new EventHandler<MouseEvent>()
+		{
 
 			@Override
-			public void handle(MouseEvent event) {
+			public void handle(MouseEvent event)
+			{
 				dragContext.x = -event.getScreenX();
 				dragContext.y = -event.getScreenY();
 
-				if (graph.getActive() != null) {
+				if (graph.getActive() != null)
+				{
 					graph.getActive().setActive(false);
 					graph.getActive().redraw();
 					graph.setActive(null);
@@ -105,15 +126,18 @@ public class GGraphScene extends AnchorPane implements ILogging {
 		GClip.install(this);
 	}
 
-	public Logger getLogger() {
+	public Logger getLogger()
+	{
 		return log;
 	}
 
-	public Scale getScaleTransform() {
+	public Scale getScaleTransform()
+	{
 		return this.scaleTransform;
 	}
 
-	protected void init() {
+	protected void init()
+	{
 
 		setBackground(new Background(new BackgroundFill(GTheme.getInstance().getColor(GColors.COLOR_BACKGROUND),
 				CornerRadii.EMPTY, Insets.EMPTY)));
@@ -121,67 +145,83 @@ public class GGraphScene extends AnchorPane implements ILogging {
 		layoutChildren();
 	}
 
-	protected void setNodeGraph(GNodeGraph graph) {
+	protected void setNodeGraph(GNodeGraph graph)
+	{
 		this.graph = graph;
 		init();
 
 	}
 
-	public double getLocalMouseX() {
+	public double getLocalMouseX()
+	{
 		return localMouseX;
 	}
 
-	public void setLocalMouseX(double localMouseX) {
+	public void setLocalMouseX(double localMouseX)
+	{
 		this.localMouseX = localMouseX;
 	}
 
-	public double getLocalMouseY() {
+	public double getLocalMouseY()
+	{
 		return localMouseY;
 	}
 
-	public void setLocalMouseY(double localMouseY) {
+	public void setLocalMouseY(double localMouseY)
+	{
 		this.localMouseY = localMouseY;
 	}
 
-	public double getCurX() {
+	public double getCurX()
+	{
 		return curX;
 	}
 
-	public void setCurX(double curX) {
+	public void setCurX(double curX)
+	{
 		this.curX = curX;
 	}
 
-	public double getCurY() {
+	public double getCurY()
+	{
 		return curY;
 	}
 
-	public void setCurY(double curY) {
+	public void setCurY(double curY)
+	{
 		this.curY = curY;
 	}
 
-	public double getpX() {
+	public double getpX()
+	{
 		return pX;
 	}
 
-	public void setpX(double pX) {
+	public void setpX(double pX)
+	{
 		this.pX = pX;
 	}
 
-	public double getpY() {
+	public double getpY()
+	{
 		return pY;
 	}
 
-	public void setpY(double pY) {
+	public void setpY(double pY)
+	{
 		this.pY = pY;
 	}
 
-	public Canvas getCanvas() {
+	public Canvas getCanvas()
+	{
 		return this.canvas;
 	}
 
 	@Override
-	protected void layoutChildren() {
-		if (this.lineColor != null) {
+	protected void layoutChildren()
+	{
+		if (this.lineColor != null)
+		{
 			final int top = (int) snappedTopInset();
 			final int right = (int) snappedRightInset();
 			final int bottom = (int) snappedBottomInset();
@@ -193,7 +233,8 @@ public class GGraphScene extends AnchorPane implements ILogging {
 			canvas.setLayoutX(left);
 			canvas.setLayoutY(top);
 
-			if (width != canvas.getWidth() || height != canvas.getHeight() || needsLayout) {
+			if (width != canvas.getWidth() || height != canvas.getHeight() || needsLayout)
+			{
 				canvas.setWidth(width);
 				canvas.setHeight(height);
 
@@ -206,22 +247,28 @@ public class GGraphScene extends AnchorPane implements ILogging {
 				final int hLineCount = (int) Math.floor((height + 1) / spacing);
 				final int vLineCount = (int) Math.floor((width + 1) / spacing);
 
-				for (int i = 0; i < hLineCount; i++) {
-					if (i % BIG_LINE_SPACING == 0) {
+				for (int i = 0; i < hLineCount; i++)
+				{
+					if (i % BIG_LINE_SPACING == 0)
+					{
 						gc.setStroke(Color.BLACK);
 						gc.setLineWidth(strokeValue + 2);
-					} else {
+					} else
+					{
 						gc.setStroke(this.lineColor);
 						gc.setLineWidth(strokeValue);
 					}
 					gc.strokeLine(0, snap((i + 1) * spacing), width, snap((i + 1) * spacing));
 				}
 
-				for (int i = 0; i < vLineCount; i++) {
-					if (i % BIG_LINE_SPACING == 0) {
+				for (int i = 0; i < vLineCount; i++)
+				{
+					if (i % BIG_LINE_SPACING == 0)
+					{
 						gc.setStroke(Color.BLACK);
 						gc.setLineWidth(strokeValue + 2);
-					} else {
+					} else
+					{
 						gc.setStroke(this.lineColor);
 						gc.setLineWidth(strokeValue);
 					}
@@ -233,20 +280,24 @@ public class GGraphScene extends AnchorPane implements ILogging {
 		}
 	}
 
-	public double getScaleValue() {
+	public double getScaleValue()
+	{
 		return scaleValue;
 	}
 
-	protected void setScaleValue(double sca) {
+	protected void setScaleValue(double sca)
+	{
 		scaleValue = sca;
 		zoomTo(scaleValue, localMouseX, localMouseY);
 	}
 
-	private static double snap(double y) {
+	private static double snap(double y)
+	{
 		return ((int) y) + HALF_PIXEL_OFFSET;
 	}
 
-	public void zoomTo(double scaleValue, double x, double y) {
+	public void zoomTo(double scaleValue, double x, double y)
+	{
 
 		needsLayout = true;
 		layoutChildren();
@@ -257,17 +308,22 @@ public class GGraphScene extends AnchorPane implements ILogging {
 		scaleTransform.setY(scaleValue);
 	}
 
-	public void moveTo(double x, double y) {
+	public void moveTo(double x, double y)
+	{
 		needsLayout = true;
 
-		for (GNode n : graph.getGuiMaster().getAllNodes()) {
+		for (GNode n : graph.getGuiMaster().getAllNodes())
+		{
+			// n.setNodeX(n.getNodeX() + x);
+			// n.setNodeY(n.getNodeY() + y);
 			n.relocate((n.getNodeX() + x), (n.getNodeY() + y));
 		}
 
 		layoutChildren();
 	}
 
-	public void strokeWidth(double strokeval) {
+	public void strokeWidth(double strokeval)
+	{
 		if (strokeval <= 1)
 			strokeval = 1;
 		if (strokeval > 20)
@@ -287,25 +343,37 @@ public class GGraphScene extends AnchorPane implements ILogging {
 	 * @author Florian Wagner
 	 *
 	 */
-	protected class MoveHandler implements EventHandler<MouseEvent> {
+	protected class MoveHandler implements EventHandler<MouseEvent>
+	{
 
 		@Override
 		// TODO
-		public void handle(MouseEvent event) {
+		public void handle(MouseEvent event)
+		{
 
-			if (event.isMiddleButtonDown()) {
-				double offsetY = (event.getScreenY() + dragContext.y);
-				double offsetX = (event.getScreenX() + dragContext.x);
+			if (event.isMiddleButtonDown())
+			{
+				double offsetX = event.getScreenX() + dragContext.x;
+				double offsetY = event.getScreenY() + dragContext.y;
 
-				if (event.isControlDown()) {
-					offsetY = 0;
-				}
-				
-				double scale = getScaleValue();
+				// adjust the offset in case we are zoomed
+				double scale = graph.getScaleValue();
 
 				offsetX /= scale;
 				offsetY /= scale;
 
+				// System.out.println(dragContext.x);
+				// System.out.println(dragContext.y);
+				/*
+				 * double offsetY = (getCurX()); double offsetX = (event.getX() -
+				 * event.getScreenX());
+				 * 
+				 * if (event.isControlDown()) { offsetY = 0; }
+				 * 
+				 * double scale = getScaleValue();
+				 * 
+				 * offsetX /= scale; offsetY /= scale;
+				 */
 				moveTo(offsetX, offsetY);
 				event.consume();
 			}
@@ -323,7 +391,8 @@ public class GGraphScene extends AnchorPane implements ILogging {
 	 * @author Florian Wagner
 	 *
 	 */
-	protected class ZoomHandler implements EventHandler<ScrollEvent> {
+	protected class ZoomHandler implements EventHandler<ScrollEvent>
+	{
 		private static final double MAX_SCALE = 10.0d;
 		private static final double MIN_SCALE = 0.4d;
 
@@ -336,7 +405,8 @@ public class GGraphScene extends AnchorPane implements ILogging {
 		private static final double MIN_STROKE = 0.0d;
 		private static final double MAX_STROKE = 4d;
 
-		public double clamp(double value, double min, double max) {
+		public double clamp(double value, double min, double max)
+		{
 
 			if (Double.compare(value, min) < 0)
 				return min;
@@ -347,25 +417,32 @@ public class GGraphScene extends AnchorPane implements ILogging {
 			return value;
 		}
 
-		public void handle(ScrollEvent scrollEvent) {
+		public void handle(ScrollEvent scrollEvent)
+		{
 
-			if (scrollEvent.isControlDown()) {
-				if (scrollEvent.getDeltaY() < 0) {
+			if (scrollEvent.isControlDown())
+			{
+				if (scrollEvent.getDeltaY() < 0)
+				{
 					strokeValue *= DELTA_MINUS;
 
-				} else {
+				} else
+				{
 					strokeValue *= DELTA_PLUS;
 				}
 				strokeValue = clamp(strokeValue, MIN_STROKE, MAX_STROKE);
 				if (strokeValue != MIN_STROKE)
 					strokeWidth(strokeValue);
 
-			} else {
+			} else
+			{
 
-				if (scrollEvent.getDeltaY() < 0) {
+				if (scrollEvent.getDeltaY() < 0)
+				{
 					scaleValue *= DELTA_MINUS;
 					lineSpacing *= DELTA_MINUS;
-				} else {
+				} else
+				{
 					scaleValue *= DELTA_PLUS;
 					lineSpacing *= DELTA_PLUS;
 				}
@@ -389,7 +466,8 @@ public class GGraphScene extends AnchorPane implements ILogging {
 	 * </p>
 	 */
 	@Override
-	public void log(Level l, String msg) {
+	public void log(Level l, String msg)
+	{
 		if (getLogger() != null)
 			log.log(l, msg);
 	}

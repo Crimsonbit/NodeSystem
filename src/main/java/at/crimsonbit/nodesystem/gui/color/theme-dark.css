@@ -36,5 +36,5 @@
     -fx-background: orange;
     -fx-background-color: orange;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 10, 0, 0, 0);
-    -fx-text-fill: -fx-selection-bar-text;
+    -fx-text-fill: white;
 }

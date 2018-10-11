@@ -2,19 +2,22 @@ package at.crimsonbit.nodesystem.language;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import at.crimsonbit.nodesystem.nodebackend.util.Tuple;
 
 public class LanguageSetup {
 
-	private String currentLanguage = "Deutsch";
+	private String currentLanguage = "English";
 	private LanguageFileReader reader = new LanguageFileReader();
 	private static LanguageSetup instance;
-	private List<LanguageFile> langFiles = new ArrayList<LanguageFile>();
 	private Map<LangType, LanguageFile> langMap = new HashMap<>();
-	
+
 	public static LanguageSetup getInstance() {
 		if (instance == null) {
 			instance = new LanguageSetup();
@@ -49,12 +52,21 @@ public class LanguageSetup {
 	}
 
 	private LanguageSetup(String lang) {
-		settLanguage(lang);
+		setLanguage(lang);
 		readCoreLanguageFile();
 	}
 
 	private LanguageSetup() {
 		readCoreLanguageFile();
+	}
+
+	public Set<String> getLanguages() {
+		Set<String> langList = new HashSet<String>();
+		for (LangType lt : langMap.keySet()) {
+			langList.add(lt.lang);
+		}
+		// System.out.println(langList);
+		return langList;
 	}
 
 	private void readCoreLanguageFile() {
@@ -69,18 +81,34 @@ public class LanguageSetup {
 		return currentLanguage;
 	}
 
-	public void settLanguage(String currentLanguage) {
+	public void setLanguage(String currentLanguage) {
 		this.currentLanguage = currentLanguage;
 	}
 
 	public String getString(String type, String token) {
-		LanguageFile lang = langMap.get(new LangType(type, currentLanguage));
+
+		LanguageFile lang = langMap.get(new LangType(type, this.currentLanguage));
+
 		if (lang != null) {
 			String localized = lang.getString(token);
 			if (localized != null)
 				return localized;
 		}
 		return "STRING_NOT_FOUND";
+	}
+
+	public Tuple<String, String> getTokenFromString(String s) {
+		Set<LangType> tmp = langMap.keySet();
+		for (LangType t : tmp) {
+			LanguageFile lang = langMap.get(t);
+			for (String k : lang.getStrings().keySet()) {
+				if (lang.getStrings().get(k).equals(s)) {
+					return new Tuple<String, String>(k, lang.getType());
+				}
+			}
+
+		}
+		return new Tuple<String, String>("NULL", "NULL");
 	}
 
 	public void readLanguageFile(InputStream inStream) {
