@@ -486,12 +486,13 @@ public class GNode extends AnchorPane implements IGNode
 		outline = new Rectangle(width, height);
 		// outline.setTranslateY(5);
 		outline.setFill(Color.TRANSPARENT);
+		outline.setStrokeWidth(0d);
 		if (hovered)
 		{
 			outline.setStroke(Color.DARKORANGE);
 			outline.setStrokeWidth(2d);
-		}
-		if (toggled)
+			
+		} else if (toggled)
 		{
 			outline = new Rectangle(width, height);
 			if (GTheme.getInstance().getStyle().equals(GStyle.DARK))
@@ -501,11 +502,8 @@ public class GNode extends AnchorPane implements IGNode
 			outline.setStroke(GTheme.getInstance().getColor(GColors.COLOR_ACTIVE_TOGGLED));
 			outline.setStrokeWidth(1);
 
-		} else if (!hovered)
-		{
-			outline.setStroke(GTheme.getInstance().getColor(GColors.COLOR_NODE_ACTIVE));
-			outline.setStrokeWidth(1);
 		}
+
 		outline.setArcWidth(21.0);
 		outline.setArcHeight(21.0);
 
